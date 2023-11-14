@@ -40,5 +40,10 @@ public class Member extends Timestamped{
     public String getRoleKey(){
         return this.role.getKey();
     }
+    public Member update(String name, String picture){
+        this.name = name;
+        this.picture = picture;
+        return this;
+    }
 
 }
