@@ -1,5 +1,10 @@
 package jungle.spaceship.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jungle.spaceship.dto.ChatMessage;
+import jungle.spaceship.dto.ChatRoom;
+import jungle.spaceship.service.ChatService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
@@ -16,11 +21,15 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class WebSocketChatHandler extends TextWebSocketHandler {
     /**
-     * 클라이언트로부터 chatting message 를 전달 받아 chatting message 객체로 변환
+     * 웹 소켓 Client 로부터 chatting message 를 전달 받아 chatting message 객체로 변환
      * 
      */
+    private final ObjectMapper objectMapper;
+
+    private final ChatService chatService;
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception{
         /*
@@ -33,10 +42,20 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
          * WebSocketSession은 연결이 확립될 때 한 번만 생성되며 해당 연결의 생명주기와 함께 한다.
          */
 
-        TextMessage welcomeMsg = new TextMessage("Welcome! 통신이 연결 되었습니다 :) ");
 
-        session.sendMessage(welcomeMsg);
+        String payload = message.getPayload();
+        log.info("payload {}", payload);
+        ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
+        ChatRoom room = chatService.findRoomById(chatMessage.getRoomId());
+
+        // 채팅방 동작을 처리한다. 이때 메시지를 보낸 클라이언트의 WebSocket Session, 메시지, 서비스 객체를 인자로 전달한다.
+        room.handleActions(session, chatMessage, chatService);
+
 
     }
+
+
+
+
 
 }
