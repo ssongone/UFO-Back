@@ -25,16 +25,19 @@ public class Member extends Timestamped{
     @Column
     private String picture;
 
+    private String authId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
     private Role role;
 
     @Builder
-    public Member(String name, String email, String picture, Role role){
+    public Member(String name, String email, String picture, Role role, String authId){
         this.name = name;
         this.email = email;
         this.picture = picture;
         this.role = role;
+        this.authId = authId;
     }
 
     public String getRoleKey(){

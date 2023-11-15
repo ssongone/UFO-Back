@@ -25,28 +25,28 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        System.out.println("CustomOAuth2UserService.loadUser");
         OAuth2UserService<OAuth2UserRequest,OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oauth2User = delegate.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
+        // Resource Server(구글, 카카오, 네이버)마다 보내주는 데이터가 다르기 때문에 OAuth2Attribute에 전달하여 처리해준다.
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oauth2User.getAttributes());
+//
+        Member member = memberRepository.findByEmail(attributes.getEmail()).orElse(attributes.toEntity());
+        memberRepository.save(member);
 
-        Member member = saveOrUpdate(attributes);
-        httpSession.setAttribute("user", new SessionMember(member));
+//        httpSession.setAttribute("user", new SessionMember(member));
 
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRoleKey())), attributes.getAttributes(), attributes.getNameAttributeKey());
-
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(attributes.toEntity().getRoleKey())), attributes.getAttributes(), attributes.getNameAttributeKey());
     }
 
-    private Member saveOrUpdate(OAuthAttributes attributes){
-        System.out.println("CustomOAuth2UserService.saveOrUpdate");
-        Member member = memberRepository.findByEmail(attributes.getEmail()).map(entity->entity.update(attributes.getName(), attributes.getPicture()))
-                .orElse(attributes.toEntity());
-
-        return memberRepository.save(member);
-    }
+//    private Member saveOrUpdate(OAuthAttributes attributes){
+//        Member member = memberRepository.findByEmail(attributes.getEmail())
+//                        .orElse(attributes.toEntity());
+//
+//        return memberRepository.save(member);
+//    }
 
 }

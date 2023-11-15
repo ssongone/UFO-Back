@@ -1,13 +1,13 @@
 package jungle.spaceship.config;
 
 import jungle.spaceship.entity.Role;
+import jungle.spaceship.jwt.OAuth2MemberSuccessHandler;
 import jungle.spaceship.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @RequiredArgsConstructor
@@ -16,6 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler;
+
 
     @Bean
     public SecurityFilterChain SecurityFilterChain(HttpSecurity http) throws Exception {
@@ -26,15 +28,19 @@ public class SecurityConfig {
                 .and()
                     .authorizeRequests()
                         .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**").permitAll()
-                        .antMatchers("/api/v1/**").hasRole(Role.USER.name())
+                        .antMatchers("/api/ufo/**").hasRole(Role.USER.name())
                         .anyRequest().authenticated()
                 .and()
                     .logout()
                         .logoutSuccessUrl("/")
                 .and()
-                    .oauth2Login()
+                    .oauth2Login(oauth2 -> oauth2
+                        .successHandler(oAuth2MemberSuccessHandler)
                         .userInfoEndpoint()
-                            .userService(customOAuth2UserService);
+                            .userService(customOAuth2UserService));
+//                    .oauth2Login()
+//                        .userInfoEndpoint()
+//                            .userService(customOAuth2UserService);
         return http.build();
     }
 }
