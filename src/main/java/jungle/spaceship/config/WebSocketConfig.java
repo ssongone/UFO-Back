@@ -2,10 +2,8 @@ package jungle.spaceship.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.*;
 
 /**
  *  WebSocketConfig
@@ -15,15 +13,23 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
  *  CORS :setAllowedOrigins("*")
  */
 @Configuration
-@EnableWebSocket
+@EnableWebSocketMessageBroker
 @RequiredArgsConstructor
-public class WebSocketConfig implements WebSocketConfigurer {
-
-    private final WebSocketHandler webSocketHandler;
-
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketHandler, "ws/chat").setAllowedOrigins("*");
+    public void configureMessageBroker(MessageBrokerRegistry config){
+        // enableSimpleBroker : 스프링에서 제공하는 내장 브로커를 사용하겠다는 설정
+        // /sub : Prefix 가 붙은 메시지가 송신되었을 때, 그 메시지를 브로커가 처리하겠다는 의미
+        config.enableSimpleBroker("/sub");
+
+        // setApplicationDestinationPrefixes : 바로 브로커가 아닌, 메시지에 어떤 처리/가공이 필요한 경우 해당 경로를 처리하고 있는 핸들러로 전달
+        config.setApplicationDestinationPrefixes("/pub");
+    }
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws").setAllowedOrigins("*");
+//                .withSockJS();
     }
 }
