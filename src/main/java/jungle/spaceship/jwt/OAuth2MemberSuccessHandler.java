@@ -37,19 +37,18 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String authId = (String) attributes.get("email");
         Member findMember = memberRepository.findByEmail(authId).orElseThrow(() -> new NoSuchElementException("값을 찾을 수 없습니다."));
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                .fromUriString("/private/login");
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("/private/login");
 
-        if (findMember.getRole() == Role.GUEST) {
-            System.out.println("회원가입으로 리다이렉트");
-            String redirectionUri = uriBuilder
-                    .queryParam("loginSuccess",false)
-                    .build()
-                    .toUriString();
-
-            response.sendRedirect(redirectionUri);
-            return;
-        }
+//        if (findMember.getRole() == Role.GUEST) {
+//            System.out.println("회원가입으로 리다이렉트");
+//            String redirectionUri = uriBuilder
+//                    .queryParam("loginSuccess",false)
+//                    .build()
+//                    .toUriString();
+//
+//            response.sendRedirect(redirectionUri);
+//            return;
+//        }
 
         TokenInfo tokenInfo = jwtProvider.generateToken(oAuth2User);
         String accessToken = tokenInfo.getGrantType()+ " " + tokenInfo.getAccessToken();
@@ -58,7 +57,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         System.out.println("tokenInfo = " + tokenInfo);
 
         String redirectionUri = uriBuilder
-                .queryParam("loginSuccess", true)
+//                .queryParam("loginSuccess", true)
                 .queryParam("accessToken", accessToken)
                 .queryParam("refreshToken", refreshToken)
                 .build()

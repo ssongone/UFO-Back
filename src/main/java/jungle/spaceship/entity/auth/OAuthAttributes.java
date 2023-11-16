@@ -29,11 +29,31 @@ public class OAuthAttributes {
 
     }
 
-    public static OAuthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes){
-        return ofGoogle(userNameAttributeName, attributes);
+    public static OAuthAttributes of(String provider, String userNameAttributeName, Map<String, Object> attributes){
+        switch (provider) {
+            case "google":
+//                return ofGoogle(userNameAttributeName, attributes);
+                return ofGoogle(userNameAttributeName, attributes);
+            case "kakao" :
+                return ofKakao(userNameAttributeName, attributes);
+            default:
+                throw new RuntimeException("소셜 로그인 접근 실패");
+        }
+
     }
 
     private static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes){
+        return OAuthAttributes.builder()
+                .oAuthid((String) attributes.get("sub")) // "sub"은 Google에서 사용자의 고유 ID를 나타냅니다.
+                .name((String) attributes.get("name"))
+                .email((String) attributes.get("email"))
+                .picture((String) attributes.get("picture"))
+                .attributes(attributes)
+                .nameAttributeKey(userNameAttributeName)
+                .build();
+    }
+
+    private static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes){
         return OAuthAttributes.builder()
                 .oAuthid((String) attributes.get("sub")) // "sub"은 Google에서 사용자의 고유 ID를 나타냅니다.
                 .name((String) attributes.get("name"))

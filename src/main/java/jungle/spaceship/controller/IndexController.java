@@ -33,24 +33,6 @@ public class IndexController{
         return "hi";
     }
 
-    @GetMapping("/private/login")
-    public @ResponseBody ResponseEntity<ExtendedResponse<Role>> loginCallback(
-            @RequestParam(name = "loginSuccess") boolean loginSuccess,
-            @RequestParam(name = "accessToken", required = false) String accessToken,
-            @RequestParam(name = "refreshToken", required = false) String refreshToken,
-            HttpServletResponse response) {
-        System.out.println("IndexController.tokenTest");
-
-        if (loginSuccess) {
-            response.addHeader("Authorization", accessToken);
-            response.addHeader("refresh", refreshToken);
-            ExtendedResponse<Role> extendedResponse = new ExtendedResponse<>(Role.USER, HttpStatus.ACCEPTED.value(), "로그인 완료");
-            return new ResponseEntity<>(extendedResponse, HttpStatus.ACCEPTED);
-        } else {
-            ExtendedResponse<Role> extendedResponse = new ExtendedResponse<>(Role.GUEST, HttpStatus.CREATED.value(), "회원 가입 완료");
-            return new ResponseEntity<>(extendedResponse, HttpStatus.CREATED);
-        }
-    }
 }
 
 

@@ -26,12 +26,35 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
 
     private final Key key;
+    private static final String BEARER_TYPE = "Bearer";
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
+    public TokenInfo generateTokenByMemberId(Long memberId) {
+        long now = (new Date()).getTime();
+        Date accessTokenExpiredAt = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+        Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
+
+        String subject = memberId.toString();
+        String accessToken = Jwts.builder()
+                .setSubject(subject)
+                .setExpiration(accessTokenExpiredAt)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+
+        String refreshToken = Jwts.builder()
+                .setSubject(subject)
+                .setExpiration(refreshTokenExpiredAt)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+
+        return new TokenInfo(BEARER_TYPE, accessToken, refreshToken);
+    }
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
     public TokenInfo generateToken(OAuth2User oAuth2User) {
         // 권한 가져오기
@@ -56,7 +79,7 @@ public class JwtTokenProvider {
                 .compact();
 
         return TokenInfo.builder()
-                .grantType("Bearer")
+                .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
@@ -82,19 +105,21 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-//    // 토큰 정보를 검증하는 메서드
-//    public void validateToken(String token) {
-//        try {
-//            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-//            return true;
-//        } catch (ExpiredJwtException e) {  // 토큰이 만료되었다면
-//            throw new JwtNotAvailable("토큰이 만료되었습니다. 다시 로그인 해주세요.");
-//        } catch (SecurityException | MalformedJwtException | IllegalArgumentException | UnsupportedJwtException e) {
-//            throw new JwtNotAvailable("올바르지 않은 토큰입니다.");
-//        }
-//
-//    }
-
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            log.info("잘못된 JWT 서명입니다.");
+        } catch (ExpiredJwtException e) {
+            log.info("만료된 JWT 토큰입니다.");
+        } catch (UnsupportedJwtException e) {
+            log.info("지원되지 않는 JWT 토큰입니다.");
+        } catch (IllegalArgumentException e) {
+            log.info("JWT 토큰이 잘못되었습니다.");
+        }
+        return false;
+    }
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();

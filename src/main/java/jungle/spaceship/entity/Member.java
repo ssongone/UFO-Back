@@ -1,6 +1,7 @@
 package jungle.spaceship.entity;
 
 
+import jungle.spaceship.entity.auth.OAuthInfoResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ public class Member extends Timestamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long memberId;
 
     @Column(nullable = false)
     private String name;
@@ -25,11 +26,15 @@ public class Member extends Timestamped{
     @Column
     private String picture;
 
-    private String authId;
+//    private String authId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
     private Role role;
+
+    @OneToOne
+    @JoinColumn(name = "member_profile_id", nullable = true)
+    private MemberProfile memberProfile;
 
     @Builder
     public Member(String name, String email, String picture, Role role, String authId){
@@ -37,7 +42,14 @@ public class Member extends Timestamped{
         this.email = email;
         this.picture = picture;
         this.role = role;
-        this.authId = authId;
+//        this.authId = authId;
+    }
+
+    public Member(OAuthInfoResponse oAuthInfoResponse) {
+        this.name = oAuthInfoResponse.getName();
+        this.email = oAuthInfoResponse.getEmail();
+        this.picture = oAuthInfoResponse.getPicture();
+        this.role = Role.GUEST;
     }
 
     public String getRoleKey(){
@@ -49,4 +61,11 @@ public class Member extends Timestamped{
         return this;
     }
 
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public void setMemberProfile(MemberProfile memberProfile) {
+        this.memberProfile = memberProfile;
+    }
 }
