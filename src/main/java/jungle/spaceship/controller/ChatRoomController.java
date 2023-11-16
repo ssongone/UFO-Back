@@ -1,7 +1,7 @@
 package jungle.spaceship.controller;
 
-import jungle.spaceship.dto.ChatRoom;
-import jungle.spaceship.repository.ChatRoomRepository;
+import jungle.spaceship.entity.ChatRoom;
+import jungle.spaceship.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -13,22 +13,22 @@ import java.util.List;
 @RequestMapping("/room")
 @RequiredArgsConstructor
 public class ChatRoomController {
-    private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomService chatRoomService;
 
     /**
      * 채팅방 생성
      */
     @PostMapping
-    public ChatRoom createRoom(@RequestParam String name){
-        return chatRoomRepository.createRoom(name);
+    public ChatRoom createRoom(@RequestParam String roomName) {
+        return chatRoomService.createRoom(roomName);
     }
 
     /**
      * 특정 채팅방 조회
      */
     @GetMapping("/{roomId}")
-    public ChatRoom roomInfo(@PathVariable String roomId){
-        return chatRoomRepository.findRoomById(roomId);
+    public ChatRoom roomInfo(@PathVariable Long roomId){
+        return chatRoomService.findRoomById(roomId);
     }
 
     /**
@@ -36,7 +36,7 @@ public class ChatRoomController {
      */
     @GetMapping("/list")
     public List<ChatRoom> findAllRoom(){
-        return chatRoomRepository.findAllRoom();
+        return chatRoomService.findAllRoom();
     }
 
 }
