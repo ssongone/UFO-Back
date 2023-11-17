@@ -1,24 +1,33 @@
-spring:
-  profiles:
-    include:
-      - oauth
-      - mysql
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  #  h2:
+#spring:
+#  profiles:
+#    include:
+#      - oauth
+#      - mysql
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+##  datasource:
+##    driver-class-name: com.mysql.cj.jdbc.Driver
+#  h2:
 #    console:
 #      enabled: true
 #  datasource:
 #    url: jdbc:h2:mem:db;MODE=MYSQL;
 #    username: sa
 #    password:
-
+#
+spring:
+  profiles:
+    include: oauth
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:db;MODE=MYSQL;
+    username: sa
+    password:
 
 jwt:
   secret: "VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa"
 
-#MYSQL_HOST: "ddd"

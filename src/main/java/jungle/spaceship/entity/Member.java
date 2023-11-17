@@ -26,23 +26,16 @@ public class Member extends Timestamped{
     @Column
     private String picture;
 
-//    private String authId;
-
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
     private Role role;
 
-    @OneToOne
-    @JoinColumn(name = "member_profile_id", nullable = true)
-    private MemberProfile memberProfile;
 
     @Builder
-    public Member(String name, String email, String picture, Role role, String authId){
+    public Member(String name, String email, String picture, Role role){
         this.name = name;
         this.email = email;
         this.picture = picture;
         this.role = role;
-//        this.authId = authId;
     }
 
     public Member(OAuthInfoResponse oAuthInfoResponse) {
@@ -65,7 +58,4 @@ public class Member extends Timestamped{
         this.role = role;
     }
 
-    public void setMemberProfile(MemberProfile memberProfile) {
-        this.memberProfile = memberProfile;
-    }
 }

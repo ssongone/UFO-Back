@@ -1,23 +1,20 @@
 package jungle.spaceship.config;
 
 import jungle.spaceship.jwt.*;
-import jungle.spaceship.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
 
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtTokenProvider jwtTokenProvider;
@@ -46,17 +43,10 @@ public class SecurityConfig {
                 .and()
                     .authorizeRequests()
                         .antMatchers(URL_TO_PERMIT).permitAll()
-//                        .antMatchers("/api/ufo/**").hasRole(Role.USER.name())
-                        .anyRequest().authenticated()
-
-                .and()
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler(oAuth2MemberSuccessHandler)
-                        .userInfoEndpoint()
-                        .userService(customOAuth2UserService));
+                        .anyRequest().authenticated();
 
         http
-                .addFilterBefore(new JwtRequestFilter(jwtTokenProvider), OAuth2LoginAuthenticationFilter.class);
+                .addFilterBefore(new JwtRequestFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
