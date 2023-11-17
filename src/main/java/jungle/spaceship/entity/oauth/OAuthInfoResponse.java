@@ -1,4 +1,4 @@
-package jungle.spaceship.entity.auth;
+package jungle.spaceship.entity.oauth;
 
 public interface OAuthInfoResponse {
     String getEmail();

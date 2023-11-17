@@ -1,7 +1,7 @@
 package jungle.spaceship;
 
 
-import jungle.spaceship.entity.auth.KakaoInfoResponse;
+import jungle.spaceship.entity.oauth.KakaoInfoResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;

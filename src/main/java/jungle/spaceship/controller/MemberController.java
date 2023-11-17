@@ -16,6 +16,8 @@ public class MemberController {
 
     @PostMapping("/api/login/kakao")
     public ResponseEntity<TokenInfo> loginFromKakao(@RequestBody String token) {
+        System.out.println("MemberController.loginFromKakao");
+        System.out.println("token = " + token);
         TokenInfo res = memberService.loginWithKakao(token);
         System.out.println("res = " + res);
         return ResponseEntity.ok(res);

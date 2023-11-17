@@ -1,7 +1,7 @@
 package jungle.spaceship.entity;
 
 
-import jungle.spaceship.entity.auth.OAuthInfoResponse;
+import jungle.spaceship.entity.oauth.OAuthInfoResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package jungle.spaceship.entity.auth;
+package jungle.spaceship.entity.oauth;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

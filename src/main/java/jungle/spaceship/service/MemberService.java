@@ -2,8 +2,8 @@ package jungle.spaceship.service;
 
 
 import jungle.spaceship.entity.Member;
-import jungle.spaceship.entity.auth.KakaoInfoResponse;
-import jungle.spaceship.entity.auth.OAuthInfoResponse;
+import jungle.spaceship.entity.oauth.KakaoInfoResponse;
+import jungle.spaceship.entity.oauth.OAuthInfoResponse;
 import jungle.spaceship.jwt.JwtTokenProvider;
 import jungle.spaceship.jwt.TokenInfo;
 import jungle.spaceship.repository.MemberRepository;
@@ -26,6 +26,7 @@ public class MemberService {
 
     static String OAUTH2_URL_KAKAO = "https://kapi.kakao.com/v2/user/me";
     public TokenInfo loginWithKakao(String accessToken) {
+        System.out.println("MemberService.loginWithKakao");
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfo(accessToken);
         Member newMember = findOrCreateMember(oAuthInfoResponse);
         return jwtTokenProvider.generateTokenByMember(newMember.getMemberId(), newMember.getRole().getKey());

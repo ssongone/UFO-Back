@@ -34,6 +34,7 @@ public class JwtTokenProvider {
     }
 
     public TokenInfo generateTokenByMember(Long memberId, String authority) {
+        System.out.println("JwtTokenProvider.generateTokenByMember");
         long now = (new Date()).getTime();
         Date accessTokenExpiredAt = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
