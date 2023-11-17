@@ -1,17 +1,24 @@
 package jungle.spaceship.entity;
 
 
+import jungle.spaceship.controller.dto.SignUpDto;
 import jungle.spaceship.entity.oauth.OAuthInfoResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
 
 @Getter
 @NoArgsConstructor
 @Entity
-public class Member extends Timestamped{
+public class Member extends Timestamped implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,8 +34,17 @@ public class Member extends Timestamped{
     private String picture;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
+    private String nickname;
+
+    private String title;
+
+    private LocalDate birthdate;
+
+    @Enumerated(EnumType.STRING)
+    private ElienType elienType;
 
     @Builder
     public Member(String name, String email, String picture, Role role){
@@ -48,9 +64,10 @@ public class Member extends Timestamped{
     public String getRoleKey(){
         return this.role.getKey();
     }
-    public Member update(String name, String picture){
-        this.name = name;
-        this.picture = picture;
+    public Member update(SignUpDto dto){
+        this.nickname = dto.getNickname();
+        this.title = dto.getTitle();
+        this.birthdate = dto.getBirthdate();
         return this;
     }
 
@@ -58,4 +75,38 @@ public class Member extends Timestamped{
         this.role = role;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(role.getKey()));
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return String.valueOf(this.memberId);
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
 }

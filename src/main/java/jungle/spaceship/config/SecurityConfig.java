@@ -1,6 +1,10 @@
 package jungle.spaceship.config;
 
-import jungle.spaceship.jwt.*;
+import jungle.spaceship.jwt.JwtAccessDeniedHandler;
+import jungle.spaceship.jwt.JwtAuthenticationEntryPoint;
+import jungle.spaceship.jwt.JwtRequestFilter;
+import jungle.spaceship.jwt.JwtTokenProvider;
+import jungle.spaceship.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
-
+    private final CustomUserDetailsService customUserDetailsService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtTokenProvider jwtTokenProvider;
@@ -43,8 +47,9 @@ public class SecurityConfig {
                         .antMatchers(URL_TO_PERMIT).permitAll()
                         .anyRequest().authenticated();
 
-        http
-                .addFilterBefore(new JwtRequestFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterBefore(new JwtRequestFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+        http.userDetailsService(customUserDetailsService);
 
         return http.build();
     }

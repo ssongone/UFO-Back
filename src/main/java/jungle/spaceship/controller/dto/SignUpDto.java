@@ -1,6 +1,5 @@
 package jungle.spaceship.controller.dto;
 
-import jungle.spaceship.entity.ElienType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,5 +23,4 @@ public class SignUpDto {
 
     private String title;
 
-    private ElienType elienType;
 }
