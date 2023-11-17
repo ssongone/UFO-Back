@@ -1,5 +1,6 @@
 package jungle.spaceship.controller;
 
+import jungle.spaceship.controller.dto.AlienDto;
 import jungle.spaceship.controller.dto.SignUpDto;
 import jungle.spaceship.jwt.TokenInfo;
 import jungle.spaceship.response.BasicResponse;
@@ -30,6 +31,12 @@ public class MemberController {
     public BasicResponse signUp(@RequestBody SignUpDto dto) {
         memberService.signUp(dto);
         return new BasicResponse(HttpStatus.OK.value(), "회원가입 성공!");
+    }
+
+    @PostMapping("/api/register/alien")
+    public BasicResponse registerAlien(@RequestBody AlienDto dto) {
+        memberService.registerAlien(dto);
+        return new BasicResponse(HttpStatus.OK.value(), "에일리언 등록 성공!");
     }
 
 }

@@ -1,12 +1,15 @@
 package jungle.spaceship.service;
 
 
+import jungle.spaceship.controller.dto.AlienDto;
 import jungle.spaceship.controller.dto.SignUpDto;
+import jungle.spaceship.entity.Alien;
 import jungle.spaceship.entity.Member;
 import jungle.spaceship.entity.oauth.KakaoInfoResponse;
 import jungle.spaceship.entity.oauth.OAuthInfoResponse;
 import jungle.spaceship.jwt.JwtTokenProvider;
 import jungle.spaceship.jwt.TokenInfo;
+import jungle.spaceship.repository.AlienRepository;
 import jungle.spaceship.repository.MemberRepository;
 import jungle.spaceship.response.ExtendedResponse;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final AlienRepository alienRepository;
     private final RestTemplate restTemplate;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -83,4 +87,16 @@ public class MemberService {
     }
 
 
+    public void registerAlien(AlienDto dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Long memberId = Long.valueOf(user.getUsername());
+
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(
+                () -> new NoSuchElementException("해당하는 사용자가 없습니다")
+        );
+
+        Alien alien = new Alien(member, dto);
+        alienRepository.save(alien);
+    }
 }
