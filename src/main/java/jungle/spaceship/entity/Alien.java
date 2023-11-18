@@ -16,14 +16,12 @@ public class Alien {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long alienId;
 
-    @OneToOne(mappedBy = "member")
-    private Member member;
-
+    @Column
     private ElienType type;
+    @Column
     private AlienColor color;
 
-    public Alien(Member member, AlienDto dto) {
-        this.member = member;
+    public Alien(AlienDto dto) {
         this.type = dto.getType();
         this.color = dto.getColor();
     }

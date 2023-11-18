@@ -43,8 +43,10 @@ public class Member extends Timestamped implements UserDetails {
 
     private LocalDate birthdate;
 
-    @Enumerated(EnumType.STRING)
-    private ElienType elienType;
+
+    @OneToOne
+    @JoinColumn(name = "alien_id")
+    private Alien alien;
 
     @Builder
     public Member(String name, String email, String picture, Role role){
@@ -73,6 +75,10 @@ public class Member extends Timestamped implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public void setAlien(Alien alien) {
+        this.alien = alien;
     }
 
     @Override
