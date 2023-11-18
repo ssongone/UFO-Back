@@ -14,7 +14,7 @@ public class SecurityUtil {
 
     private final MemberRepository memberRepository;
 
-    public Member extractMember() {
+    public  Member extractMember() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         Long memberId = Long.valueOf(user.getUsername());
