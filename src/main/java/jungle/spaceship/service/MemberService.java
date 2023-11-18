@@ -105,6 +105,7 @@ public class MemberService {
         Member member = securityUtil.extractMember();
         Alien alien = new Alien(dto);
         member.setAlien(alienRepository.save(alien));
+        memberRepository.save(member);
     }
     @Transactional
     public void registerFamily(FamilyDto dto) {
