@@ -43,10 +43,14 @@ public class Member extends Timestamped implements UserDetails {
 
     private LocalDate birthdate;
 
-
     @OneToOne
     @JoinColumn(name = "alien_id")
     private Alien alien;
+
+    @ManyToOne
+    @JoinColumn(name = "family_id")
+    private Family family;
+
 
     @Builder
     public Member(String name, String email, String picture, Role role){
@@ -79,6 +83,10 @@ public class Member extends Timestamped implements UserDetails {
 
     public void setAlien(Alien alien) {
         this.alien = alien;
+    }
+
+    public void setFamily(Family family) {
+        this.family = family;
     }
 
     @Override

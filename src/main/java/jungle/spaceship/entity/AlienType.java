@@ -1,6 +1,6 @@
 package jungle.spaceship.entity;
 
-public enum ElienType {
+public enum AlienType {
     CHILD,
     YOUTH,
     ADULT,

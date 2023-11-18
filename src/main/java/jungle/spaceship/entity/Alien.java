@@ -17,7 +17,7 @@ public class Alien {
     private Long alienId;
 
     @Column
-    private ElienType type;
+    private AlienType type;
     @Column
     private AlienColor color;
 

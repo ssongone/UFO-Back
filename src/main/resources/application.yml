@@ -1,21 +1,21 @@
-#spring:
-#  profiles:
-#    include:
-#      - oauth
-#      - mysql
-#  jpa:
-#    hibernate:
-#      ddl-auto: create
-#    show-sql: true
-
 spring:
-  h2:
-    console:
-      enabled: true
-  datasource:
-    url: jdbc:h2:mem:db;MODE=MYSQL;
-    username: sa
-    password:
+  profiles:
+    include:
+      - mysql
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+#spring:
+#  h2:
+#    console:
+#      enabled: true
+#  datasource:
+#    url: jdbc:h2:mem:db;MODE=MYSQL;
+#    username: sa
+#    password:
 
 jwt:
   secret: "VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa"

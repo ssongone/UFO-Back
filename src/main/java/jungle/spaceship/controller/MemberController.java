@@ -1,6 +1,7 @@
 package jungle.spaceship.controller;
 
 import jungle.spaceship.controller.dto.AlienDto;
+import jungle.spaceship.controller.dto.FamilyDto;
 import jungle.spaceship.controller.dto.SignUpDto;
 import jungle.spaceship.jwt.TokenInfo;
 import jungle.spaceship.response.BasicResponse;
@@ -21,8 +22,6 @@ public class MemberController {
 
     @PostMapping("/api/login/kakao")
     public ResponseEntity<ExtendedResponse<TokenInfo>> loginFromKakao(@RequestBody String token) {
-        System.out.println("MemberController.loginFromKakao");
-        System.out.println("token = " + token);
         ExtendedResponse<TokenInfo> result = memberService.loginWithKakao(token);
         return ResponseEntity.ok(result);
     }
@@ -39,4 +38,9 @@ public class MemberController {
         return new BasicResponse(HttpStatus.OK.value(), "에일리언 등록 성공!");
     }
 
+    @PostMapping("/api/register/family")
+    public BasicResponse registerFamily(@RequestBody FamilyDto dto) {
+        memberService.registerFamily(dto);
+        return new BasicResponse(HttpStatus.OK.value(), "가족 등록 성공!");
+    }
 }

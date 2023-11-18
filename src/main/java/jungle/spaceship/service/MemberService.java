@@ -2,8 +2,11 @@ package jungle.spaceship.service;
 
 
 import jungle.spaceship.controller.dto.AlienDto;
+import jungle.spaceship.controller.dto.FamilyDto;
 import jungle.spaceship.controller.dto.SignUpDto;
 import jungle.spaceship.entity.Alien;
+import jungle.spaceship.entity.Family;
+import jungle.spaceship.entity.InvitationCode;
 import jungle.spaceship.entity.Member;
 import jungle.spaceship.entity.oauth.KakaoInfoResponse;
 import jungle.spaceship.entity.oauth.OAuthInfoResponse;
@@ -11,6 +14,8 @@ import jungle.spaceship.jwt.JwtTokenProvider;
 import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.jwt.TokenInfo;
 import jungle.spaceship.repository.AlienRepository;
+import jungle.spaceship.repository.FamilyRepository;
+import jungle.spaceship.repository.InvitationCodeRepository;
 import jungle.spaceship.repository.MemberRepository;
 import jungle.spaceship.response.ExtendedResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +31,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.transaction.Transactional;
+import java.security.SecureRandom;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import static jungle.spaceship.entity.InvitationCode.CODE_CHARACTERS;
+import static jungle.spaceship.entity.InvitationCode.CODE_LENGTH;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +45,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final AlienRepository alienRepository;
+    private final FamilyRepository familyRepository;
+    private final InvitationCodeRepository invitationCodeRepository;
     private final RestTemplate restTemplate;
     private final JwtTokenProvider jwtTokenProvider;
     private final SecurityUtil securityUtil;
@@ -91,9 +103,38 @@ public class MemberService {
 
     public void registerAlien(AlienDto dto) {
         Member member = securityUtil.extractMember();
-
         Alien alien = new Alien(dto);
         member.setAlien(alienRepository.save(alien));
+    }
+    @Transactional
+    public void registerFamily(FamilyDto dto) {
+        Member member = securityUtil.extractMember();
+        Family family = new Family(dto);
+
+        family.getMembers().add(member);
+        member.setFamily(family);
+
+        memberRepository.save(member);
+        familyRepository.save(family);
+
+        String code = makeCode();
+        System.out.println("code = " + code);
+
+        InvitationCode invitationCode = new InvitationCode(code, family);
+        invitationCodeRepository.save(invitationCode);
+    }
+
+    public String makeCode() {
+        SecureRandom random = new SecureRandom();
+        StringBuilder codeBuilder = new StringBuilder(CODE_LENGTH);
+
+        for (int i = 0; i < CODE_LENGTH; i++) {
+            int randomIndex = random.nextInt(CODE_CHARACTERS.length());
+            char randomChar = CODE_CHARACTERS.charAt(randomIndex);
+            codeBuilder.append(randomChar);
+        }
+
+        return codeBuilder.toString();
     }
 
 }
