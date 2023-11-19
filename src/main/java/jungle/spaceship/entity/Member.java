@@ -14,7 +14,7 @@ public class Member extends Timestamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long memberId;
 
     @Column(nullable = false)
     private String name;
@@ -37,9 +37,9 @@ public class Member extends Timestamped{
         this.role = role;
     }
 
-    public String getRoleKey(){
-        return this.role.getKey();
-    }
+//    public String getRoleKey(){
+//        return this.role.getKey();
+//    }
     public Member update(String name, String picture){
         this.name = name;
         this.picture = picture;

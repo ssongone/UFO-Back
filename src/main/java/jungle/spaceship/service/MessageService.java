@@ -4,6 +4,7 @@ import jungle.spaceship.dto.ChatMessageDTO;
 import jungle.spaceship.entity.*;
 import jungle.spaceship.repository.MessageRepository;
 import jungle.spaceship.repository.ChatRoomRepository;
+import jungle.spaceship.repository.RedisMessageCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
@@ -22,8 +23,9 @@ public class MessageService implements DisposableBean{
     private final MessageRepository messageRepository;
     private final ChatRoomRepository chatRoomRepository;
 
+    private final RedisMessageCache messageMap;
     // 채팅 메시지 임시 저장 캐시 : 채팅방Id, 채팅 메시지
-    private static final Map<Long, Queue<Message>> messageMap = new HashMap<>();
+//    private static final Map<Long, Queue<Message>> messageMap = new HashMap<>();
     private final EntityManager em;
 
 
@@ -58,22 +60,29 @@ public class MessageService implements DisposableBean{
                 new Message(messageType, content, member, chatRoom);
 
         // 채팅방에 캐시가 없다면 새로운 큐를 생성 및 메시지 추가 후 put(roomId, queue) 한다.
-        messageMap.computeIfAbsent(roomId, key -> new LinkedList<>()).add(message);
-        Queue<Message> queue = messageMap.get(roomId);
-
-        // 캐시 쓰기 전략 (Write Back) : 큐 사이즈가 일정 크기 초과하면 일부를 db에 저장 후 큐를 갱신
-        if(queue.size() > TRANSACTION_MESSAGE_SIZE + MESSAGE_PAGEABLE_SIZE){
-
-            Queue<Message> tmpQueue = new LinkedList<>();
-            for (int i = 0; i < TRANSACTION_MESSAGE_SIZE; i++) {
-                
-                tmpQueue.add(queue.poll()); 
-            }
-            commitMessageQueue(tmpQueue);   // 큐에서 메시지를 가져와 db에 저장
+        if(!messageMap.containsKey(roomId)){
+            //채팅방에 처음쓰는 글이라면 캐시가 없으므로 캐시를 생성
+            Queue<Message> q = new LinkedList<>();
+            q.add(message);
+            messageMap.put(roomId, q);
         }
+        else{
+            Queue<Message> mQueue = messageMap.get(roomId);
+            mQueue.add(message);
+            // 캐시 쓰기 전략 (Write Back) : 큐 사이즈가 일정 크기 초과하면 일부를 db에 저장 후 큐를 갱신
+            if(mQueue.size() > TRANSACTION_MESSAGE_SIZE + MESSAGE_PAGEABLE_SIZE){
 
-        // 큐의 상태가 변경되었기 때무넹 현재 큐를 갱신
-        messageMap.put(roomId, queue);
+                Queue<Message> tmpQueue = new LinkedList<>();
+                for (int i = 0; i < TRANSACTION_MESSAGE_SIZE; i++) {
+
+                    tmpQueue.add(mQueue.poll());
+                }
+                commitMessageQueue(tmpQueue);   // 큐에서 메시지를 가져와 db에 저장
+            }
+            // 큐의 상태가 변경되었기 때무넹 현재 큐를 갱신
+            messageMap.put(roomId, mQueue);
+
+        }
     }
 
     /**
@@ -95,7 +104,7 @@ public class MessageService implements DisposableBean{
     }
 
 
-    private void commitMessageQueue(Queue<Message> queue){
+    public void commitMessageQueue(Queue<Message> queue){
         for (int i = 0; i < queue.size(); i++) {
             Message message = queue.poll();
             em.persist(message);
@@ -106,9 +115,7 @@ public class MessageService implements DisposableBean{
     @Override
     public void destroy() throws Exception {
         // 서버 다운 전 큐를 db 에 저장시키기
-        for (Queue<Message> messages : messageMap.values()) {
-            commitMessageQueue(messages);
-        }
+        commitMessageQueue(messageMap.values());
     }
 
     private List<Message> getMessageInDB(Long roomId) {
