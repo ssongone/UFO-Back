@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,9 +21,9 @@ public class Family extends Timestamped{
     private String ufoName;
     private String plantName;
 
-    @OneToMany(mappedBy = "family", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "family")
     @JsonManagedReference
-    private List<Member> members;
+    private List<Member> members = new ArrayList<>();
 
     public Family(FamilyDto dto) {
         this.ufoName = dto.getUfoName();

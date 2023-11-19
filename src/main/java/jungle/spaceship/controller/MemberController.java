@@ -47,7 +47,7 @@ public class MemberController {
         return ResponseEntity.ok(memberService.registerFamily(dto));
     }
 
-    @PostMapping("/api/register/currentFamily/{code}")
+    @GetMapping("/api/register/currentFamily/{code}")
     public ResponseEntity<ExtendedResponse<FamilyRegistrationDto>> registerCurrentFamily(@PathVariable String code) {
         return ResponseEntity.ok(memberService.registerCurrentFamily(code));
     }

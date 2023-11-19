@@ -132,9 +132,9 @@ public class MemberService {
 
         Family family = invitationCode.getFamily();
         Member member = securityUtil.extractMember();
-
-        member.setFamily(family);
         member.setRole(Role.USER);
+        member.setFamily(family);
+        family.getMembers().add(member);
 
         memberRepository.save(member);
         familyRepository.save(family);
@@ -143,7 +143,6 @@ public class MemberService {
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
         FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, familyResponseDto);
         return new ExtendedResponse<>(familyRegistrationDto, HttpStatus.OK.value(), "가족에 등록되었습니다");
-
     }
 
     public String makeCode() {

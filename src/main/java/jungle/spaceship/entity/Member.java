@@ -53,6 +53,9 @@ public class Member extends Timestamped implements UserDetails {
     @JsonBackReference
     private Family family;
 
+    public void setFamily(Family family) {
+        this.family = family;
+    }
 
     @Builder
     public Member(String name, String email, String picture, Role role){
@@ -85,10 +88,6 @@ public class Member extends Timestamped implements UserDetails {
 
     public void setAlien(Alien alien) {
         this.alien = alien;
-    }
-
-    public void setFamily(Family family) {
-        this.family = family;
     }
 
     @Override
