@@ -1,12 +1,13 @@
 package jungle.spaceship.entity;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
-
+@Getter
 public class InvitationCode {
 
     public static final String CODE_CHARACTERS = "!@#$%^&*ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

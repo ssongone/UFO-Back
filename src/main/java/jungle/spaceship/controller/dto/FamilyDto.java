@@ -6,4 +6,5 @@ import lombok.Getter;
 public class FamilyDto {
     private String ufoName;
     private String plantName;
+    private String code;
 }

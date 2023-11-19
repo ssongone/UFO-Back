@@ -1,6 +1,7 @@
 package jungle.spaceship.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jungle.spaceship.controller.dto.SignUpDto;
 import jungle.spaceship.entity.oauth.OAuthInfoResponse;
 import lombok.Builder;
@@ -49,6 +50,7 @@ public class Member extends Timestamped implements UserDetails {
 
     @ManyToOne
     @JoinColumn(name = "family_id")
+    @JsonBackReference
     private Family family;
 
 

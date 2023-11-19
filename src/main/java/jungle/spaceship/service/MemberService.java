@@ -1,13 +1,8 @@
 package jungle.spaceship.service;
 
 
-import jungle.spaceship.controller.dto.AlienDto;
-import jungle.spaceship.controller.dto.FamilyDto;
-import jungle.spaceship.controller.dto.SignUpDto;
-import jungle.spaceship.entity.Alien;
-import jungle.spaceship.entity.Family;
-import jungle.spaceship.entity.InvitationCode;
-import jungle.spaceship.entity.Member;
+import jungle.spaceship.controller.dto.*;
+import jungle.spaceship.entity.*;
 import jungle.spaceship.entity.oauth.KakaoInfoResponse;
 import jungle.spaceship.entity.oauth.OAuthInfoResponse;
 import jungle.spaceship.jwt.JwtTokenProvider;
@@ -107,22 +102,48 @@ public class MemberService {
         member.setAlien(alienRepository.save(alien));
         memberRepository.save(member);
     }
+
     @Transactional
-    public void registerFamily(FamilyDto dto) {
+    public ExtendedResponse<FamilyRegistrationDto> registerFamily(FamilyDto dto) {
+        String code = dto.getCode();
         Member member = securityUtil.extractMember();
         Family family = new Family(dto);
 
         family.getMembers().add(member);
         member.setFamily(family);
+        member.setRole(Role.USER);
 
         memberRepository.save(member);
         familyRepository.save(family);
 
-        String code = makeCode();
-        System.out.println("code = " + code);
-
         InvitationCode invitationCode = new InvitationCode(code, family);
         invitationCodeRepository.save(invitationCode);
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey());
+        FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
+        FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, familyResponseDto);
+        return new ExtendedResponse<>(familyRegistrationDto, HttpStatus.CREATED.value(), "가족이 생성되었습니다");
+
+    }
+
+    public ExtendedResponse<FamilyRegistrationDto> registerCurrentFamily(String code) {
+        InvitationCode invitationCode = invitationCodeRepository.findByCode(code)
+                .orElseThrow(() -> new NoSuchElementException("코드가 유효하지 않습니다"));
+
+        Family family = invitationCode.getFamily();
+        Member member = securityUtil.extractMember();
+
+        member.setFamily(family);
+        member.setRole(Role.USER);
+
+        memberRepository.save(member);
+        familyRepository.save(family);
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey());
+        FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
+        FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, familyResponseDto);
+        return new ExtendedResponse<>(familyRegistrationDto, HttpStatus.OK.value(), "가족에 등록되었습니다");
+
     }
 
     public String makeCode() {
@@ -135,7 +156,11 @@ public class MemberService {
             codeBuilder.append(randomChar);
         }
 
-        return codeBuilder.toString();
+        String code = codeBuilder.toString();
+        if (invitationCodeRepository.findByCode(code).isPresent()) {
+            code = makeCode();
+        }
+        return code;
     }
 
 }
