@@ -1,11 +1,14 @@
 spring:
   profiles:
-    include: -mysql
+
+    include:
+      - mysql
   jpa:
     generate-ddl: true
     hibernate:
       ddl-auto: update
     show-sql: true
+
   data:
     redis:
       repositories:
@@ -19,18 +22,7 @@ spring:
     port: 6379
     expire: 60
 
-  servlet:
-    multipart:
-      maxFileSize: 10MB
-      maxRequestSize: 10MB
+jwt:
+  secret: "VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa"
 
-#spring:
-#  profiles:
-#    include: oauth
-#  h2:
-#    console:
-#      enabled: true
-#  datasource:
-#    url: jdbc:h2:mem:db;MODE=MYSQL;
-#    username: sa
-#    password:
+
