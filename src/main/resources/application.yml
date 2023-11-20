@@ -1,5 +1,6 @@
 spring:
   profiles:
+
     include:
       - mysql
   jpa:
@@ -8,15 +9,20 @@ spring:
       ddl-auto: update
     show-sql: true
 
-#spring:
-#  h2:
-#    console:
-#      enabled: true
-#  datasource:
-#    url: jdbc:h2:mem:db;MODE=MYSQL;
-#    username: sa
-#    password:
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+  cache:
+    type: redis
+
+  redis:
+    host: localhost
+    port: 6379
+    expire: 60
 
 jwt:
   secret: "VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa"
+
 
