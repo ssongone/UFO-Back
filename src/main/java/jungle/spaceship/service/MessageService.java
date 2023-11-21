@@ -37,24 +37,22 @@ public class MessageService implements DisposableBean{
     /**
      * 메시지 보내기 및 캐시/DB 에 저장
      */
-    public ChatMessageDTO sendMessage(ChatMessageDTO message, Long MemberId) {
+    public ChatMessageDTO sendMessage(ChatMessageDTO message, Long memberId) {
         if(MessageType.ENTER.equals(message.getType())) {
 
             message.setContent(message.getSender() + "(님)이 입장하였습니다.");
         }
-        saveMessage(message.getRoomId(), message.getType(), message.getContent(), MemberId);
+        saveMessage(message, memberId);
         return message;
     }
 
 
-    private void saveMessage(ChatMessageDTO messageDTO){
+    private void saveMessage(ChatMessageDTO messageDTO, Long memberId){
         Long roomId = messageDTO.getRoomId();
         ChatRoom chatRoom =
                 chatRoomRepository.findById(roomId).orElseThrow();
 
-        // test 용 주입
-        Message message =
-                new Message(messageType, content, memberId, chatRoom);
+        Message message = messageDTO.getNewMessage(chatRoom, memberId);
 
         // 채팅방에 캐시가 없다면 새로운 큐를 생성 및 메시지 추가 후 put(roomId, queue) 한다.
         if(!messageMap.containsKey(roomId)){
