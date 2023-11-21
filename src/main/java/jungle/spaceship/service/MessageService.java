@@ -47,10 +47,10 @@ public class MessageService implements DisposableBean{
     }
 
 
-    private void saveMessage(Long roomId, MessageType messageType, String content, Long memberId){
+    private void saveMessage(ChatMessageDTO messageDTO){
+        Long roomId = messageDTO.getRoomId();
         ChatRoom chatRoom =
                 chatRoomRepository.findById(roomId).orElseThrow();
-
 
         // test 용 주입
         Message message =
