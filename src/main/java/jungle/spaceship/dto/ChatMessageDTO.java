@@ -1,5 +1,7 @@
 package jungle.spaceship.dto;
 
+import jungle.spaceship.entity.ChatRoom;
+import jungle.spaceship.entity.Message;
 import jungle.spaceship.entity.MessageType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +24,14 @@ public class ChatMessageDTO {
     private String content;
     private final String time;
 
+    public Message getNewMessage(ChatRoom room){
+        return Message.builder()
+                .messageType(type)
+                .content(content)
+                .memberId(memberId)
+                .chatRoom(room)
+                .createAt(time)
+                .build();
 
+    }
 }
