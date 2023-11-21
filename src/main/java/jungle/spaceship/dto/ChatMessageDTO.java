@@ -24,7 +24,7 @@ public class ChatMessageDTO {
     private String content;
     private final String time;
 
-    public Message getNewMessage(ChatRoom room){
+    public Message getNewMessage(ChatRoom room, Long memberId){
         return Message.builder()
                 .messageType(type)
                 .content(content)
