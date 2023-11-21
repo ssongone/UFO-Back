@@ -1,8 +1,8 @@
 spring:
   profiles:
-
     include:
       - mysql
+      - security
   jpa:
     generate-ddl: true
     hibernate:
