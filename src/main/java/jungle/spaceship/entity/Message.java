@@ -29,6 +29,7 @@ public class Message {
 
     private String createAt;
 
+
     @Builder
     public Message(MessageType messageType, String content, Long memberId, ChatRoom chatRoom, String createAt) {
         this.messageType = messageType;

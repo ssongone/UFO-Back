@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 public class InvitationCode {
 
-    public static final String CODE_CHARACTERS = "!@#$%^&*ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    public static final String CODE_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     public static final int CODE_LENGTH = 32;
 
     @Id

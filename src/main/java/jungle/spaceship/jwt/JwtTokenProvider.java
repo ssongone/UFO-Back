@@ -73,6 +73,19 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
+    public Long getMemberIdByToken(String accessToken) {
+        if (validateToken(accessToken)) {
+            throw new RuntimeException("유효하지 않은 토큰입니다.");
+        }
+        Claims claims = parseClaims(accessToken);
+
+        if (claims.get(AUTHORITIES_KEY) == null) {
+            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+        }
+
+        return Long.valueOf(claims.getSubject());
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
