@@ -1,12 +1,10 @@
 package jungle.spaceship.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,23 +21,20 @@ public class Message {
     @Column
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    private Long memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
     private ChatRoom chatRoom;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @CreatedDate
-    private LocalDateTime createAt;
+    private String createAt;
 
-
-    public Message(MessageType messageType, String content, Member member, ChatRoom chatRoom) {
+    @Builder
+    public Message(MessageType messageType, String content, Long memberId, ChatRoom chatRoom, String createAt) {
         this.messageType = messageType;
         this.content = content;
-        this.member = member;
+        this.memberId = memberId;
         this.chatRoom = chatRoom;
+        this.createAt = createAt;
     }
 }
