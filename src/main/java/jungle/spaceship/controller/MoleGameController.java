@@ -24,7 +24,7 @@ public class MoleGameController {
     }
 
 
-    @MessageMapping("/mole/catch")
+    @MessageMapping("/catch")
     public void message(MoleCaughtInfoDto caughtInfoDto) {
         System.out.println("caughtInfoDto = " + caughtInfoDto);
 //        messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), resMessage);

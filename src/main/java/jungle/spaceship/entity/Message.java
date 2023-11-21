@@ -23,9 +23,7 @@ public class Message {
     @Column
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    private Long memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
@@ -36,10 +34,10 @@ public class Message {
     private LocalDateTime createAt;
 
 
-    public Message(MessageType messageType, String content, Member member, ChatRoom chatRoom) {
+    public Message(MessageType messageType, String content, Long memberId, ChatRoom chatRoom) {
         this.messageType = messageType;
         this.content = content;
-        this.member = member;
+        this.memberId = memberId;
         this.chatRoom = chatRoom;
     }
 }
