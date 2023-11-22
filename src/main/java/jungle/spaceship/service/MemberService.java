@@ -48,7 +48,6 @@ public class MemberService {
 
     static String OAUTH2_URL_KAKAO = "https://kapi.kakao.com/v2/user/me";
     public ExtendedResponse<TokenInfo> loginWithKakao(String accessToken) {
-        System.out.println("MemberService.loginWithKakao");
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfo(accessToken);
 
         Optional<Member> memberByEmail = memberRepository.findByEmail(oAuthInfoResponse.getEmail());
@@ -56,7 +55,7 @@ public class MemberService {
 
         HttpStatus responseStatus = memberByEmail.isPresent() ? HttpStatus.OK : HttpStatus.CREATED;
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey());
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), member.getFamily().getFamilyId());
         return new ExtendedResponse<>(tokenInfo, responseStatus.value(), "로그인 완료");
     }
 
@@ -119,7 +118,7 @@ public class MemberService {
         InvitationCode invitationCode = new InvitationCode(code, family);
         invitationCodeRepository.save(invitationCode);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey());
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(),family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
         FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, familyResponseDto);
         return new ExtendedResponse<>(familyRegistrationDto, HttpStatus.CREATED.value(), "가족이 생성되었습니다");
@@ -139,7 +138,7 @@ public class MemberService {
         memberRepository.save(member);
         familyRepository.save(family);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey());
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
         FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, familyResponseDto);
         return new ExtendedResponse<>(familyRegistrationDto, HttpStatus.OK.value(), "가족에 등록되었습니다");

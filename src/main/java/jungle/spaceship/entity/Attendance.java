@@ -17,8 +17,14 @@ public class Attendance {
     @JoinColumn(name="member_id")
     private Member member;
 
+    private Boolean isCheck;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreatedDate
     private LocalDateTime attendanceTime;
 
+    public Attendance(Member member, Boolean isCheck) {
+        this.member = member;
+        this.isCheck = isCheck;
+    }
 }

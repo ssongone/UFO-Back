@@ -3,13 +3,14 @@ package jungle.spaceship.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jungle.spaceship.entity.MemberDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -25,6 +26,8 @@ public class JwtTokenProvider {
     private final Key key;
     private static final String BEARER_TYPE = "Bearer";
     private static final String AUTHORITIES_KEY = "auth";
+    private static final String FAMILY_KEY = "family";
+
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30 * 24 * 7;            // 30분인데 테스트 위해 늘림
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
 
@@ -33,7 +36,7 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenInfo generateTokenByMember(Long memberId, String authority) {
+    public TokenInfo generateTokenByMember(Long memberId, String authority, Long familyId) {
         long now = (new Date()).getTime();
         Date accessTokenExpiredAt = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
@@ -42,6 +45,7 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(subject)
                 .claim(AUTHORITIES_KEY, authority)
+                .claim(FAMILY_KEY, familyId.toString())
                 .setExpiration(accessTokenExpiredAt)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -71,23 +75,11 @@ public class JwtTokenProvider {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        User principal = new User(claims.getSubject(), "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+//        User principal = new User(claims.getSubject(), "", authorities);
+        UserDetails pr = new MemberDetail(claims.getSubject(), claims.get(FAMILY_KEY).toString());
+        return new UsernamePasswordAuthenticationToken(pr, "", authorities);
     }
 
-
-    public Long getMemberIdByToken(String accessToken) {
-        if (validateToken(accessToken)) {
-            throw new RuntimeException("유효하지 않은 토큰입니다.");
-        }
-        Claims claims = parseClaims(accessToken);
-
-        if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
-        }
-
-        return Long.valueOf(claims.getSubject());
-    }
 
     public boolean validateToken(String token) {
         try {
