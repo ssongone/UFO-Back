@@ -1,6 +1,7 @@
 package jungle.spaceship.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
 
@@ -11,9 +12,12 @@ public class SecurityWebSocketConfig extends AbstractSecurityWebSocketMessageBro
     protected void configureInbound(MessageSecurityMetadataSourceRegistry message) {
         message
                 .nullDestMatcher().permitAll()
-                .simpDestMatchers("/pub/**").authenticated()
-                .simpSubscribeDestMatchers("/sub/**").authenticated()
-                .anyMessage().denyAll();
+                .simpTypeMatchers(SimpMessageType.CONNECT,
+                        SimpMessageType.DISCONNECT, SimpMessageType.OTHER).permitAll()
+                .anyMessage().authenticated();
+//                .simpDestMatchers("/pub/**").authenticated()
+//                .simpSubscribeDestMatchers("/sub/**").authenticated()
+//
     }
 
     @Override

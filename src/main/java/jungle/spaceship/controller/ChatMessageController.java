@@ -7,8 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -27,12 +25,8 @@ public class ChatMessageController {
      */
     @MessageMapping("/chat")
     public void message(ChatMessageDTO message, StompHeaderAccessor accessor) {
-        Authentication authentication = (Authentication) accessor.getUser();
-        System.out.println("authentication = " + authentication);
-        UsernamePasswordAuthenticationToken principal = (UsernamePasswordAuthenticationToken) authentication.getPrincipal();
-        System.out.println("principal = " + principal);
-        Long memberId = Long.valueOf(principal.getName());
-        System.out.println("memberId = " + memberId);
+
+        Long memberId = Long.valueOf(accessor.getUser().getName());
         ChatMessageDTO resMessage = messageService.sendMessage(message, memberId);
         messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), resMessage);
     }

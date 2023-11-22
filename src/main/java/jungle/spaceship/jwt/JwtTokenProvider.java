@@ -75,22 +75,6 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    public User getUser(String accessToken) {
-        System.out.println("JwtTokenProvider.getAuthentication");
-        System.out.println("accessToken = " + accessToken);
-        Claims claims = parseClaims(accessToken);
-
-        if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
-        }
-
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
-
-        return new User(claims.getSubject(), "", authorities);
-    }
 
     public Long getMemberIdByToken(String accessToken) {
         if (validateToken(accessToken)) {
