@@ -22,11 +22,11 @@ public class ChatMessageDTO {
     private String content;
     private final String time;
 
-    public Message getNewMessage(Long memberId){
+    public Message getNewMessage(){
         return Message.builder()
                 .messageType(type)
                 .content(content)
-                .memberId(memberId)
+                .sender(sender)
                 .roomId(roomId)
                 .createAt(time)
                 .build();

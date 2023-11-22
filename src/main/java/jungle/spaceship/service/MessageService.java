@@ -35,20 +35,20 @@ public class MessageService implements DisposableBean{
     /**
      * 메시지 보내기 및 캐시/DB 에 저장
      */
-    public ChatMessageDTO sendMessage(ChatMessageDTO message, Long memberId) {
+    public ChatMessageDTO sendMessage(ChatMessageDTO message) {
         if(MessageType.ENTER.equals(message.getType())) {
 
             message.setContent(message.getSender() + "(님)이 입장하였습니다.");
         }
-        saveMessage(message, memberId);
+        saveMessage(message);
         return message;
     }
 
 
-    private void saveMessage(ChatMessageDTO messageDTO, Long memberId){
+    private void saveMessage(ChatMessageDTO messageDTO){
         Long roomId = messageDTO.getRoomId();
 
-        Message message = messageDTO.getNewMessage(memberId);
+        Message message = messageDTO.getNewMessage();
 
         // 채팅방에 캐시가 없다면 새로운 큐를 생성 및 메시지 추가 후 put(roomId, queue) 한다.
         if(!messageMap.containsKey(roomId)){
@@ -115,5 +115,12 @@ public class MessageService implements DisposableBean{
 
     private List<Message> getMessageInCache(Long roomId){
         return messageMap.get(roomId).stream().toList();
+    }
+
+
+    // 채팅방 삭제 시 큐 및 캐시에서 제거하는 로직 추가
+    public void deleteChatRoom(Long roomId) {
+        // 해당 roomId에 대한 큐를 messageMap에서 제거
+        messageMap.deleteKey(roomId);
     }
 }

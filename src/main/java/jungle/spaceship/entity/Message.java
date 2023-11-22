@@ -21,7 +21,7 @@ public class Message {
     @Column
     private String content;
 
-    private Long memberId;
+    private String sender;
 
     private Long roomId;
 
@@ -29,10 +29,10 @@ public class Message {
 
 
     @Builder
-    public Message(MessageType messageType, String content, Long memberId, Long roomId, String createAt) {
+    public Message(MessageType messageType, String content, String sender, Long roomId, String createAt) {
         this.messageType = messageType;
         this.content = content;
-        this.memberId = memberId;
+        this.sender = sender;
         this.roomId = roomId;
         this.createAt = createAt;
     }
