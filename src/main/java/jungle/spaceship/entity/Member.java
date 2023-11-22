@@ -72,9 +72,10 @@ public class Member extends Timestamped implements UserDetails {
         this.role = Role.GUEST;
     }
 
-//    public String getRoleKey(){
-//        return this.role.getKey();
-//    }
+    public String getRoleKey(){
+        return this.role.getKey();
+    }
+
     public Member update(SignUpDto dto){
         this.nickname = dto.getNickname();
         this.title = dto.getTitle();

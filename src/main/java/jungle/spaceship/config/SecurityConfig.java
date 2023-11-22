@@ -25,6 +25,7 @@ public class SecurityConfig {
     private static final String[] URL_TO_PERMIT = {
             "/api/login/kakao",
             "/room/**",
+            "/ws",
             "/", "/css/**", "/images/**", "/js/**", "/h2-console/**"
     };
     @Bean
