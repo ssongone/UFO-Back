@@ -1,12 +1,15 @@
 package jungle.spaceship.controller.dto;
 
-import jungle.spaceship.entity.Member;
-import jungle.spaceship.entity.Tmi;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@NoArgsConstructor
 public class TmiDto {
     String content;
 
-    public Tmi getTmi(Member member) {
-        return new Tmi(content, member);
+    public TmiDto(String content) {
+        this.content = content;
     }
+
 }
