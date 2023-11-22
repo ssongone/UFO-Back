@@ -1,12 +1,14 @@
 package jungle.spaceship.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor
 public class Attendance {
 
     @Id

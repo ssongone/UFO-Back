@@ -15,9 +15,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -51,9 +48,17 @@ public class MemberService {
         Optional<Member> memberByEmail = memberRepository.findByEmail(oAuthInfoResponse.getEmail());
         Member member = memberByEmail.orElseGet(() -> memberRepository.save(new Member(oAuthInfoResponse)));
 
-        HttpStatus responseStatus = memberByEmail.isPresent() ? HttpStatus.OK : HttpStatus.CREATED;
+        HttpStatus responseStatus = HttpStatus.CREATED;
+        // 가족 정보 없는 경우 가짜 FamilyId 줌.. 별로 좋은 방법은 아닌것 같다..
+        Long familyId = 0L;
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), member.getFamily().getFamilyId());
+        if (memberByEmail.isPresent()) {
+            responseStatus = HttpStatus.OK;
+            familyId = member.getFamily().getFamilyId();
+        }
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), familyId);
+
         return new ExtendedResponse<>(tokenInfo, responseStatus.value(), "로그인 완료");
     }
 
@@ -79,13 +84,8 @@ public class MemberService {
     }
 
     public void signUp(SignUpDto dto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        Long memberId = Long.valueOf(user.getUsername());
+        Member member = securityUtil.extractMember();
 
-        Member member = memberRepository.findByMemberId(memberId).orElseThrow(
-                () -> new NoSuchElementException("해당하는 사용자가 없습니다")
-        );
 
         member.update(dto);
         System.out.println("member = " + member);

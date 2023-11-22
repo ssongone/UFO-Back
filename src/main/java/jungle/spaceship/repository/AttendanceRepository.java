@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
-     List<Attendance> findByMemberAndCreateAtAfterAndCreateAtBefore(Member member, LocalDateTime startOfDay, LocalDateTime endOfDay);
-     List<Attendance> findByMember_Family_FamilyIdAndAttendanceTimeAfter(Long familyId, LocalDateTime today);
+     List<Attendance> findByMemberAndAttendanceTimeIsAfterAndAttendanceTimeIsBefore(Member member, LocalDateTime startOfDay, LocalDateTime endOfDay);
+     List<Attendance> findByMember_Family_FamilyIdAndAttendanceTimeIsAfter(Long familyId, LocalDateTime today);
 }
