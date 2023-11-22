@@ -1,6 +1,5 @@
 package jungle.spaceship.controller.dto;
 
-import jungle.spaceship.entity.ChatRoom;
 import jungle.spaceship.entity.Message;
 import jungle.spaceship.entity.MessageType;
 import lombok.Getter;
@@ -23,12 +22,12 @@ public class ChatMessageDTO {
     private String content;
     private final String time;
 
-    public Message getNewMessage(ChatRoom room, Long memberId){
+    public Message getNewMessage(Long memberId){
         return Message.builder()
                 .messageType(type)
                 .content(content)
                 .memberId(memberId)
-                .chatRoom(room)
+                .roomId(roomId)
                 .createAt(time)
                 .build();
 

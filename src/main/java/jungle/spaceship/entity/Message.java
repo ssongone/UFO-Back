@@ -23,19 +23,17 @@ public class Message {
 
     private Long memberId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", nullable = false)
-    private ChatRoom chatRoom;
+    private Long roomId;
 
     private String createAt;
 
 
     @Builder
-    public Message(MessageType messageType, String content, Long memberId, ChatRoom chatRoom, String createAt) {
+    public Message(MessageType messageType, String content, Long memberId, Long roomId, String createAt) {
         this.messageType = messageType;
         this.content = content;
         this.memberId = memberId;
-        this.chatRoom = chatRoom;
+        this.roomId = roomId;
         this.createAt = createAt;
     }
 }

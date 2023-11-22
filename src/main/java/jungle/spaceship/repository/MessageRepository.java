@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    @Query(value = "select * from (select * from message where chat_room_Id = :roomId order by message_id desc limit :num) n order by n.message_id", nativeQuery = true)
+    @Query(value = "select * from (select * from message where room_id = :roomId order by message_id desc limit :num) n order by n.message_id", nativeQuery = true)
     List<Message> findNumberOfMessageInChatRoomReverse(@Param("roomId") Long roomId, @Param("num") int num);
 
 }

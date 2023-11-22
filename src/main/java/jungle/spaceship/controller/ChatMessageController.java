@@ -37,7 +37,7 @@ public class ChatMessageController {
     }
 
     @GetMapping("/chat/list")
-    public List<Message> getMessageList(@RequestParam Long roomId){
+    public List<Message> getMessageList(@RequestParam("id") Long roomId){
         return messageService.getMessages(roomId);
     }
 }
