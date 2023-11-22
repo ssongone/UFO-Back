@@ -25,9 +25,14 @@ public class Family extends Timestamped{
     @JsonManagedReference
     private List<Member> members = new ArrayList<>();
 
-    public Family(FamilyDto dto) {
+    @OneToOne
+    @JoinColumn(name = "chatRoom_id")
+    private ChatRoom chatRoom;
+
+    public Family(FamilyDto dto, ChatRoom chatRoom) {
         this.ufoName = dto.getUfoName();
         this.plantName = dto.getPlantName();
+        this.chatRoom = chatRoom;
     }
 
 }

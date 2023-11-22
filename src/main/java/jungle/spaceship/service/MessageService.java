@@ -1,9 +1,8 @@
 package jungle.spaceship.service;
 
-import jungle.spaceship.dto.ChatMessageDTO;
+import jungle.spaceship.controller.dto.ChatMessageDTO;
 import jungle.spaceship.entity.*;
 import jungle.spaceship.repository.MessageRepository;
-import jungle.spaceship.repository.ChatRoomRepository;
 import jungle.spaceship.repository.RedisMessageCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,6 @@ import java.util.*;
 public class MessageService implements DisposableBean{
 
     private final MessageRepository messageRepository;
-    private final ChatRoomRepository chatRoomRepository;
 
     private final RedisMessageCache messageMap;
     // 채팅 메시지 임시 저장 캐시 : 채팅방Id, 채팅 메시지
@@ -31,7 +29,7 @@ public class MessageService implements DisposableBean{
 
     private static final int TRANSACTION_MESSAGE_SIZE = 20; // 한번에 처리될 메시지 사이즈
     private static final int MESSAGE_PAGEABLE_SIZE = 30;    // Queue 에 임시 보관될 메시지 수
-    private static final int MESSAGE_CACHE_MAX = 10;        // Write Back 패턴 중 최대 모을 수 있는 메시지 캐시
+    private static final int MESSAGE_CACHE_MAX = 50;        // Write Back 패턴 중 최대 모을 수 있는 메시지 캐시
 
 
     /**
@@ -49,10 +47,8 @@ public class MessageService implements DisposableBean{
 
     private void saveMessage(ChatMessageDTO messageDTO, Long memberId){
         Long roomId = messageDTO.getRoomId();
-        ChatRoom chatRoom =
-                chatRoomRepository.findById(roomId).orElseThrow();
 
-        Message message = messageDTO.getNewMessage(chatRoom, memberId);
+        Message message = messageDTO.getNewMessage(memberId);
 
         // 채팅방에 캐시가 없다면 새로운 큐를 생성 및 메시지 추가 후 put(roomId, queue) 한다.
         if(!messageMap.containsKey(roomId)){
@@ -65,7 +61,7 @@ public class MessageService implements DisposableBean{
             Queue<Message> mQueue = messageMap.get(roomId);
             mQueue.add(message);
             // 캐시 쓰기 전략 (Write Back) : 큐 사이즈가 일정 크기 초과하면 일부를 db에 저장 후 큐를 갱신
-            if(mQueue.size() > TRANSACTION_MESSAGE_SIZE + MESSAGE_PAGEABLE_SIZE){
+            if(mQueue.size() > MESSAGE_CACHE_MAX){
 
                 Queue<Message> tmpQueue = new LinkedList<>();
                 for (int i = 0; i < TRANSACTION_MESSAGE_SIZE; i++) {

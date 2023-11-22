@@ -8,10 +8,7 @@ import jungle.spaceship.entity.oauth.OAuthInfoResponse;
 import jungle.spaceship.jwt.JwtTokenProvider;
 import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.jwt.TokenInfo;
-import jungle.spaceship.repository.AlienRepository;
-import jungle.spaceship.repository.FamilyRepository;
-import jungle.spaceship.repository.InvitationCodeRepository;
-import jungle.spaceship.repository.MemberRepository;
+import jungle.spaceship.repository.*;
 import jungle.spaceship.response.ExtendedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -41,6 +38,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final AlienRepository alienRepository;
     private final FamilyRepository familyRepository;
+    private final ChatRoomRepository chatRoomRepository;
     private final InvitationCodeRepository invitationCodeRepository;
     private final RestTemplate restTemplate;
     private final JwtTokenProvider jwtTokenProvider;
@@ -106,12 +104,14 @@ public class MemberService {
     public ExtendedResponse<FamilyRegistrationDto> registerFamily(FamilyDto dto) {
         String code = dto.getCode();
         Member member = securityUtil.extractMember();
-        Family family = new Family(dto);
+        ChatRoom chatRoom = new ChatRoom(dto.getCreatedAt());
+        Family family = new Family(dto, chatRoom);
 
         family.getMembers().add(member);
         member.setFamily(family);
         member.setRole(Role.USER);
 
+        chatRoomRepository.save(chatRoom);
         memberRepository.save(member);
         familyRepository.save(family);
 

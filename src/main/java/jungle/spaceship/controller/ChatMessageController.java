@@ -1,13 +1,18 @@
 package jungle.spaceship.controller;
 
-import jungle.spaceship.dto.ChatMessageDTO;
+import jungle.spaceship.controller.dto.ChatMessageDTO;
+import jungle.spaceship.entity.Message;
 import jungle.spaceship.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -31,4 +36,8 @@ public class ChatMessageController {
         messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), resMessage);
     }
 
+    @GetMapping("/chat/list")
+    public List<Message> getMessageList(@RequestParam("id") Long roomId){
+        return messageService.getMessages(roomId);
+    }
 }
