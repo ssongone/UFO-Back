@@ -1,4 +1,4 @@
-package jungle.spaceship.dto;
+package jungle.spaceship.controller.dto;
 
 import jungle.spaceship.entity.ChatRoom;
 import jungle.spaceship.entity.Message;
@@ -18,7 +18,6 @@ public class ChatMessageDTO {
     private final MessageType type;
     private final Long roomId;
     private final String sender;    // 회원 닉네임
-    private final Long memberId;
 
     @Setter
     private String content;
