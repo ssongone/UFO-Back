@@ -1,6 +1,6 @@
 package jungle.spaceship.service;
 
-import jungle.spaceship.dto.ChatMessageDTO;
+import jungle.spaceship.controller.dto.ChatMessageDTO;
 import jungle.spaceship.entity.*;
 import jungle.spaceship.repository.MessageRepository;
 import jungle.spaceship.repository.ChatRoomRepository;
