@@ -34,9 +34,7 @@ public class WebSocketInterceptor implements ChannelInterceptor {
             }
 
             Authentication authentication = jwtTokenProvider.getAuthentication(authToken);
-            System.out.println("^-^");
             accessor.setUser(authentication);
-            System.out.println("^----^");
         }
         return message;
     }
