@@ -4,7 +4,7 @@ import jungle.spaceship.jwt.JwtAccessDeniedHandler;
 import jungle.spaceship.jwt.JwtAuthenticationEntryPoint;
 import jungle.spaceship.jwt.JwtRequestFilter;
 import jungle.spaceship.jwt.JwtTokenProvider;
-import jungle.spaceship.service.CustomUserDetailsService;
+import jungle.spaceship.member.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,7 +1,8 @@
 package jungle.spaceship.config;
 
-import jungle.spaceship.repository.RedisMessageCache;
-import jungle.spaceship.service.MessageService;
+import jungle.spaceship.chat.entity.Chat;
+import jungle.spaceship.chat.repository.RedisMessageCache;
+import jungle.spaceship.chat.service.ChatService;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -14,18 +15,12 @@ import java.util.Queue;
 public class RedisKeyExpirationListener extends KeyExpirationEventMessageListener {
 
     private final RedisMessageCache redisMessageCache;
-    private final MessageService messageService;
-    /**
-     * Creates new {@link MessageListener} for {@code __keyevent@*__:expired} messages.
-     *
-     * @param listenerContainer must not be {@literal null}.
-     * @param redisMessageCache
-     * @param messageService
-     */
-    public RedisKeyExpirationListener(RedisMessageListenerContainer listenerContainer, RedisMessageCache redisMessageCache, MessageService messageService) {
+    private final ChatService chatService;
+
+    public RedisKeyExpirationListener(RedisMessageListenerContainer listenerContainer, RedisMessageCache redisMessageCache, ChatService chatService) {
         super(listenerContainer);
         this.redisMessageCache = redisMessageCache;
-        this.messageService = messageService;
+        this.chatService = chatService;
     }
 
 
@@ -34,10 +29,10 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
     public void onMessage(Message message, byte[] pattern) {
         //2번 캐시에서 roomId를 뽑아냄
         Long roomId = Long.valueOf(message.toString().substring(4));
-        LinkedList<jungle.spaceship.entity.Message> messages = redisMessageCache.get(roomId);
-        Queue<jungle.spaceship.entity.Message> messageQueue = new LinkedList<>(messages);
+        LinkedList<Chat> chats = redisMessageCache.get(roomId);
+        Queue<Chat> chatQueue = new LinkedList<>(chats);
         //roomId로 1번캐시의 Value를 알아내 DB에 commit
-        messageService.commitMessageQueue(messageQueue);
+        chatService.commitMessageQueue(chatQueue);
         //남아있는 1번캐시를 삭제
         redisMessageCache.deleteKey(roomId);
     }

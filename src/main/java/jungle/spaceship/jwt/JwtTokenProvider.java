@@ -3,7 +3,7 @@ package jungle.spaceship.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jungle.spaceship.entity.MemberDetail;
+import jungle.spaceship.member.entity.MemberDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
