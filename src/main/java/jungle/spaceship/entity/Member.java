@@ -40,7 +40,7 @@ public class Member extends Timestamped implements UserDetails {
 
     private String nickname;
 
-    private String title;
+    private FamilyRole familyRole;
 
     private LocalDate birthdate;
 
@@ -78,7 +78,7 @@ public class Member extends Timestamped implements UserDetails {
 
     public Member update(SignUpDto dto){
         this.nickname = dto.getNickname();
-        this.title = dto.getTitle();
+        this.familyRole = dto.getFamilyRole();
         this.birthdate = dto.getBirthdate();
         return this;
     }

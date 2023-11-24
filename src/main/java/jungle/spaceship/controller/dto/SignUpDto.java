@@ -1,5 +1,6 @@
 package jungle.spaceship.controller.dto;
 
+import jungle.spaceship.entity.FamilyRole;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,6 @@ public class SignUpDto {
     @Past(message = "Birthdate must be in the past")
     private LocalDate birthdate;
 
-    private String title;
+    private FamilyRole familyRole;
 
 }
