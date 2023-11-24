@@ -1,8 +1,8 @@
 package jungle.spaceship.jwt;
 
-import jungle.spaceship.entity.Member;
-import jungle.spaceship.entity.MemberDetail;
-import jungle.spaceship.repository.MemberRepository;
+import jungle.spaceship.member.entity.Member;
+import jungle.spaceship.member.entity.MemberDetail;
+import jungle.spaceship.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

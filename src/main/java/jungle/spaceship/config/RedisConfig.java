@@ -1,7 +1,7 @@
 package jungle.spaceship.config;
 
 
-import jungle.spaceship.entity.Message;
+import jungle.spaceship.chat.entity.Chat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
@@ -32,16 +32,20 @@ public class RedisConfig {
         return new LettuceConnectionFactory(host, port);
     }
 
-    @Bean
-    public RedisTemplate<String, LinkedList<Message>> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+    @Bean(name = "messageRedisTemplate")
+    public RedisTemplate<String, LinkedList<Chat>> messageRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
-        RedisTemplate<String, LinkedList<Message>> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(genericJackson2JsonRedisSerializer);
-        return redisTemplate;
+        RedisTemplate<String, LinkedList<Chat>> messageRedisTemplate = new RedisTemplate<>();
+        messageRedisTemplate.setConnectionFactory(redisConnectionFactory);
+        messageRedisTemplate.setKeySerializer(new StringRedisSerializer());
+        messageRedisTemplate.setValueSerializer(genericJackson2JsonRedisSerializer);
+        return messageRedisTemplate;
     }
 
+    /**
+     * Redis 메시지를 수신하는 리스너 컨테이너
+     * - Redis에 연결하고, 메시지를 수신하기 위해 등록된 리스너를 관리
+     */
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory) {
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();

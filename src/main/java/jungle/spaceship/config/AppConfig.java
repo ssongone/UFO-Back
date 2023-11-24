@@ -1,7 +1,7 @@
 package jungle.spaceship.config;
 
 import jungle.spaceship.jwt.SecurityUtil;
-import jungle.spaceship.repository.MemberRepository;
+import jungle.spaceship.member.repository.MemberRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
