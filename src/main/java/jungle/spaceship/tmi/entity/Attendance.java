@@ -1,6 +1,7 @@
-package jungle.spaceship.member.entity;
+package jungle.spaceship.tmi.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jungle.spaceship.member.entity.Member;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 

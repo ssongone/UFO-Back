@@ -1,7 +1,9 @@
 package jungle.spaceship.chat.controller.dto;
 
+import com.google.firebase.messaging.Notification;
 import jungle.spaceship.chat.entity.Chat;
 import jungle.spaceship.chat.entity.ChatType;
+import jungle.spaceship.notification.PushAlarm;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -12,7 +14,7 @@ import lombok.Setter;
  */
 @Getter
 @RequiredArgsConstructor
-public class ChatRegisterDto {
+public class ChatRegisterDto implements PushAlarm {
 
     private final ChatType type;
     private final Long roomId;
@@ -31,5 +33,13 @@ public class ChatRegisterDto {
                 .createAt(time)
                 .build();
 
+    }
+
+    @Override
+    public Notification toNotification() {
+        return Notification.builder()
+                .setTitle(sender)
+                .setBody(content)
+                .build();
     }
 }
