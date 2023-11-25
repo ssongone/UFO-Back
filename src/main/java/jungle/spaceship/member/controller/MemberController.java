@@ -1,13 +1,13 @@
 package jungle.spaceship.member.controller;
 
+import jungle.spaceship.jwt.TokenInfo;
 import jungle.spaceship.member.controller.dto.AlienDto;
 import jungle.spaceship.member.controller.dto.FamilyDto;
 import jungle.spaceship.member.controller.dto.FamilyRegistrationDto;
 import jungle.spaceship.member.controller.dto.SignUpDto;
-import jungle.spaceship.jwt.TokenInfo;
+import jungle.spaceship.member.service.MemberService;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
-import jungle.spaceship.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

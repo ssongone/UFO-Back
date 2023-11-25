@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,9 +29,12 @@ public class ChatController {
      * 3. 메시지 발행되면 /sub/chat/room/{roomId} 는 채팅방을 구분하는 값이므로 pub-sub 에서 Topic 의 역할
      */
     @MessageMapping("/chat")
-    public void message(ChatRegisterDto message) {
-        ChatRegisterDto resMessage = chatService.sendMessage(message);
+    public void message(ChatRegisterDto message, StompHeaderAccessor accessor) {
+
+        Long memberId = Long.valueOf(accessor.getUser().getName());
+        ChatRegisterDto resMessage = chatService.sendMessage(message, memberId);
         messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), resMessage);
+
     }
 
     @GetMapping("/chat/list")

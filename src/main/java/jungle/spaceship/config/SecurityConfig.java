@@ -26,6 +26,7 @@ public class SecurityConfig {
             "/api/login/kakao",
             "/room/**",
             "/ws",
+            "/api/notification/**",
             "/", "/css/**", "/images/**", "/js/**", "/h2-console/**"
     };
     @Bean

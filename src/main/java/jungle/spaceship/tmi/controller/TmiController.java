@@ -1,10 +1,12 @@
 package jungle.spaceship.tmi.controller;
 
-import jungle.spaceship.chat.controller.dto.ChatResponseDto;
-import jungle.spaceship.tmi.controller.dto.TmiDto;
-import jungle.spaceship.member.entity.Attendance;
+import jungle.spaceship.jwt.SecurityUtil;
+import jungle.spaceship.notification.service.NotificationServiceImpl;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
+import jungle.spaceship.tmi.controller.dto.TmiDto;
+import jungle.spaceship.tmi.controller.dto.TmiResponseDto;
+import jungle.spaceship.tmi.entity.Attendance;
 import jungle.spaceship.tmi.service.TmiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,9 @@ import java.util.List;
 public class TmiController {
 
     private final TmiService tmiService;
+    private final SecurityUtil securityUtil;
+    private final NotificationServiceImpl notificationServiceImpl;
+
 
     @PostMapping("/tmi")
     public ResponseEntity<BasicResponse> registerTmi(@RequestBody TmiDto tmiDto){
@@ -29,8 +34,8 @@ public class TmiController {
     }
 
     @GetMapping("/familyTmi")
-    public List<ChatResponseDto> getTmiByFamilyId() {
-        List<ChatResponseDto> tmiByFamilyId = tmiService.getTmiByFamilyId();
+    public List<TmiResponseDto> getTmiByFamilyId() {
+        List<TmiResponseDto> tmiByFamilyId = tmiService.getTmiByFamilyId();
         System.out.println("tmiByFamilyId = " + tmiByFamilyId);
         return tmiByFamilyId;
     }

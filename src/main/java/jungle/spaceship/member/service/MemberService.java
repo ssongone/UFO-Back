@@ -18,6 +18,7 @@ import jungle.spaceship.member.repository.InvitationCodeRepository;
 import jungle.spaceship.member.repository.MemberRepository;
 import jungle.spaceship.chat.entity.ChatRoom;
 import jungle.spaceship.chat.repository.ChatRoomRepository;
+import jungle.spaceship.notification.service.NotificationServiceImpl;
 import jungle.spaceship.response.ExtendedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -49,6 +50,7 @@ public class MemberService {
     private final RestTemplate restTemplate;
     private final JwtTokenProvider jwtTokenProvider;
     private final SecurityUtil securityUtil;
+    private final NotificationServiceImpl notificationService;
 
     static String OAUTH2_URL_KAKAO = "https://kapi.kakao.com/v2/user/me";
     public ExtendedResponse<TokenInfo> loginWithKakao(String accessToken) {
@@ -72,7 +74,6 @@ public class MemberService {
     }
 
     public OAuthInfoResponse requestOAuthInfo(String accessToken) {
-        System.out.println("accessToken = " + accessToken);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         httpHeaders.set("Authorization", "Bearer " + accessToken);
@@ -87,15 +88,8 @@ public class MemberService {
         return restTemplate.postForObject(OAUTH2_URL_KAKAO, request, KakaoInfoResponse.class);
     }
 
-    private Member findOrCreateMember(OAuthInfoResponse oAuthInfoResponse) {
-        return memberRepository.findByEmail(oAuthInfoResponse.getEmail())
-                .orElseGet(() -> memberRepository.save(new Member(oAuthInfoResponse)));
-    }
-
     public void signUp(SignUpDto dto) {
         Member member = securityUtil.extractMember();
-
-
         member.update(dto);
         System.out.println("member = " + member);
         memberRepository.save(member);
@@ -129,11 +123,12 @@ public class MemberService {
 
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(),family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
-        FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, familyResponseDto);
+        FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, member, familyResponseDto);
         return new ExtendedResponse<>(familyRegistrationDto, HttpStatus.CREATED.value(), "가족이 생성되었습니다");
 
     }
 
+    @Transactional
     public ExtendedResponse<FamilyRegistrationDto> registerCurrentFamily(String code) {
         InvitationCode invitationCode = invitationCodeRepository.findByCode(code)
                 .orElseThrow(() -> new NoSuchElementException("코드가 유효하지 않습니다"));
@@ -149,7 +144,9 @@ public class MemberService {
 
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
-        FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, familyResponseDto);
+        FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, member, familyResponseDto);
+
+        notificationService.sendMessageToFamilyExcludingMe(familyRegistrationDto, member);
         return new ExtendedResponse<>(familyRegistrationDto, HttpStatus.OK.value(), "가족에 등록되었습니다");
     }
 
