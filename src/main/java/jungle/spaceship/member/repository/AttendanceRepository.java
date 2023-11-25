@@ -1,6 +1,6 @@
 package jungle.spaceship.member.repository;
 
-import jungle.spaceship.member.entity.Attendance;
+import jungle.spaceship.tmi.entity.Attendance;
 import jungle.spaceship.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
