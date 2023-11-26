@@ -23,10 +23,11 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtTokenProvider jwtTokenProvider;
     private static final String[] URL_TO_PERMIT = {
-            "/api/login/kakao",
+            "/api/login/**",
             "/room/**",
             "/ws",
             "/api/notification/**",
+            "api/plant/**",
             "/", "/css/**", "/images/**", "/js/**", "/h2-console/**"
     };
     @Bean

@@ -25,6 +25,11 @@ public class MemberController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/api/login/kakao22")
+    public void loginFromKakao22() {
+        System.out.println("MemberController.loginFromKakao22");
+    }
+
     @PostMapping("/api/register/user")
     public ResponseEntity<BasicResponse> signUp(@RequestBody SignUpDto dto) {
         memberService.signUp(dto);

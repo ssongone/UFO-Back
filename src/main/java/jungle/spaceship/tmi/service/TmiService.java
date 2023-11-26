@@ -1,16 +1,15 @@
 package jungle.spaceship.tmi.service;
 
-import jungle.spaceship.tmi.controller.dto.TmiResponseDto;
-import jungle.spaceship.notification.service.NotificationServiceImpl;
-import jungle.spaceship.tmi.controller.dto.TmiDto;
-import jungle.spaceship.tmi.entity.Attendance;
-import jungle.spaceship.member.entity.Member;
-import jungle.spaceship.tmi.entity.Tmi;
 import jungle.spaceship.jwt.SecurityUtil;
+import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.repository.AttendanceRepository;
-import jungle.spaceship.tmi.repository.TmiRepository;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
+import jungle.spaceship.tmi.controller.dto.TmiDto;
+import jungle.spaceship.tmi.controller.dto.TmiResponseDto;
+import jungle.spaceship.tmi.entity.Attendance;
+import jungle.spaceship.tmi.entity.Tmi;
+import jungle.spaceship.tmi.repository.TmiRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,7 +30,6 @@ public class TmiService {
     private final SecurityUtil securityUtil;
     private final TmiRepository tmiRepository;
     private final AttendanceRepository attendanceRepository;
-    private final NotificationServiceImpl notificationServiceimpl;
 
 
     public BasicResponse tmiCheck() {
@@ -54,7 +52,7 @@ public class TmiService {
 
         Tmi tmi = new Tmi(tmiDto, member);
         tmiRepository.save(tmi);
-        notificationServiceimpl.sendMessageToFamilyExcludingMe(tmi.toResponseDto(), member);
+//        notificationServiceimpl.sendMessageToFamilyExcludingMe(tmi.toResponseDto(), member);
         return new BasicResponse(HttpStatus.CREATED.value(), "Tmi 등록 완료");
     }
 
