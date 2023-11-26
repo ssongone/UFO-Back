@@ -28,4 +28,8 @@ public class CommentController {
         return ResponseEntity.ok(commentService.modifyComment(commentId, commentModifyDto));
     }
 
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<BasicResponse> deleteComment(@PathVariable Long commentId){
+        return ResponseEntity.ok(commentService.deleteComment(commentId));
+    }
 }

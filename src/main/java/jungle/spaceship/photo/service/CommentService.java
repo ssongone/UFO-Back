@@ -63,4 +63,15 @@ public class CommentService {
         return new ExtendedResponse<>(commentModifyDto, HttpStatus.OK.value(), "댓글이 수정 완료!");
     }
 
+    /**
+     * 댓글 삭제
+     */
+    public BasicResponse deleteComment(Long commentId) {
+        commentRepository.findById(commentId)
+                .orElseThrow(() -> new NoSuchElementException("해당하는 댓글이 없습니다"));
+
+        commentRepository.deleteById(commentId);
+        return new BasicResponse(HttpStatus.NO_CONTENT.value(), "댓글 삭제 완료!");
+
+    }
 }
