@@ -52,21 +52,16 @@ public class S3Service {
      */
     public String getPreSignedUrl(S3RegisterDto s3RegisterDto){
         securityUtil.extractMember();
-        String prefix = s3RegisterDto.getPrefix(); // 파일명에 추가될 프리픽스(prefix) 가져오기
-        String fileName = s3RegisterDto.getFileName(); // 파일명 가져오기
-
-        // 만약 프리픽스(prefix)가 비어있지 않다면 파일명에 추가
-        if (!prefix.isEmpty()) {
-            fileName = prefix + "/" + fileName;
-        }
+        String prefix = s3RegisterDto.prefix(); // 파일명에 추가될 프리픽스(prefix) 가져오기
+        String fileName = s3RegisterDto.fileName(); // 파일명 가져오기
 
         // URL 생성을 위한 요청 객체 생성
         GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePreSignedUrlRequest(prefix, fileName);
 
         // Amazon S3 서비스를 통해 URL 생성
         URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
-// https://your-s3-bucket.s3.amazonaws.com/photos/family/2023/2a1c0a3e-09f5-4d6d-9a27-94f5b42f3d95pic1.jpg?AWSAccessKeyId=your-access-key&Expires=1679795200&Signature=your-signature&x-amz-security-token=your-security-token
         return url.toString();
+
     }
 
 

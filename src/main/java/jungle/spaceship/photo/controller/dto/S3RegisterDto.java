@@ -1,13 +1,11 @@
 package jungle.spaceship.photo.controller.dto;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Getter
-@RequiredArgsConstructor
-public class S3RegisterDto {
 
-    private final String fileName;
 
-    private final String prefix;
+public record S3RegisterDto(
+        @JsonProperty("fileName") String fileName,
+        @JsonProperty("prefix") String prefix) {
+
 }
