@@ -2,28 +2,24 @@ package jungle.spaceship.member.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jungle.spaceship.member.controller.dto.SignUpDto;
 import jungle.spaceship.member.entity.alien.Alien;
+import jungle.spaceship.member.entity.family.Family;
 import jungle.spaceship.member.entity.family.FamilyRole;
 import jungle.spaceship.member.entity.family.Role;
-import jungle.spaceship.member.entity.family.Family;
 import jungle.spaceship.member.entity.oauth.OAuthInfoResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
 
 @Getter
 @NoArgsConstructor
 @Entity
-public class Member extends Timestamped implements UserDetails {
+public class Member extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -48,6 +44,7 @@ public class Member extends Timestamped implements UserDetails {
 
     private LocalDate birthdate;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "alien_id")
     private Alien alien;
@@ -57,6 +54,8 @@ public class Member extends Timestamped implements UserDetails {
     @JsonBackReference
     private Family family;
 
+    @JsonIgnore
+    private String firebaseToken;
     public void setFamily(Family family) {
         this.family = family;
     }
@@ -95,38 +94,4 @@ public class Member extends Timestamped implements UserDetails {
         this.alien = alien;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(role.getKey()));
-    }
-
-    @Override
-    public String getPassword() {
-        return null;
-    }
-
-    @Override
-    public String getUsername() {
-        return String.valueOf(this.memberId);
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return false;
-    }
 }

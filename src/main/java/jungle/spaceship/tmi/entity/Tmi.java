@@ -1,6 +1,6 @@
 package jungle.spaceship.tmi.entity;
 
-import jungle.spaceship.chat.controller.dto.ChatResponseDto;
+import jungle.spaceship.tmi.controller.dto.TmiResponseDto;
 import jungle.spaceship.tmi.controller.dto.TmiDto;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.entity.Timestamped;
@@ -28,7 +28,7 @@ public class Tmi extends Timestamped {
         this.member = member;
     }
 
-    public ChatResponseDto toDto() {
-        return new ChatResponseDto(this.content, this.member.getNickname());
+    public TmiResponseDto toResponseDto() {
+        return new TmiResponseDto(this.content, this.member.getNickname());
     }
 }

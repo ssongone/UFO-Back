@@ -1,8 +1,9 @@
 package jungle.spaceship.tmi.service;
 
-import jungle.spaceship.chat.controller.dto.ChatResponseDto;
+import jungle.spaceship.tmi.controller.dto.TmiResponseDto;
+import jungle.spaceship.notification.service.NotificationServiceImpl;
 import jungle.spaceship.tmi.controller.dto.TmiDto;
-import jungle.spaceship.member.entity.Attendance;
+import jungle.spaceship.tmi.entity.Attendance;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.tmi.entity.Tmi;
 import jungle.spaceship.jwt.SecurityUtil;
@@ -30,6 +31,7 @@ public class TmiService {
     private final SecurityUtil securityUtil;
     private final TmiRepository tmiRepository;
     private final AttendanceRepository attendanceRepository;
+    private final NotificationServiceImpl notificationServiceimpl;
 
 
     public BasicResponse tmiCheck() {
@@ -52,17 +54,18 @@ public class TmiService {
 
         Tmi tmi = new Tmi(tmiDto, member);
         tmiRepository.save(tmi);
+        notificationServiceimpl.sendMessageToFamilyExcludingMe(tmi.toResponseDto(), member);
         return new BasicResponse(HttpStatus.CREATED.value(), "Tmi 등록 완료");
     }
 
-    public List<ChatResponseDto> getTmiByFamilyId() {
+    public List<TmiResponseDto> getTmiByFamilyId() {
         Long familyId = securityUtil.extractFamilyId();
         System.out.println("familyId = " + familyId);
         LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
         System.out.println("today = " + today);
         return tmiRepository.findByMember_Family_FamilyIdAndCreateAtIsAfterOrderByCreateAtDesc(familyId, today)
                         .stream()
-                        .map(Tmi::toDto)
+                        .map(Tmi::toResponseDto)
                         .collect(Collectors.toList());
 
 //        System.out.println("tmis = " + tmis);
