@@ -2,6 +2,7 @@ package jungle.spaceship.photo.service;
 
 import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.entity.Member;
+import jungle.spaceship.photo.controller.dto.CommentModifyDto;
 import jungle.spaceship.photo.controller.dto.CommentRegisterDto;
 import jungle.spaceship.photo.controller.dto.CommentResponseDto;
 import jungle.spaceship.photo.entity.Comment;
@@ -42,6 +43,24 @@ public class CommentService {
         CommentResponseDto commentResponseDto = new CommentResponseDto(comment);
 
         return new ExtendedResponse<>(commentResponseDto, HttpStatus.CREATED.value(), "댓글이 생성되었습니다");
+    }
+
+    /**
+     * 댓글 수정
+     */
+    public BasicResponse modifyComment(Long commentId, CommentModifyDto commentModifyDto) {
+
+        String content = commentModifyDto.getContent();
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NoSuchElementException("해당하는 댓글이 없습니다"));
+
+        // 댓글 수정
+        comment.setContent(content);
+        commentModifyDto.setModifiedAt(comment.getModifiedAt());
+        commentRepository.save(comment);
+
+        return new ExtendedResponse<>(commentModifyDto, HttpStatus.OK.value(), "댓글이 수정 완료!");
     }
 
 }
