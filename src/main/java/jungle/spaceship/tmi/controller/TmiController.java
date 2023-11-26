@@ -1,7 +1,5 @@
 package jungle.spaceship.tmi.controller;
 
-import jungle.spaceship.jwt.SecurityUtil;
-import jungle.spaceship.notification.service.NotificationServiceImpl;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
 import jungle.spaceship.tmi.controller.dto.TmiDto;
@@ -24,10 +22,6 @@ import java.util.List;
 public class TmiController {
 
     private final TmiService tmiService;
-    private final SecurityUtil securityUtil;
-    private final NotificationServiceImpl notificationServiceImpl;
-
-
     @PostMapping("/tmi")
     public ResponseEntity<BasicResponse> registerTmi(@RequestBody TmiDto tmiDto){
         return ResponseEntity.ok(tmiService.registerTmi(tmiDto));
