@@ -1,5 +1,6 @@
 package jungle.spaceship.photo.entity;
 
+import jungle.spaceship.member.entity.family.Family;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,8 +23,13 @@ public class PhotoTag {
     @JoinColumn(name = "photo_id")
     private Photo photo;
 
-    public PhotoTag(FamilyRoleInfo roleInfo, Photo photo){
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "family_id")
+    private Family family;
+
+    public PhotoTag(FamilyRoleInfo roleInfo, Family family, Photo photo){
         this.familyRoleInfo = roleInfo;
+        this.family = family;
         this.photo = photo;
     }
 

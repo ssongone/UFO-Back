@@ -20,9 +20,10 @@ public class PhotoController {
     private final S3Service s3Service;
 
     @PostMapping("/s3")
-    public String createPreSignedUrl(@RequestBody S3RegisterDto s3RegisterDto) {
-        return s3Service.getPreSignedUrl(s3RegisterDto);
-
+    public ResponseEntity<String> createPreSignedUrl(@RequestBody S3RegisterDto s3RegisterDto) {
+        log.info(s3RegisterDto.fileName());
+        log.info(s3RegisterDto.prefix());
+        return ResponseEntity.ok(s3Service.getPreSignedUrl(s3RegisterDto));
     }
 
     @PostMapping

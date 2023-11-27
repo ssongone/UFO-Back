@@ -33,23 +33,22 @@ public class PhotoService {
         Member member = securityUtil.extractMember();
 
         // 사진
-        Photo photo = photoDto.toPhoto( member,
-                                        member.getFamily());
+        Photo photo = photoDto.toPhoto(member);
 
-        for(FamilyRole writer : photoDto.getPhotoTags()){
+        for(FamilyRole writer : photoDto.photoTags()){
 
             // FamilyRole Info 클래스 찾음
             FamilyRoleInfo roleInfo = roleRepository.findByFamilyRole(writer);
 
             // PhotoTag 저장
-            photo.toPhotoTag(roleInfo);
+            photo.toPhotoTag(roleInfo, member.getFamily());
         }
 
         photoRepository.save(photo);
         PhotoResponseDto photoResponseDto =
                 new PhotoResponseDto(photo.getPhotoId(), photo.getCreateAt());
 
-        return new ExtendedResponse<>(photoResponseDto,HttpStatus.CREATED.value(), "가족이 생성되었습니다");
+        return new ExtendedResponse<>(photoResponseDto,HttpStatus.CREATED.value(), "사진이 생성되었습니다");
     }
 
 }

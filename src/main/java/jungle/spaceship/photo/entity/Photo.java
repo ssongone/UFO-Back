@@ -25,10 +25,9 @@ public class Photo {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long photoId;
 
-    private String photoName;
-
     private String description;                                   /* 사진 간단 설명 */
 
+    private String photoKey;
 
     @CreatedDate
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -37,6 +36,7 @@ public class Photo {
     @OneToMany(mappedBy = "photo", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Set<PhotoTag> photoTags = new LinkedHashSet<>();
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member; // 사진 등록자
@@ -44,22 +44,17 @@ public class Photo {
     @OneToMany(mappedBy = "photo",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Comment> comment = new ArrayList<>();            /* 사진 댓글 */
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "family_id")
-    private Family family;
-
-    public Photo(String fileName, String description, Member member, Family family){
-        this.photoName = fileName;
+    public Photo(String description, String photoKey, Member member){
         this.description = description;
+        this.photoKey = photoKey;
         this.member = member;
-        this.family = family;
     }
 
 
 
-    public void toPhotoTag(FamilyRoleInfo roleInfo) {
+    public void toPhotoTag(FamilyRoleInfo roleInfo, Family family) {
         this.photoTags.add(
-                new PhotoTag(roleInfo, this)
+                new PhotoTag(roleInfo, family, this)
         );
 
     }
