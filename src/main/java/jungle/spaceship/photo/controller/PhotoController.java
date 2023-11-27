@@ -30,4 +30,10 @@ public class PhotoController {
     public ResponseEntity<BasicResponse> registerPhoto(@RequestBody PhotoRegisterDto photoDto){
         return ResponseEntity.ok(photoService.registerPhoto(photoDto));
     }
+
+    @GetMapping("/list/{familyId}/{photoId}")
+    public ResponseEntity<BasicResponse> getPhotoList(@PathVariable Long familyId, @PathVariable Long photoId){
+        return ResponseEntity.ok(photoService.getPhotoList(familyId, photoId));
+    }
+
 }
