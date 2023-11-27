@@ -34,6 +34,7 @@ public class PhotoService {
     private final PhotoRepository photoRepository;
     private final PhotoTagRepository photoTagRepository;
     private final FamilyRepository familyRepository;
+    private final FamilyRoleInfoRepository familyRoleInfoRepository;
 
     private final static int PHOTO_PAGEABLE_CNT = 40;
 
@@ -89,10 +90,28 @@ public class PhotoService {
 
     }
 
-    // 유효한 가족 아이디 체크
-    private Boolean isValidFamilyId(Long familyId) {
-        Optional<Family> family = familyRepository.findById(familyId);
-        return family.isPresent();
+    @Transactional
+    public BasicResponse getPhotoListByTag(PhotoListRequestDto requestDto){
+
+        Long familyId = requestDto.getFamilyId();
+        Long lastPhotoId = requestDto.getPhotoId();
+        FamilyRole familyRole = requestDto.getFamilyRole();
+
+        if( ! isValidFamilyId(familyId)){
+            throw new NoSuchElementException("해당하는 가족이 없습니다");
+        }
+        Long roleId = familyRoleInfoRepository.findByFamilyRole(familyRole).getFamilyRoleId();
+
+        List<PhotoTag> photoTags;
+        if(lastPhotoId == null){
+            photoTags = photoTagRepository.findRecentPhotoTagsByFamilyRole(PHOTO_PAGEABLE_CNT, familyId, roleId);
+        }else{
+            photoTags = photoTagRepository.findRecentPhotoTagsByFamilyRoleWithPaging(PHOTO_PAGEABLE_CNT, familyId, lastPhotoId, roleId);
+        }
+
+        List<PhotoListResponseDto> result = getPhotoListResponse(photoTags);
+
+        return new ExtendedResponse<>(result,HttpStatus.OK.value(), "사진 리스트 반환 성공!");
     }
 
     private List<PhotoListResponseDto> getPhotoListResponse(List<PhotoTag> photoTags) {

@@ -36,4 +36,9 @@ public class PhotoController {
         return ResponseEntity.ok(photoService.getPhotoList(familyId, photoId));
     }
 
+    @PostMapping("/tag")
+    public ResponseEntity<BasicResponse> getPhotoListByTag(@RequestBody PhotoListRequestDto photoListRequestDto){
+        log.info(photoListRequestDto.getFamilyId().toString());
+        return ResponseEntity.ok(photoService.getPhotoListByTag(photoListRequestDto));
+    }
 }
