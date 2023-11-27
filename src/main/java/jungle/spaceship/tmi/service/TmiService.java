@@ -3,6 +3,7 @@ package jungle.spaceship.tmi.service;
 import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.repository.AttendanceRepository;
+import jungle.spaceship.notification.service.NotificationService;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
 import jungle.spaceship.tmi.controller.dto.TmiDto;
@@ -26,11 +27,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TmiService {
 
-    private final int MAX_TMI_COUNT_PER_DAY = 3;
     private final SecurityUtil securityUtil;
     private final TmiRepository tmiRepository;
     private final AttendanceRepository attendanceRepository;
-
+    private final NotificationService notificationService;
 
     public BasicResponse tmiCheck() {
         Member member = securityUtil.extractMember();
@@ -44,15 +44,12 @@ public class TmiService {
     }
     public BasicResponse registerTmi(TmiDto tmiDto) {
         Member member = securityUtil.extractMember();
-//        LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-//        LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
-//        Long count = tmiRepository.countByMemberAndCreateAtIsAfterAndCreateAtIsBefore(member, startOfDay, endOfDay);
-//        if (count >= MAX_TMI_COUNT_PER_DAY)
-//            return new BasicResponse(HttpStatus.NOT_ACCEPTABLE.value(), "TMI는 하루에 3개까지 입력할 수 있습니다.");
 
         Tmi tmi = new Tmi(tmiDto, member);
         tmiRepository.save(tmi);
-//        notificationServiceimpl.sendMessageToFamilyExcludingMe(tmi.toResponseDto(), member);
+        TmiResponseDto responseDto = tmi.toResponseDto();
+        System.out.println("responseDto = " + responseDto);
+        notificationService.sendMessageToFamilyExcludingMe(responseDto, member);
         return new BasicResponse(HttpStatus.CREATED.value(), "Tmi 등록 완료");
     }
 

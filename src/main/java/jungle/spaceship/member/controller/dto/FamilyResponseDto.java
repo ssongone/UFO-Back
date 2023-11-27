@@ -12,14 +12,14 @@ import java.util.List;
 @AllArgsConstructor
 public class FamilyResponseDto {
     private Long familyId;
-    private Long chatRoomId;
+    private Long chatroomId;
     private String ufoName;
     private Plant plant;
     private List<Member> members;
 
     public FamilyResponseDto(Family family) {
         this.familyId = family.getFamilyId();
-        this.chatRoomId = family.getChatRoom().getRoomId();
+        this.chatroomId = family.getChatRoom().getRoomId();
         this.ufoName = family.getUfoName();
         this.plant = family.getPlant();
         this.members = family.getMembers();
