@@ -25,9 +25,9 @@ public class MemberController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/api/login/kakao22")
+    @GetMapping("/api/login/kakaoRedirect")
     public void loginFromKakao22() {
-        System.out.println("MemberController.loginFromKakao22");
+        System.out.println("MemberController.loginFromKakaoRedirect");
     }
 
     @PostMapping("/api/register/user")
@@ -52,8 +52,8 @@ public class MemberController {
         return ResponseEntity.ok(memberService.registerFamily(dto));
     }
 
-    @GetMapping("/api/register/currentFamily/{code}")
-    public ResponseEntity<ExtendedResponse<FamilyRegistrationDto>> registerCurrentFamily(@PathVariable String code) {
-        return ResponseEntity.ok(memberService.registerCurrentFamily(code));
+    @PostMapping("/api/register/currentFamily")
+    public ResponseEntity<ExtendedResponse<FamilyRegistrationDto>> registerCurrentFamily(@RequestBody FamilyDto dto) {
+        return ResponseEntity.ok(memberService.registerCurrentFamily(dto));
     }
 }

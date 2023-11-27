@@ -16,6 +16,7 @@ import jungle.spaceship.member.entity.family.Role;
 import jungle.spaceship.member.entity.oauth.KakaoInfoResponse;
 import jungle.spaceship.member.entity.oauth.OAuthInfoResponse;
 import jungle.spaceship.member.repository.*;
+import jungle.spaceship.notification.service.NotificationService;
 import jungle.spaceship.response.ExtendedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -48,6 +49,9 @@ public class MemberService {
     private final RestTemplate restTemplate;
     private final JwtTokenProvider jwtTokenProvider;
     private final SecurityUtil securityUtil;
+    private final NotificationService notificationService;
+
+    static String DEFAULT_TOKEN = "cZONPdOLQYCg3gxyiC736r:APA91bGYhF7Em9guyGqFxjDun9dbkanX0K0x2Gc3y13lF1TTcjrhvbXzvOldg11K5rQ_1wJkH1qfQV941-SbBLIjym4Nct75_zBB_UiaUaLsgWcf2Xo9eVrdtC9eYIlQy0RDgc8qodA0";
 
     static String OAUTH2_URL_KAKAO = "https://kapi.kakao.com/v2/user/me";
     public ExtendedResponse<TokenInfo> loginWithKakao(String accessToken) {
@@ -103,14 +107,20 @@ public class MemberService {
     @Transactional
     public ExtendedResponse<FamilyRegistrationDto> registerFamily(FamilyDto dto) {
         String code = dto.getCode();
+        String firebaseToken = dto.getFirebaseToken();
+        if (firebaseToken == null || firebaseToken.isEmpty())
+            firebaseToken = DEFAULT_TOKEN;
+        System.out.println("firebaseToken = " + firebaseToken);
         Member member = securityUtil.extractMember();
         ChatRoom chatRoom = new ChatRoom(dto.getCreatedAt());
         Plant plant = new Plant(dto.getPlantName());
         Family family = new Family(dto, chatRoom,plant);
 
         family.getMembers().add(member);
+        family.setPlant(plant);
         member.setFamily(family);
         member.setRole(Role.USER);
+        member.setFirebaseToken(firebaseToken);
 
         plantRepository.save(plant);
         chatRoomRepository.save(chatRoom);
@@ -128,7 +138,12 @@ public class MemberService {
     }
 
     @Transactional
-    public ExtendedResponse<FamilyRegistrationDto> registerCurrentFamily(String code) {
+    public ExtendedResponse<FamilyRegistrationDto> registerCurrentFamily(FamilyDto dto) {
+        String code = dto.getCode();
+        String firebaseToken = dto.getFirebaseToken();
+        if (firebaseToken.isEmpty())
+            firebaseToken = DEFAULT_TOKEN;
+        System.out.println("firebaseToken = " + firebaseToken);
         InvitationCode invitationCode = invitationCodeRepository.findByCode(code)
                 .orElseThrow(() -> new NoSuchElementException("코드가 유효하지 않습니다"));
 
@@ -136,6 +151,7 @@ public class MemberService {
         Member member = securityUtil.extractMember();
         member.setRole(Role.USER);
         member.setFamily(family);
+        member.setFirebaseToken(firebaseToken);
         family.getMembers().add(member);
 
         memberRepository.save(member);
@@ -145,7 +161,7 @@ public class MemberService {
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
         FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, member, familyResponseDto);
 
-//        notificationService.sendMessageToFamilyExcludingMe(familyRegistrationDto, member);
+        notificationService.sendMessageToFamilyExcludingMe(familyRegistrationDto, member);
         return new ExtendedResponse<>(familyRegistrationDto, HttpStatus.OK.value(), "가족에 등록되었습니다");
     }
 

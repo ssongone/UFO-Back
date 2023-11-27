@@ -42,5 +42,7 @@ public class Family extends Timestamped{
         this.plant = plant;
     }
 
-
+    public void setPlant(Plant plant) {
+        this.plant = plant;
+    }
 }

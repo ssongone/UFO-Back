@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jungle.spaceship.member.controller.dto.SignUpDto;
 import jungle.spaceship.member.entity.alien.Alien;
 import jungle.spaceship.member.entity.family.Family;
-import jungle.spaceship.member.entity.family.FamilyRole;
 import jungle.spaceship.member.entity.family.Role;
 import jungle.spaceship.member.entity.oauth.OAuthInfoResponse;
 import lombok.Builder;
@@ -40,7 +39,7 @@ public class Member extends Timestamped {
 
     private String nickname;
 
-    private FamilyRole familyRole;
+    private String familyRole;
 
     private LocalDate birthdate;
 
@@ -94,4 +93,7 @@ public class Member extends Timestamped {
         this.alien = alien;
     }
 
+    public void setFirebaseToken(String firebaseToken) {
+        this.firebaseToken = firebaseToken;
+    }
 }

@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 채팅 메시지에 대한 정보 담기
  *
@@ -42,4 +45,15 @@ public class ChatRegisterDto implements PushAlarm {
                 .setBody(content)
                 .build();
     }
+
+    @Override
+    public Map<String, String> getAdditionalData() {
+        Map<String, String> additionalData = new HashMap<>();
+
+        additionalData.put("sender", sender);
+        additionalData.put("content", content);
+
+        return additionalData;
+    }
+
 }
