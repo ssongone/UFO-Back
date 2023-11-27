@@ -1,4 +1,4 @@
-package jungle.spaceship.photo.controller.dto;
+package jungle.spaceship.photo.controller.dto.comment;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jungle.spaceship.member.entity.Member;

@@ -2,9 +2,9 @@ package jungle.spaceship.photo.service;
 
 import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.entity.Member;
-import jungle.spaceship.photo.controller.dto.CommentModifyDto;
-import jungle.spaceship.photo.controller.dto.CommentRegisterDto;
-import jungle.spaceship.photo.controller.dto.CommentResponseDto;
+import jungle.spaceship.photo.controller.dto.comment.CommentModifyDto;
+import jungle.spaceship.photo.controller.dto.comment.CommentRegisterDto;
+import jungle.spaceship.photo.controller.dto.comment.CommentResponseDto;
 import jungle.spaceship.photo.entity.Comment;
 import jungle.spaceship.photo.entity.Photo;
 import jungle.spaceship.photo.repository.CommentRepository;

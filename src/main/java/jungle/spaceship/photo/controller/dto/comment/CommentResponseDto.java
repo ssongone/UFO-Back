@@ -1,4 +1,4 @@
-package jungle.spaceship.photo.controller.dto;
+package jungle.spaceship.photo.controller.dto.comment;
 
 import jungle.spaceship.photo.entity.Comment;
 import lombok.Getter;

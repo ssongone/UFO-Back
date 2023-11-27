@@ -1,7 +1,7 @@
 package jungle.spaceship.photo.controller;
 
-import jungle.spaceship.photo.controller.dto.CommentModifyDto;
-import jungle.spaceship.photo.controller.dto.CommentRegisterDto;
+import jungle.spaceship.photo.controller.dto.comment.CommentModifyDto;
+import jungle.spaceship.photo.controller.dto.comment.CommentRegisterDto;
 import jungle.spaceship.photo.service.CommentService;
 import jungle.spaceship.response.BasicResponse;
 import lombok.RequiredArgsConstructor;
