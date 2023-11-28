@@ -1,0 +1,5 @@
+spring:
+  redis:
+    host: 43.202.241.133
+    port: 6379
+    expire: 60

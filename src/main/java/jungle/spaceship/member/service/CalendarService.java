@@ -8,6 +8,8 @@ import jungle.spaceship.member.repository.CalendarEventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -37,5 +39,13 @@ public class CalendarService {
         CalendarEvent calendarEvent = calendarEventRepository.findById(eventId).orElseThrow(() ->
                 new NoSuchElementException("해당 이벤트가 존재하지 않습니다"));
         calendarEventRepository.delete(calendarEvent);
+    }
+
+
+    public List<CalendarEvent> monthlyEvent(int year, int month) {
+        Long familyId = securityUtil.extractFamilyId();
+        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
+        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusSeconds(1);
+        return calendarEventRepository.findByMember_Family_FamilyIdAndEndDateIsAfterAndStartDateIsBefore(familyId, startOfMonth, endOfMonth);
     }
 }

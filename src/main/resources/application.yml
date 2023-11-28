@@ -6,6 +6,7 @@ spring:
       - mysql
       - security
       - cloud
+      - redis
   jpa:
     generate-ddl: true
     hibernate:
@@ -30,10 +31,6 @@ spring:
   cache:
     type: redis
 
-  redis:
-    host: 43.202.241.133
-    port: 6379
-    expire: 60
 
 
 #  cloud:

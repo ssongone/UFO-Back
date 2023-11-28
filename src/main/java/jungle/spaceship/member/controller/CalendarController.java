@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class CalendarController {
@@ -38,5 +40,13 @@ public class CalendarController {
     public BasicResponse deleteEvent(@PathVariable Long eventId) {
         calendarService.deleteEvent(eventId);
         return new BasicResponse(HttpStatus.OK.value(), "삭제 완료");
+    }
+
+
+    @GetMapping("/calendarEvent/day/{year}/{month}")
+    public ExtendedResponse<List<CalendarEvent>> monthlyEvent(@PathVariable int year, @PathVariable int month) {
+        List<CalendarEvent> calendarEvents = calendarService.monthlyEvent(year, month);
+        System.out.println("calendarEvents = " + calendarEvents);
+        return new ExtendedResponse<>(calendarEvents, HttpStatus.OK.value(), "");
     }
 }

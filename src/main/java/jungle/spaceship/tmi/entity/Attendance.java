@@ -2,6 +2,7 @@ package jungle.spaceship.tmi.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jungle.spaceship.member.entity.Member;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @ToString
+@Getter
 public class Attendance {
 
     @Id

@@ -2,13 +2,17 @@ package jungle.spaceship.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jungle.spaceship.member.controller.dto.CalendarRequestDto;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
+@Getter
+@ToString
 public class CalendarEvent {
 
     @Id
