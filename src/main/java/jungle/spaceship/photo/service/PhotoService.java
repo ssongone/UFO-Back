@@ -3,7 +3,6 @@ package jungle.spaceship.photo.service;
 import com.amazonaws.services.s3.AmazonS3;
 import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.entity.Member;
-import jungle.spaceship.member.entity.family.Family;
 import jungle.spaceship.member.entity.family.FamilyRole;
 import jungle.spaceship.member.repository.FamilyRepository;
 import jungle.spaceship.photo.controller.dto.*;
@@ -33,7 +32,6 @@ public class PhotoService {
     private final FamilyRoleInfoRepository roleRepository;
     private final PhotoRepository photoRepository;
     private final PhotoTagRepository photoTagRepository;
-    private final FamilyRepository familyRepository;
     private final FamilyRoleInfoRepository familyRoleInfoRepository;
 
     private final static int PHOTO_PAGEABLE_CNT = 40;
@@ -68,12 +66,9 @@ public class PhotoService {
     }
 
     @Transactional
-    public BasicResponse getPhotoList(Long familyId, Long photoId){
+    public BasicResponse getPhotoList(Long photoId){
 
-
-        if( ! isValidFamilyId(familyId)){
-            throw new NoSuchElementException("해당하는 가족이 없습니다");
-        }
+        Long familyId = securityUtil.extractFamilyId();
 
         List<PhotoTag> photoTags;
         if(photoId == null){
@@ -86,6 +81,7 @@ public class PhotoService {
 
         List<PhotoListResponseDto> result = getPhotoListResponse(photoTags);
 
+        log.info("사진 등록 성공!");
         return new ExtendedResponse<>(result,HttpStatus.OK.value(), "사진 리스트 반환 성공!");
 
     }
@@ -93,13 +89,11 @@ public class PhotoService {
     @Transactional
     public BasicResponse getPhotoListByTag(PhotoListRequestDto requestDto){
 
-        Long familyId = requestDto.getFamilyId();
+        Long familyId = securityUtil.extractFamilyId();
+
         Long lastPhotoId = requestDto.getPhotoId();
         FamilyRole familyRole = requestDto.getFamilyRole();
 
-        if( ! isValidFamilyId(familyId)){
-            throw new NoSuchElementException("해당하는 가족이 없습니다");
-        }
         Long roleId = familyRoleInfoRepository.findByFamilyRole(familyRole).getFamilyRoleId();
 
         List<PhotoTag> photoTags;
@@ -127,22 +121,14 @@ public class PhotoService {
             PhotoListResponseDto responseDto =
                     photoResponseMap.computeIfAbsent(photoId, k ->
                             new PhotoListResponseDto(
-                                    photoTag.getPhoto().getPhotoId(),
-                                    makeS3Url(photoTag.getPhoto().getPhotoKey()),
-                                    photoTag.getPhoto().getCreateAt())
+                                    photoTag.getPhoto(),
+                                    makeS3Url(photoTag.getPhoto().getPhotoKey()))
                     );
             // FamilyRole 을 추가
             responseDto.setFamilyRole(photoTag.getFamilyRoleInfo().getFamilyRole());
         }
 
         return new ArrayList<>(photoResponseMap.values());
-    }
-
-
-    // 유효한 가족 아이디 체크
-    private Boolean isValidFamilyId(Long familyId) {
-        Optional<Family> family = familyRepository.findById(familyId);
-        return family.isPresent();
     }
 
 

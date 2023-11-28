@@ -32,14 +32,13 @@ public class PhotoController {
         return ResponseEntity.ok(photoService.registerPhoto(photoDto));
     }
 
-    @GetMapping("/list/{familyId}/{photoId}")
-    public ResponseEntity<BasicResponse> getPhotoList(@PathVariable Long familyId, @PathVariable(required = false) Long photoId){
-        return ResponseEntity.ok(photoService.getPhotoList(familyId, photoId));
+    @GetMapping("/list/{photoId}")
+    public ResponseEntity<BasicResponse> getPhotoList(@PathVariable(required = false) Long photoId){
+        return ResponseEntity.ok(photoService.getPhotoList(photoId));
     }
 
     @PostMapping("/tag")
     public ResponseEntity<BasicResponse> getPhotoListByTag(@RequestBody PhotoListRequestDto photoListRequestDto){
-        log.info(photoListRequestDto.getFamilyId().toString());
         return ResponseEntity.ok(photoService.getPhotoListByTag(photoListRequestDto));
     }
 }
