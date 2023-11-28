@@ -114,9 +114,9 @@ public class TmiService {
         LocalDate startDate = LocalDate.now().minusWeeks(1);
         LocalDateTime startDateTime = startDate.atStartOfDay();
 
-        List<Object[]> tmiWithDate = attendanceRepository.findAttendanceTimeByFamilyAndDate(familyId, memberId, startDateTime);
+        List<Object[]> attendanceWithDate = attendanceRepository.findAttendanceTimeByFamilyAndDate(familyId, memberId, startDateTime);
 
-        Map<Date, List<Attendance>> resultMap = tmiWithDate.stream()
+        Map<Date, List<Attendance>> resultMap = attendanceWithDate.stream()
                 .collect(Collectors.groupingBy(
                         row -> (Date) row[0],
                         Collectors.mapping(row -> (Attendance) row[1], Collectors.toList())
