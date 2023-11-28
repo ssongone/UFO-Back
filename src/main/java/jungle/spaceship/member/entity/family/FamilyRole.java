@@ -14,7 +14,9 @@ public enum FamilyRole {
     GRANDFATHER("할아버지"),
     GRANDMOTHER("할머니"),
 
-    UNCLE("삼촌");
+    UNCLE("삼촌"),
+
+    EXTRA("기타");
 
 
     String roleName;

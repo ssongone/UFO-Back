@@ -9,11 +9,9 @@ import javax.annotation.Nullable;
 @Getter
 @RequiredArgsConstructor
 public class PhotoListRequestDto {
-    private final Long familyId;
 
     @Nullable
     private final Long photoId;
 
-    @Nullable
     private FamilyRole familyRole;
 }
