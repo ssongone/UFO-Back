@@ -29,6 +29,9 @@ public class PhotoController {
 
     @PostMapping
     public ResponseEntity<BasicResponse> registerPhoto(@RequestBody PhotoRegisterDto photoDto){
+        log.info(photoDto.photoTags().toString());
+        log.info(photoDto.description());
+        log.info(photoDto.photoKey());
         return ResponseEntity.ok(photoService.registerPhoto(photoDto));
     }
 
