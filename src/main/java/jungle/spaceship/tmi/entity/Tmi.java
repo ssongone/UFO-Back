@@ -4,6 +4,7 @@ import jungle.spaceship.tmi.controller.dto.TmiResponseDto;
 import jungle.spaceship.tmi.controller.dto.TmiDto;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.entity.Timestamped;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @ToString
+@Getter
 public class Tmi extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,7 +21,7 @@ public class Tmi extends Timestamped {
 
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 

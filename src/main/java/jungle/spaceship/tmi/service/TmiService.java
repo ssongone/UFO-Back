@@ -2,7 +2,7 @@ package jungle.spaceship.tmi.service;
 
 import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.entity.Member;
-import jungle.spaceship.member.repository.AttendanceRepository;
+import jungle.spaceship.tmi.repository.AttendanceRepository;
 import jungle.spaceship.notification.service.NotificationService;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -62,9 +64,6 @@ public class TmiService {
                         .stream()
                         .map(Tmi::toResponseDto)
                         .collect(Collectors.toList());
-
-//        System.out.println("tmis = " + tmis);
-//        return tmis;
     }
 
     public BasicResponse attend() {
@@ -76,7 +75,7 @@ public class TmiService {
             return new BasicResponse(HttpStatus.NOT_ACCEPTABLE.value(), "출석은 하루에 한번만 가능합니다");
         }
 
-        Attendance attendance = new Attendance(member, true);
+        Attendance attendance = new Attendance(member);
         attendanceRepository.save(attendance);
 
         return new BasicResponse(HttpStatus.OK.value(), "출석 완료!");
@@ -88,5 +87,44 @@ public class TmiService {
         List<Attendance> attendances = attendanceRepository.findByMember_Family_FamilyIdAndAttendanceTimeIsAfter(familyId, today);
         return new ExtendedResponse<>(attendances, HttpStatus.OK.value(), "");
     }
+
+
+    public ExtendedResponse<Map<Date, List<Tmi>>> weeklyTmi() {
+        Long familyId = securityUtil.extractFamilyId();
+        Long memberId = securityUtil.extractMember().getMemberId();
+        LocalDate startDate = LocalDate.now().minusWeeks(1);
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+
+        List<Object[]> tmiWithDate = tmiRepository.findTmiDataByFamilyAndDate(familyId, memberId, startDateTime);
+
+        Map<Date, List<Tmi>> resultMap = tmiWithDate.stream()
+                .collect(Collectors.groupingBy(
+                        row -> (Date) row[0],
+                        Collectors.mapping(row -> (Tmi) row[1], Collectors.toList())
+                ));
+
+        System.out.println("resultMap = " + resultMap);
+        return new ExtendedResponse<>(resultMap, HttpStatus.OK.value(), "");
+    }
+
+    public ExtendedResponse<Map<Date, List<Attendance>>> weeklyAttendance() {
+        Long familyId = securityUtil.extractFamilyId();
+        Long memberId = securityUtil.extractMember().getMemberId();
+
+        LocalDate startDate = LocalDate.now().minusWeeks(1);
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+
+        List<Object[]> tmiWithDate = attendanceRepository.findAttendanceTimeByFamilyAndDate(familyId, memberId, startDateTime);
+
+        Map<Date, List<Attendance>> resultMap = tmiWithDate.stream()
+                .collect(Collectors.groupingBy(
+                        row -> (Date) row[0],
+                        Collectors.mapping(row -> (Attendance) row[1], Collectors.toList())
+                ));
+
+        System.out.println("resultMap = " + resultMap);
+        return new ExtendedResponse<>(resultMap, HttpStatus.OK.value(), "");
+    }
+
 
 }
