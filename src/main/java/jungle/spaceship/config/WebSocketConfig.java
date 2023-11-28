@@ -6,12 +6,10 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 /**
  *  WebSocketConfig
@@ -25,14 +23,8 @@ import org.springframework.web.socket.config.annotation.WebSocketTransportRegist
 @EnableWebSocket
 @EnableWebSocketMessageBroker
 @RequiredArgsConstructor
-
-public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final WebSocketInterceptor webSocketInterceptor;
-
-    @Override
-    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
-        registration.addDecoratorFactory(CustomWebSocketHandlerDecorator::new);
-    }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config){

@@ -1,10 +1,11 @@
 package jungle.spaceship.member.entity.family;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jungle.spaceship.chat.entity.ChatRoom;
 import jungle.spaceship.member.controller.dto.FamilyDto;
 import jungle.spaceship.member.entity.Member;
+import jungle.spaceship.member.entity.Plant;
 import jungle.spaceship.member.entity.Timestamped;
-import jungle.spaceship.chat.entity.ChatRoom;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,7 +23,6 @@ public class Family extends Timestamped{
     private Long familyId;
 
     private String ufoName;
-    private String plantName;
 
     @OneToMany(mappedBy = "family")
     @JsonManagedReference
@@ -32,10 +32,17 @@ public class Family extends Timestamped{
     @JoinColumn(name = "chatRoom_id")
     private ChatRoom chatRoom;
 
-    public Family(FamilyDto dto, ChatRoom chatRoom) {
+    @OneToOne
+    @JoinColumn(name = "plant_id")
+    private Plant plant;
+
+    public Family(FamilyDto dto, ChatRoom chatRoom, Plant plant) {
         this.ufoName = dto.getUfoName();
-        this.plantName = dto.getPlantName();
         this.chatRoom = chatRoom;
+        this.plant = plant;
     }
 
+    public void setPlant(Plant plant) {
+        this.plant = plant;
+    }
 }

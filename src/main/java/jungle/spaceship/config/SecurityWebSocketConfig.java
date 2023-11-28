@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 @Configuration
 public class SecurityWebSocketConfig extends AbstractSecurityWebSocketMessageBrokerConfigurer {
@@ -18,6 +19,11 @@ public class SecurityWebSocketConfig extends AbstractSecurityWebSocketMessageBro
 //                .simpDestMatchers("/pub/**").authenticated()
 //                .simpSubscribeDestMatchers("/sub/**").authenticated()
 //
+    }
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        registration.addDecoratorFactory(CustomWebSocketHandlerDecorator::new);
     }
 
     @Override

@@ -8,4 +8,5 @@ public class FamilyDto {
     private String plantName;
     private String code;
     private String createdAt;
+    private String firebaseToken;
 }
