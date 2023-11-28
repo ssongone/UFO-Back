@@ -1,5 +1,6 @@
 package jungle.spaceship.photo.controller;
 
+import jungle.spaceship.photo.controller.dto.PhotoListRequestDto;
 import jungle.spaceship.photo.controller.dto.PhotoRegisterDto;
 import jungle.spaceship.photo.service.PhotoService;
 import jungle.spaceship.photo.controller.dto.S3RegisterDto;
@@ -32,7 +33,7 @@ public class PhotoController {
     }
 
     @GetMapping("/list/{familyId}/{photoId}")
-    public ResponseEntity<BasicResponse> getPhotoList(@PathVariable Long familyId, @PathVariable Long photoId){
+    public ResponseEntity<BasicResponse> getPhotoList(@PathVariable Long familyId, @PathVariable(required = false) Long photoId){
         return ResponseEntity.ok(photoService.getPhotoList(familyId, photoId));
     }
 

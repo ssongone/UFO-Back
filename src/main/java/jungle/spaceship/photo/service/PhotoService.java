@@ -114,6 +114,9 @@ public class PhotoService {
         return new ExtendedResponse<>(result,HttpStatus.OK.value(), "사진 리스트 반환 성공!");
     }
 
+
+
+
     private List<PhotoListResponseDto> getPhotoListResponse(List<PhotoTag> photoTags) {
         Map<Long, PhotoListResponseDto> photoResponseMap = new HashMap<>();
 
@@ -134,6 +137,14 @@ public class PhotoService {
 
         return new ArrayList<>(photoResponseMap.values());
     }
+
+
+    // 유효한 가족 아이디 체크
+    private Boolean isValidFamilyId(Long familyId) {
+        Optional<Family> family = familyRepository.findById(familyId);
+        return family.isPresent();
+    }
+
 
     // s3에 업로드 된 이미지의 객체 url 생성
     private String makeS3Url(String photoKey){
