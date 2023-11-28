@@ -1,4 +1,4 @@
-package jungle.spaceship.game.map;
+package jungle.spaceship.gameMap;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
