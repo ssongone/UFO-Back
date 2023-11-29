@@ -57,13 +57,13 @@ public class TmiService {
 
     public List<TmiResponseDto> getTmiByFamilyId() {
         Long familyId = securityUtil.extractFamilyId();
-        System.out.println("familyId = " + familyId);
         LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-        System.out.println("today = " + today);
-        return tmiRepository.findByMember_Family_FamilyIdAndCreateAtIsAfterOrderByCreateAtDesc(familyId, today)
-                        .stream()
-                        .map(Tmi::toResponseDto)
-                        .collect(Collectors.toList());
+        List<TmiResponseDto> collect = tmiRepository.findByMember_Family_FamilyIdAndCreateAtIsAfterOrderByCreateAtDesc(familyId, today)
+                .stream()
+                .map(Tmi::toResponseDto)
+                .collect(Collectors.toList());
+        System.out.println("collect = " + collect);
+        return collect;
     }
 
     public BasicResponse attend() {
@@ -91,29 +91,27 @@ public class TmiService {
 
     public ExtendedResponse<Map<Date, List<Tmi>>> weeklyTmi() {
         Long familyId = securityUtil.extractFamilyId();
-        Long memberId = securityUtil.extractMember().getMemberId();
         LocalDate startDate = LocalDate.now().minusWeeks(1);
         LocalDateTime startDateTime = startDate.atStartOfDay();
 
-        List<Object[]> tmiWithDate = tmiRepository.findTmiDataByFamilyAndDate(familyId, memberId, startDateTime);
-
+        List<Object[]> tmiWithDate = tmiRepository.findTmiDataByFamilyAndDate(familyId, startDateTime);
+        System.out.println("tmiWithDate.size() = " + tmiWithDate.size());
         Map<Date, List<Tmi>> resultMap = tmiWithDate.stream()
                 .collect(Collectors.groupingBy(
                         row -> (Date) row[0],
                         Collectors.mapping(row -> (Tmi) row[1], Collectors.toList())
                 ));
-
+        
         return new ExtendedResponse<>(resultMap, HttpStatus.OK.value(), "");
     }
 
     public ExtendedResponse<Map<Date, List<Attendance>>> weeklyAttendance() {
         Long familyId = securityUtil.extractFamilyId();
-        Long memberId = securityUtil.extractMember().getMemberId();
 
         LocalDate startDate = LocalDate.now().minusWeeks(1);
         LocalDateTime startDateTime = startDate.atStartOfDay();
 
-        List<Object[]> attendanceWithDate = attendanceRepository.findAttendanceTimeByFamilyAndDate(familyId, memberId, startDateTime);
+        List<Object[]> attendanceWithDate = attendanceRepository.findAttendanceTimeByFamilyAndDate(familyId, startDateTime);
         Attendance at = (Attendance) attendanceWithDate.get(0)[1];
         Map<Date, List<Attendance>> resultMap = attendanceWithDate.stream()
                 .collect(Collectors.groupingBy(

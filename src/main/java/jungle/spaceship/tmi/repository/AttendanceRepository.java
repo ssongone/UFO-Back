@@ -18,9 +18,9 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
              "JOIN a.member m " +
              "JOIN m.family f " +
              "WHERE f.familyId = :familyId " +
-             "AND a.attendanceTime > :createdAt " +
-             "AND m.memberId = :memberId")
-     List<Object[]> findAttendanceTimeByFamilyAndDate(@Param("familyId") Long familyId, @Param("memberId") Long memberId, @Param("createdAt") LocalDateTime createdAt);
+             "AND a.attendanceTime > :createdAt "
+     )
+     List<Object[]> findAttendanceTimeByFamilyAndDate(@Param("familyId") Long familyId, @Param("createdAt") LocalDateTime createdAt);
 
 }
 
