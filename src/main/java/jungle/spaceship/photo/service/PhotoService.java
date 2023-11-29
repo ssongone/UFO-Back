@@ -68,10 +68,9 @@ public class PhotoService {
     }
 
     @Transactional
-    public BasicResponse getPhotoList(Long photoId){
-
+    public BasicResponse getPhotoList(){
+        Long photoId = null;
         Long familyId = securityUtil.extractFamilyId();
-
         List<PhotoTag> photoTags;
         if(photoId == null){
             // 최신 사진 페이징 처리
@@ -83,7 +82,7 @@ public class PhotoService {
 
         List<PhotoListResponseDto> result = getPhotoListResponse(photoTags);
 
-        log.info("사진 등록 성공!");
+        log.info(result.toString());
         return new ExtendedResponse<>(result,HttpStatus.OK.value(), "사진 리스트 반환 성공!");
 
     }
