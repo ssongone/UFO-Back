@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,7 +40,8 @@ public class NotificationService {
                         .putData("time", LocalDateTime.now().toString())
                         .setNotification(alarm.toNotification())
                         .setToken(token);
-                    alarm.getAdditionalData().forEach(builder::putData);
+                    Optional.ofNullable(alarm.getAdditionalData())
+                            .ifPresent(additionalData -> additionalData.forEach(builder::putData));
 
                     return builder.build();
                 })
