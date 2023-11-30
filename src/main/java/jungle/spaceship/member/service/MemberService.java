@@ -10,7 +10,9 @@ import jungle.spaceship.member.controller.dto.*;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.entity.Plant;
 import jungle.spaceship.member.entity.alien.Alien;
+import jungle.spaceship.member.entity.alien.AlienType;
 import jungle.spaceship.member.entity.family.Family;
+import jungle.spaceship.member.entity.family.FamilyRole;
 import jungle.spaceship.member.entity.family.InvitationCode;
 import jungle.spaceship.member.entity.family.Role;
 import jungle.spaceship.member.entity.oauth.KakaoInfoResponse;
@@ -30,6 +32,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -92,7 +95,6 @@ public class MemberService {
     public void signUp(SignUpDto dto) {
         Member member = securityUtil.extractMember();
         member.update(dto);
-        System.out.println("member = " + member);
         memberRepository.save(member);
     }
 
@@ -182,4 +184,49 @@ public class MemberService {
         return code;
     }
 
+    public FamilyInfoResponseDto requestFamilyInfo(Long familyId) {
+        FamilyInfoResponseDto response = new FamilyInfoResponseDto();
+        Family family = familyRepository.findById(familyId)
+                .orElseThrow(() -> new NoSuchElementException("Family not found with id: " + familyId));
+
+        List<Member> members = family.getMembers();
+        if (members.size() < 2)
+            return response;
+
+        for (Member member : members) {
+            FamilyRole nowRole = member.getFamilyRole();
+            AlienType nowType = member.getAlien().getType();
+            response.getRoles().get(nowRole.ordinal()).setEnabled(false);
+            response.getTypes().get(nowType.ordinal()).setEnabled(false);
+        }
+        System.out.println(response);
+        return response;
+    }
+
+    public Member updateCharacter(CharacterDto characterDto) {
+        Member member = securityUtil.extractMember();
+        member.updateCharacter(characterDto);
+
+        memberRepository.save(member);
+        Family family = member.getFamily();
+        System.out.println("family.getMembers() = " + family.getMembers());
+
+        notificationService.sendMessageToFamilyExcludingMe(member, member);
+        return member;
+    }
+
+    public Family updateFamily(FamilyDto dto) {
+        Member member = securityUtil.extractMember();
+        Long familyId = securityUtil.extractFamilyId();
+        Family family = familyRepository.findById(familyId)
+                .orElseThrow(() -> new NoSuchElementException("Family not found with id: " + familyId));
+
+        family.getPlant().setName(dto.getPlantName());
+        family.setUfoName(dto.getUfoName());
+
+        familyRepository.save(family);
+        notificationService.sendMessageToFamilyExcludingMe(dto, member);
+        return family;
+
+    }
 }

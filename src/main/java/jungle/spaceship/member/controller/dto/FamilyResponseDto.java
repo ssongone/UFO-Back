@@ -5,11 +5,13 @@ import jungle.spaceship.member.entity.Plant;
 import jungle.spaceship.member.entity.family.Family;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class FamilyResponseDto {
     private Long familyId;
     private Long chatroomId;
@@ -24,4 +26,5 @@ public class FamilyResponseDto {
         this.plant = family.getPlant();
         this.members = family.getMembers();
     }
+
 }

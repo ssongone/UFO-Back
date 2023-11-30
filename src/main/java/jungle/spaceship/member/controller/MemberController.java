@@ -1,10 +1,9 @@
 package jungle.spaceship.member.controller;
 
 import jungle.spaceship.jwt.TokenInfo;
-import jungle.spaceship.member.controller.dto.AlienDto;
-import jungle.spaceship.member.controller.dto.FamilyDto;
-import jungle.spaceship.member.controller.dto.FamilyRegistrationDto;
-import jungle.spaceship.member.controller.dto.SignUpDto;
+import jungle.spaceship.member.controller.dto.*;
+import jungle.spaceship.member.entity.Member;
+import jungle.spaceship.member.entity.family.Family;
 import jungle.spaceship.member.service.MemberService;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
@@ -36,6 +35,11 @@ public class MemberController {
         return ResponseEntity.ok(new BasicResponse(HttpStatus.OK.value(), "회원가입 성공!"));
     }
 
+    @GetMapping("/api/familyInfo/{familyId}")
+    public FamilyInfoResponseDto requestFamilyInfo(@PathVariable Long familyId) {
+        return memberService.requestFamilyInfo(familyId);
+    }
+
     @PostMapping("/api/register/alien")
     public ResponseEntity<BasicResponse> registerAlien(@RequestBody AlienDto dto) {
         memberService.registerAlien(dto);
@@ -56,4 +60,15 @@ public class MemberController {
     public ResponseEntity<ExtendedResponse<FamilyRegistrationDto>> registerCurrentFamily(@RequestBody FamilyDto dto) {
         return ResponseEntity.ok(memberService.registerCurrentFamily(dto));
     }
+
+    @PatchMapping("/api/member")
+    public Member updateMember(@RequestBody CharacterDto dto) {
+        return memberService.updateCharacter(dto);
+    }
+
+    @PatchMapping("api/family")
+    public Family updateFamily(@RequestBody FamilyDto dto) {
+        return memberService.updateFamily(dto);
+    }
+
 }

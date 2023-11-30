@@ -42,7 +42,13 @@ public class Family extends Timestamped{
         this.plant = plant;
     }
 
+    public void setUfoName(String ufoName) {
+        this.ufoName = ufoName;
+    }
+
     public void setPlant(Plant plant) {
         this.plant = plant;
     }
+
+
 }

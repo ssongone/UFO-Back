@@ -7,6 +7,8 @@ import java.util.Map;
 public interface PushAlarm {
 
     String NEW_FAMILY_ALARM_BODY = "우주선에 새로운 에일리언이 들어왔어요";
+    String DEFAULT_BODY = "눌러서 확인해보세요";
+
 
     Notification toNotification();
     Map<String, String> getAdditionalData();

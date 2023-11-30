@@ -18,11 +18,13 @@ public enum FamilyRole {
 
     EXTRA("기타");
 
-
-
     String roleName;
 
     FamilyRole(String roleName) {
         this.roleName = roleName;
+    }
+
+    public String getRoleName() {
+        return roleName;
     }
 }

@@ -1,8 +1,13 @@
 package jungle.spaceship.member.entity.alien;
 
 public enum AlienType {
-    CHILD,
-    YOUTH,
-    ADULT,
-    SENIOR
+    BASIC,
+    CHRISTMAS_TREE,
+    GLASSES,
+    RABBIT,
+    SANTA,
+    HEADBAND,
+    TOMATO,
+    GIRL,
+    BAND_AID
 }

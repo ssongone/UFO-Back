@@ -33,7 +33,7 @@ public class FamilyRegistrationDto implements PushAlarm {
         additionalData.put("memberId", member.getMemberId().toString());
         additionalData.put("nickName", member.getName());
         additionalData.put("picture", member.getPicture());
-        additionalData.put("familyRole", member.getFamilyRole());
+        additionalData.put("familyRole", member.getFamilyRole().getRoleName());
 
         return additionalData;
     }

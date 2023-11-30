@@ -16,13 +16,17 @@ public class Alien {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long alienId;
 
-    @Column
+    @Enumerated(EnumType.STRING)
     private AlienType type;
-    @Column
+
     private AlienColor color;
 
     public Alien(AlienDto dto) {
         this.type = dto.getType();
-        this.color = dto.getColor();
+//        this.color = dto.getColor();
+    }
+
+    public void setType(AlienType type) {
+        this.type = type;
     }
 }

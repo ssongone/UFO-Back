@@ -21,6 +21,4 @@ public class SignUpDto {
     @Past(message = "Birthdate must be in the past")
     private LocalDate birthdate;
 
-    private String familyRole;
-
 }
