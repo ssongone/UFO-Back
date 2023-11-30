@@ -48,7 +48,7 @@ public class CalendarService {
 
     public List<CalendarEvent> monthlyEvent(int year, int month) {
         Long familyId = securityUtil.extractFamilyId();
-        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
+        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0).minusSeconds(1);
         LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusSeconds(1);
         return calendarEventRepository.findByMember_Family_FamilyIdAndEndDateIsAfterAndStartDateIsBefore(familyId, startOfMonth, endOfMonth);
     }
