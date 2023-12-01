@@ -5,8 +5,6 @@ spring:
     include:
       - mysql
       - security
-      - cloud
-      - redis
   jpa:
     generate-ddl: true
     hibernate:
@@ -31,33 +29,9 @@ spring:
   cache:
     type: redis
 
-
-
-#  cloud:
-#    aws:
-#      credentials:
-#        access-key: "123456"
-#        secret-key: "123456"
-#      region:
-#        static: ap-northeast-2
-
-
-
-#  cloud:
-#    aws:
-#      s3:
-#        bucket: "my bucket"
-#      stack.auto: false
-#      region.static: ap-northeast-2
-#      credentials:
-#        access-Key: "123456"
-#        secretKey: [ secret key ]
-
-
-#  local mysql
-#  datasource:
-#    url: jdbc:mysql://localhost:3306/ufo
-#    username: root
-#    password: 12345
+  redis:
+    host: 43.202.241.133
+    port: 6379
+    expire: 60
 
 

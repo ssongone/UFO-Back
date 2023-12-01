@@ -18,6 +18,7 @@ public class InvitationCode {
     private Long codeId;
 
     private String code;
+
     @OneToOne
     @JoinColumn(name = "family_id")
     private Family family;
