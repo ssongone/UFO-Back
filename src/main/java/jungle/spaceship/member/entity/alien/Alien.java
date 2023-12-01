@@ -21,6 +21,10 @@ public class Alien {
 
     private AlienColor color;
 
+    public Alien(AlienType type) {
+        this.type = type;
+    }
+
     public Alien(AlienDto dto) {
         this.type = dto.getType();
 //        this.color = dto.getColor();

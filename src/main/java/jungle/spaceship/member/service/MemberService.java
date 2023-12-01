@@ -86,7 +86,6 @@ public class MemberService {
         body.add("property_keys", "[\"kakao_account.email\", \"kakao_account.profile\"]");
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
-        KakaoInfoResponse kakaoInfoResponse = restTemplate.postForObject(OAUTH2_URL_KAKAO, request, KakaoInfoResponse.class);
 
         return restTemplate.postForObject(OAUTH2_URL_KAKAO, request, KakaoInfoResponse.class);
     }
@@ -99,6 +98,53 @@ public class MemberService {
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
         return new LoginResponseDto(tokenInfo, member, familyResponseDto);
     }
+
+    public LoginResponseDto signUpNewFamily(SignUpDto dto) {
+        Member member = securityUtil.extractMember();
+        Alien alien = new Alien(dto.getAlienType());
+        member.setAlien(alien);
+
+        InvitationCode invitationCode = invitationCodeRepository.findByCode(dto.getCode())
+                .orElseThrow(() -> new RuntimeException("가족 코드가 잘못됐어요!"));
+        Family family = invitationCode.getFamily();
+
+        family.getMembers().add(member);
+        member.setFamily(family);
+
+        memberRepository.save(member);
+        alienRepository.save(alien);
+        familyRepository.save(family);
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
+        FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
+        return new LoginResponseDto(tokenInfo, member, familyResponseDto);
+    }
+
+    public LoginResponseDto signUpCurrentFamily(SignUpDto dto) {
+        Member member = securityUtil.extractMember();
+        Alien alien = new Alien(dto.getAlienType());
+        member.setAlien(alien);
+
+        Plant plant = new Plant(dto.getPlantName());
+        Family family = new Family();
+        family.setUfoName(dto.getUfoName());
+        family.setPlant(plant);
+
+        family.getMembers().add(member);
+        member.setFamily(family);
+
+        InvitationCode invitationCode = new InvitationCode(dto.getCode(), family);
+        invitationCodeRepository.save(invitationCode);
+        plantRepository.save(plant);
+        memberRepository.save(member);
+        alienRepository.save(alien);
+        familyRepository.save(family);
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
+        FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
+        return new LoginResponseDto(tokenInfo, member, familyResponseDto);
+    }
+
 
     public void signUp(SignUpDto dto) {
         Member member = securityUtil.extractMember();
@@ -192,13 +238,13 @@ public class MemberService {
         return code;
     }
 
-    public FamilyInfoResponseDto requestFamilyInfo(Long familyId) {
+    public FamilyInfoResponseDto requestFamilyInfo(String familyCode) {
         FamilyInfoResponseDto response = new FamilyInfoResponseDto();
-        Family family = familyRepository.findById(familyId)
-                .orElseThrow(() -> new NoSuchElementException("Family not found with id: " + familyId));
-
+        InvitationCode invitationCode = invitationCodeRepository.findByCode(familyCode)
+                .orElseThrow(() -> new NoSuchElementException("코드가 유효하지 않습니다"));
+        Family family = invitationCode.getFamily();
         List<Member> members = family.getMembers();
-        if (members.size() < 2)
+        if (members.isEmpty())
             return response;
 
         for (Member member : members) {
@@ -207,7 +253,6 @@ public class MemberService {
             response.getRoles().get(nowRole.ordinal()).setEnabled(false);
             response.getTypes().get(nowType.ordinal()).setEnabled(false);
         }
-        System.out.println(response);
         return response;
     }
 

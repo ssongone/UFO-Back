@@ -35,15 +35,27 @@ public class MemberController {
         System.out.println("MemberController.loginFromKakaoRedirect");
     }
 
-    @PostMapping("/api/register/user")
-    public ResponseEntity<BasicResponse> signUp(@RequestBody SignUpDto dto) {
-        memberService.signUp(dto);
-        return ResponseEntity.ok(new BasicResponse(HttpStatus.OK.value(), "회원가입 성공!"));
+    @PostMapping("/api/user/newFamily")
+    public ResponseEntity<LoginResponseDto> signUpNewFamily(@RequestBody SignUpDto dto) {
+        LoginResponseDto loginResponseDto = memberService.signUpNewFamily(dto);
+        return ResponseEntity.ok(loginResponseDto);
     }
 
-    @GetMapping("/api/familyInfo/{familyId}")
-    public FamilyInfoResponseDto requestFamilyInfo(@PathVariable Long familyId) {
-        return memberService.requestFamilyInfo(familyId);
+    @PostMapping("/api/user/currentFamily")
+    public ResponseEntity<LoginResponseDto> signUpCurrentFamily(@RequestBody SignUpDto dto) {
+        LoginResponseDto loginResponseDto = memberService.signUpCurrentFamily(dto);
+        return ResponseEntity.ok(loginResponseDto);
+    }
+
+//    @PostMapping("/api/register/user")
+//    public ResponseEntity<BasicResponse> signUp(@RequestBody SignUpDto dto) {
+//        memberService.signUp(dto);
+//        return ResponseEntity.ok(new BasicResponse(HttpStatus.OK.value(), "회원가입 성공!"));
+//    }
+
+    @GetMapping("/api/familyInfo/{familyCode}")
+    public FamilyInfoResponseDto requestFamilyInfo(@PathVariable String familyCode) {
+        return memberService.requestFamilyInfo(familyCode);
     }
 
     @PostMapping("/api/register/alien")
