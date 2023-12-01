@@ -18,9 +18,9 @@ public interface TmiRepository extends JpaRepository<Tmi, Long> {
             "JOIN t.member m " +
             "JOIN m.family f " +
             "WHERE f.familyId = :familyId " +
-            "AND t.createAt > :createdAt " +
-            "AND m.memberId = :memberId")
-    List<Object[]> findTmiDataByFamilyAndDate(@Param("familyId") Long familyId, @Param("memberId") Long memberId, @Param("createdAt") LocalDateTime createdAt);
+            "AND t.createAt > :createdAt "
+    )
+    List<Object[]> findTmiDataByFamilyAndDate(@Param("familyId") Long familyId, @Param("createdAt") LocalDateTime createdAt);
 
 
 }
