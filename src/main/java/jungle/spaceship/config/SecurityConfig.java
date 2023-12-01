@@ -29,9 +29,6 @@ public class SecurityConfig {
             "/api/notification/**",
             "/api/plant/**",
             "/api/1/**",
-            "/api/1/tmitest/**",
-            "/api/1/test",
-            "/ddd",
             "/", "/css/**", "/images/**", "/js/**", "/h2-console/**"
     };
     @Bean

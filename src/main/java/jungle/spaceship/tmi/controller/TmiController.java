@@ -5,6 +5,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import jungle.spaceship.jwt.SecurityUtil;
+import jungle.spaceship.member.controller.dto.PlantStateDto;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
 import jungle.spaceship.tmi.controller.dto.TmiDto;
@@ -52,7 +53,7 @@ public class TmiController {
     }
 
     @GetMapping("/attendance")
-    public ResponseEntity<BasicResponse> attend() {
+    public ResponseEntity<ExtendedResponse<PlantStateDto>> attend() {
         return ResponseEntity.ok(tmiService.attend());
     }
 

@@ -21,16 +21,20 @@ public class Plant {
     private String name;
 
     public static final int[] LEVEL_THRESHOLD = {10, 20, 40, 80, 120, 160, 200, 250, 300, 350, 400};
+    public static final int ATTENDANCE_POINT = 1;
 
     public PlantStateDto performActivity(int pointsEarned) {
         this.point += pointsEarned;
         System.out.println("pointsEarned = " + pointsEarned);
-        return new PlantStateDto(this.name, point, checkLevelUp());
+        boolean result = checkLevelUp();
+        return new PlantStateDto(this.name, point, level, result);
     }
 
     private boolean checkLevelUp() {
         boolean isUp = false;
-        while (LEVEL_THRESHOLD[level] >= point) {
+        while (level < LEVEL_THRESHOLD.length) {
+            if (point < LEVEL_THRESHOLD[level])
+                break;
             level++;
             isUp = true;
         }

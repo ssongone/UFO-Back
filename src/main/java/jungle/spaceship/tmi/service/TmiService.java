@@ -1,8 +1,9 @@
 package jungle.spaceship.tmi.service;
 
 import jungle.spaceship.jwt.SecurityUtil;
+import jungle.spaceship.member.controller.dto.PlantStateDto;
 import jungle.spaceship.member.entity.Member;
-import jungle.spaceship.tmi.repository.AttendanceRepository;
+import jungle.spaceship.member.service.PlantService;
 import jungle.spaceship.notification.service.NotificationService;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
@@ -10,6 +11,7 @@ import jungle.spaceship.tmi.controller.dto.TmiDto;
 import jungle.spaceship.tmi.controller.dto.TmiResponseDto;
 import jungle.spaceship.tmi.entity.Attendance;
 import jungle.spaceship.tmi.entity.Tmi;
+import jungle.spaceship.tmi.repository.AttendanceRepository;
 import jungle.spaceship.tmi.repository.TmiRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,7 @@ public class TmiService {
     private final TmiRepository tmiRepository;
     private final AttendanceRepository attendanceRepository;
     private final NotificationService notificationService;
+    private final PlantService plantService;
 
     public BasicResponse tmiCheck() {
         Member member = securityUtil.extractMember();
@@ -66,19 +69,22 @@ public class TmiService {
         return collect;
     }
 
-    public BasicResponse attend() {
+    public ExtendedResponse<PlantStateDto> attend() {
         Member member = securityUtil.extractMember();
 
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
         LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        PlantStateDto plantStateDto = new PlantStateDto();
         if (!attendanceRepository.findByMemberAndAttendanceTimeIsAfterAndAttendanceTimeIsBefore(member, startOfDay, endOfDay).isEmpty()) {
-            return new BasicResponse(HttpStatus.NOT_ACCEPTABLE.value(), "출석은 하루에 한번만 가능합니다");
+            return new ExtendedResponse<>(plantStateDto, HttpStatus.NOT_ACCEPTABLE.value(), "출석은 하루에 한번만 가능합니다");
         }
 
         Attendance attendance = new Attendance(member);
         attendanceRepository.save(attendance);
 
-        return new BasicResponse(HttpStatus.OK.value(), "출석 완료!");
+        plantStateDto = plantService.earnAttendancePoint(securityUtil.extractFamilyId());
+
+        return new ExtendedResponse<>(plantStateDto, HttpStatus.OK.value(), "출석 완료!");
     }
 
     public ExtendedResponse<List<Attendance>> getAttendees() {
