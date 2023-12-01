@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jungle.spaceship.member.controller.dto.SignUpDto;
 import jungle.spaceship.member.entity.alien.Alien;
 import jungle.spaceship.member.entity.family.Family;
+import jungle.spaceship.member.entity.family.FamilyRole;
 import jungle.spaceship.member.entity.family.Role;
 import jungle.spaceship.member.entity.oauth.OAuthInfoResponse;
 import lombok.Builder;
@@ -39,12 +40,13 @@ public class Member extends Timestamped {
 
     private String nickname;
 
-    private String familyRole;
+    @Enumerated(EnumType.STRING)
+    private FamilyRole familyRole;
 
     private LocalDate birthdate;
 
     @JsonIgnore
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "alien_id")
     private Alien alien;
 
@@ -78,11 +80,10 @@ public class Member extends Timestamped {
         return this.role.getKey();
     }
 
-    public Member update(SignUpDto dto){
+    public void update(SignUpDto dto){
         this.nickname = dto.getNickname();
         this.familyRole = dto.getFamilyRole();
         this.birthdate = dto.getBirthdate();
-        return this;
     }
 
     public void setRole(Role role) {

@@ -23,7 +23,8 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtTokenProvider jwtTokenProvider;
     private static final String[] URL_TO_PERMIT = {
-            "/api/login/**",
+            "/api/login/kakao",
+            "/api/login/kakaoRedirect",
             "/room/**",
             "/ws",
             "/api/notification/**",

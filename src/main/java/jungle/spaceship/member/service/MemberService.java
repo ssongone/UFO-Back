@@ -57,24 +57,24 @@ public class MemberService {
     static String DEFAULT_TOKEN = "cZONPdOLQYCg3gxyiC736r:APA91bGYhF7Em9guyGqFxjDun9dbkanX0K0x2Gc3y13lF1TTcjrhvbXzvOldg11K5rQ_1wJkH1qfQV941-SbBLIjym4Nct75_zBB_UiaUaLsgWcf2Xo9eVrdtC9eYIlQy0RDgc8qodA0";
 
     static String OAUTH2_URL_KAKAO = "https://kapi.kakao.com/v2/user/me";
-    public ExtendedResponse<TokenInfo> loginWithKakao(String accessToken) {
+
+    public Optional<LoginResponseDto> loginWithKakao(String accessToken) {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfo(accessToken);
 
         Optional<Member> memberByEmail = memberRepository.findByEmail(oAuthInfoResponse.getEmail());
-        Member member = memberByEmail.orElseGet(() -> memberRepository.save(new Member(oAuthInfoResponse)));
 
-        HttpStatus responseStatus = HttpStatus.CREATED;
-        // 가족 정보 없는 경우 가짜 FamilyId 줌.. 별로 좋은 방법은 아닌것 같다..
-        Long familyId = 0L;
-
-        if (memberByEmail.isPresent()) {
-            responseStatus = HttpStatus.OK;
-            familyId = member.getFamily().getFamilyId();
+        if (memberByEmail.isEmpty()) {
+            memberRepository.save(new Member(oAuthInfoResponse));
+            return Optional.empty();
         }
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), familyId);
-        System.out.println("tokenInfo.getAccessToken() = " + tokenInfo.getAccessToken());
-        return new ExtendedResponse<>(tokenInfo, responseStatus.value(), "로그인 완료");
+        Member member = memberByEmail.get();
+        Family family = member.getFamily();
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
+        FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
+        LoginResponseDto loginResponseDto = new LoginResponseDto(tokenInfo, member, familyResponseDto);
+        return Optional.of(loginResponseDto);
     }
 
     public OAuthInfoResponse requestOAuthInfo(String accessToken) {
@@ -87,9 +87,17 @@ public class MemberService {
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
         KakaoInfoResponse kakaoInfoResponse = restTemplate.postForObject(OAUTH2_URL_KAKAO, request, KakaoInfoResponse.class);
-        System.out.println("kakaoInfoResponse = " + kakaoInfoResponse);
 
         return restTemplate.postForObject(OAUTH2_URL_KAKAO, request, KakaoInfoResponse.class);
+    }
+
+    public LoginResponseDto loginWithToken() {
+        Member member = securityUtil.extractMember();
+        Family family = member.getFamily();
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
+        FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
+        return new LoginResponseDto(tokenInfo, member, familyResponseDto);
     }
 
     public void signUp(SignUpDto dto) {
@@ -203,30 +211,30 @@ public class MemberService {
         return response;
     }
 
-    public Member updateCharacter(CharacterDto characterDto) {
-        Member member = securityUtil.extractMember();
-        member.updateCharacter(characterDto);
-
-        memberRepository.save(member);
-        Family family = member.getFamily();
-        System.out.println("family.getMembers() = " + family.getMembers());
-
-        notificationService.sendMessageToFamilyExcludingMe(member, member);
-        return member;
-    }
-
-    public Family updateFamily(FamilyDto dto) {
-        Member member = securityUtil.extractMember();
-        Long familyId = securityUtil.extractFamilyId();
-        Family family = familyRepository.findById(familyId)
-                .orElseThrow(() -> new NoSuchElementException("Family not found with id: " + familyId));
-
-        family.getPlant().setName(dto.getPlantName());
-        family.setUfoName(dto.getUfoName());
-
-        familyRepository.save(family);
-        notificationService.sendMessageToFamilyExcludingMe(dto, member);
-        return family;
-
-    }
+//    public Member updateCharacter(CharacterDto characterDto) {
+//        Member member = securityUtil.extractMember();
+//        member.updateCharacter(characterDto);
+//
+//        memberRepository.save(member);
+//        Family family = member.getFamily();
+//        System.out.println("family.getMembers() = " + family.getMembers());
+//
+//        notificationService.sendMessageToFamilyExcludingMe(member, member);
+//        return member;
+//    }
+//
+//    public Family updateFamily(FamilyDto dto) {
+//        Member member = securityUtil.extractMember();
+//        Long familyId = securityUtil.extractFamilyId();
+//        Family family = familyRepository.findById(familyId)
+//                .orElseThrow(() -> new NoSuchElementException("Family not found with id: " + familyId));
+//
+//        family.getPlant().setName(dto.getPlantName());
+//        family.setUfoName(dto.getUfoName());
+//
+//        familyRepository.save(family);
+//        notificationService.sendMessageToFamilyExcludingMe(dto, member);
+//        return family;
+//
+//    }
 }

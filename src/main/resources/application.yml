@@ -1,25 +1,17 @@
 server:
-  port: 12345
+  port: 12346
 spring:
   profiles:
     include:
       - mysql
       - security
+      - redis
+      - cloud
   jpa:
     generate-ddl: true
     hibernate:
       ddl-auto: update
     show-sql: true
-
-#  h2:
-#    console:
-#      enabled: true
-#  datasource:
-#    url: jdbc:h2:mem:db;MODE=MYSQL;
-#    username: sa
-#    password:
-
-
 
   data:
     redis:
@@ -29,9 +21,5 @@ spring:
   cache:
     type: redis
 
-  redis:
-    host: 43.202.241.133
-    port: 6379
-    expire: 60
 
 

@@ -28,11 +28,11 @@ public class Family extends Timestamped{
     @JsonManagedReference
     private List<Member> members = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "chatRoom_id")
     private ChatRoom chatRoom;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "plant_id")
     private Plant plant;
 

@@ -1,9 +1,6 @@
 package jungle.spaceship.member.controller;
 
-import jungle.spaceship.jwt.TokenInfo;
 import jungle.spaceship.member.controller.dto.*;
-import jungle.spaceship.member.entity.Member;
-import jungle.spaceship.member.entity.family.Family;
 import jungle.spaceship.member.service.MemberService;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
@@ -12,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @RestController
 public class MemberController {
@@ -19,9 +18,16 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/api/login/kakao")
-    public ResponseEntity<ExtendedResponse<TokenInfo>> loginFromKakao(@RequestBody String token) {
-        ExtendedResponse<TokenInfo> result = memberService.loginWithKakao(token);
-        return ResponseEntity.ok(result);
+    public ExtendedResponse<LoginResponseDto> loginFromKakao(@RequestBody String token) {
+        Optional<LoginResponseDto> loginResponseDto = memberService.loginWithKakao(token);
+        return loginResponseDto.map(responseDto -> new ExtendedResponse<>(responseDto, HttpStatus.OK.value(), "로그인 성공"))
+                .orElseGet(() -> new ExtendedResponse<>(null, HttpStatus.BAD_REQUEST.value(), "회원가입이 필요합니다."));
+    }
+
+    @GetMapping("/api/login/token")
+    public ExtendedResponse<LoginResponseDto> loginFromToken() {
+        LoginResponseDto loginResponseDto = memberService.loginWithToken();
+        return new ExtendedResponse<>(loginResponseDto, HttpStatus.OK.value(), "로그인 성공");
     }
 
     @GetMapping("/api/login/kakaoRedirect")
@@ -61,14 +67,14 @@ public class MemberController {
         return ResponseEntity.ok(memberService.registerCurrentFamily(dto));
     }
 
-    @PatchMapping("/api/member")
-    public Member updateMember(@RequestBody CharacterDto dto) {
-        return memberService.updateCharacter(dto);
-    }
-
-    @PatchMapping("api/family")
-    public Family updateFamily(@RequestBody FamilyDto dto) {
-        return memberService.updateFamily(dto);
-    }
+//    @PatchMapping("/api/member")
+//    public Member updateMember(@RequestBody CharacterDto dto) {
+//        return memberService.updateCharacter(dto);
+//    }
+//
+//    @PatchMapping("api/family")
+//    public Family updateFamily(@RequestBody FamilyDto dto) {
+//        return memberService.updateFamily(dto);
+//    }
 
 }
