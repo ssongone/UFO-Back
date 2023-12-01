@@ -13,6 +13,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class SignUpDto {
 
+    private String email;
+
     private String nickname;
     private LocalDate birthdate;
     private FamilyRole familyRole;

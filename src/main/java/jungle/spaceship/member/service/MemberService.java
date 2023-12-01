@@ -69,6 +69,10 @@ public class MemberService {
         }
 
         Member member = memberByEmail.get();
+        if (member.getFamily() == null) {
+            return Optional.empty();
+        }
+
         Family family = member.getFamily();
 
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
@@ -99,8 +103,12 @@ public class MemberService {
         return new LoginResponseDto(tokenInfo, member, familyResponseDto);
     }
 
-    public LoginResponseDto signUpNewFamily(SignUpDto dto) {
-        Member member = securityUtil.extractMember();
+    public Optional<LoginResponseDto> signUpNewFamily(SignUpDto dto) {
+        Optional<Member> byEmail = memberRepository.findByEmail(dto.getEmail());
+        if (byEmail.isEmpty()) {
+            return Optional.empty();
+        }
+        Member member = byEmail.get();
         Alien alien = new Alien(dto.getAlienType());
         member.setAlien(alien);
 
@@ -117,11 +125,15 @@ public class MemberService {
 
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
-        return new LoginResponseDto(tokenInfo, member, familyResponseDto);
+        return Optional.of(new LoginResponseDto(tokenInfo, member, familyResponseDto));
     }
 
-    public LoginResponseDto signUpCurrentFamily(SignUpDto dto) {
-        Member member = securityUtil.extractMember();
+    public Optional<LoginResponseDto> signUpCurrentFamily(SignUpDto dto) {
+        Optional<Member> byEmail = memberRepository.findByEmail(dto.getEmail());
+        if (byEmail.isEmpty()) {
+            return Optional.empty();
+        }
+        Member member = byEmail.get();
         Alien alien = new Alien(dto.getAlienType());
         member.setAlien(alien);
 
@@ -142,7 +154,7 @@ public class MemberService {
 
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
-        return new LoginResponseDto(tokenInfo, member, familyResponseDto);
+        return Optional.of(new LoginResponseDto(tokenInfo, member, familyResponseDto));
     }
 
 
