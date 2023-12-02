@@ -105,21 +105,24 @@ public class MemberService {
         return new LoginResponseDto(tokenInfo, member, familyResponseDto);
     }
 
+    @Transactional
     public Optional<LoginResponseDto> signUpCurrentFamily(SignUpDto dto) {
+        InvitationCode invitationCode = invitationCodeRepository.findByCode(dto.getCode())
+                .orElseThrow(() -> new RuntimeException("가족 코드가 잘못됐어요!"));
+
         Optional<Member> byEmail = memberRepository.findByEmail(dto.getEmail());
         if (byEmail.isEmpty()) {
             return Optional.empty();
         }
-        Member member = byEmail.get();
-        Alien alien = new Alien(dto.getAlienType());
-        member.setAlien(alien);
 
-        InvitationCode invitationCode = invitationCodeRepository.findByCode(dto.getCode())
-                .orElseThrow(() -> new RuntimeException("가족 코드가 잘못됐어요!"));
+        Member member = byEmail.get();
+        member.update(dto);
+        Alien alien = new Alien(dto.getAlienType());
         Family family = invitationCode.getFamily();
 
-        family.getMembers().add(member);
         member.setFamily(family);
+        member.setAlien(alien);
+        family.getMembers().add(member);
 
         alienRepository.save(alien);
         memberRepository.save(member);
@@ -130,29 +133,33 @@ public class MemberService {
         return Optional.of(new LoginResponseDto(tokenInfo, member, familyResponseDto));
     }
 
+    @Transactional
     public Optional<LoginResponseDto> signUpNewFamily(SignUpDto dto) {
         Optional<Member> byEmail = memberRepository.findByEmail(dto.getEmail());
         if (byEmail.isEmpty()) {
             return Optional.empty();
         }
         Member member = byEmail.get();
+        member.update(dto);
         Alien alien = new Alien(dto.getAlienType());
-        member.setAlien(alien);
-
         Plant plant = new Plant(dto.getPlantName());
+        ChatRoom chatRoom = new ChatRoom();
         Family family = new Family();
         family.setUfoName(dto.getUfoName());
         family.setPlant(plant);
-
+        family.setChatRoom(chatRoom);
         family.getMembers().add(member);
         member.setFamily(family);
-
-        InvitationCode invitationCode = new InvitationCode(dto.getCode(), family);
-        invitationCodeRepository.save(invitationCode);
+        member.setAlien(alien);
         plantRepository.save(plant);
+        chatRoomRepository.save(chatRoom);
         alienRepository.save(alien);
         memberRepository.save(member);
         familyRepository.save(family);
+
+
+        InvitationCode invitationCode = new InvitationCode(dto.getCode(), family);
+        invitationCodeRepository.save(invitationCode);
 
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);

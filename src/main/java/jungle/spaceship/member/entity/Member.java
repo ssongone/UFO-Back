@@ -85,6 +85,7 @@ public class Member extends Timestamped {
         this.familyRole = dto.getFamilyRole();
         this.birthdate = dto.getBirthdate();
         this.firebaseToken = dto.getFirebaseToken();
+        this.role = Role.USER;
     }
 
     public void setRole(Role role) {

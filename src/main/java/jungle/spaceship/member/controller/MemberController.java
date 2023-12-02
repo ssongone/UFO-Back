@@ -41,7 +41,6 @@ public class MemberController {
         Optional<LoginResponseDto> loginResponseDto = memberService.signUpNewFamily(dto);
         return loginResponseDto.map(responseDto -> new ExtendedResponse<>(responseDto, HttpStatus.OK.value(), "회원가입 성공"))
                 .orElseGet(() -> new ExtendedResponse<>(null, 12345, "이메일을 찾을 수 없습니다"));
-
     }
 
     @PostMapping("/api/register/currentFamily")
