@@ -1,16 +1,15 @@
 package jungle.spaceship.member.controller;
 
-import jungle.spaceship.jwt.TokenInfo;
-import jungle.spaceship.member.controller.dto.*;
-import jungle.spaceship.member.entity.Member;
-import jungle.spaceship.member.entity.family.Family;
+import jungle.spaceship.member.controller.dto.FamilyInfoResponseDto;
+import jungle.spaceship.member.controller.dto.LoginResponseDto;
+import jungle.spaceship.member.controller.dto.SignUpDto;
 import jungle.spaceship.member.service.MemberService;
-import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,9 +18,16 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/api/login/kakao")
-    public ResponseEntity<ExtendedResponse<TokenInfo>> loginFromKakao(@RequestBody String token) {
-        ExtendedResponse<TokenInfo> result = memberService.loginWithKakao(token);
-        return ResponseEntity.ok(result);
+    public ExtendedResponse<LoginResponseDto> loginFromKakao(@RequestBody String token) {
+        Optional<LoginResponseDto> loginResponseDto = memberService.loginWithKakao(token);
+        return loginResponseDto.map(responseDto -> new ExtendedResponse<>(responseDto, HttpStatus.OK.value(), "로그인 성공"))
+                .orElseGet(() -> new ExtendedResponse<>(null, 12345, "회원가입이 필요합니다."));
+    }
+
+    @GetMapping("/api/login/token")
+    public ExtendedResponse<LoginResponseDto> loginFromToken() {
+        LoginResponseDto loginResponseDto = memberService.loginWithToken();
+        return new ExtendedResponse<>(loginResponseDto, HttpStatus.OK.value(), "로그인 성공");
     }
 
     @GetMapping("/api/login/kakaoRedirect")
@@ -29,46 +35,45 @@ public class MemberController {
         System.out.println("MemberController.loginFromKakaoRedirect");
     }
 
-    @PostMapping("/api/register/user")
-    public ResponseEntity<BasicResponse> signUp(@RequestBody SignUpDto dto) {
-        memberService.signUp(dto);
-        return ResponseEntity.ok(new BasicResponse(HttpStatus.OK.value(), "회원가입 성공!"));
-    }
-
-    @GetMapping("/api/familyInfo/{familyId}")
-    public FamilyInfoResponseDto requestFamilyInfo(@PathVariable Long familyId) {
-        return memberService.requestFamilyInfo(familyId);
-    }
-
-    @PostMapping("/api/register/alien")
-    public ResponseEntity<BasicResponse> registerAlien(@RequestBody AlienDto dto) {
-        memberService.registerAlien(dto);
-        return ResponseEntity.ok(new BasicResponse(HttpStatus.OK.value(), "에일리언 등록 성공!"));
-    }
-
-    @GetMapping("/api/register/familyCode")
-    public ResponseEntity<String> makeNewCode() {
-        return ResponseEntity.ok(memberService.makeCode());
-    }
-
     @PostMapping("/api/register/newFamily")
-    public ResponseEntity<ExtendedResponse<FamilyRegistrationDto>> registerFamily(@RequestBody FamilyDto dto) {
-        return ResponseEntity.ok(memberService.registerFamily(dto));
+    public ExtendedResponse<LoginResponseDto> signUpNewFamily(@RequestBody SignUpDto dto) {
+        Optional<LoginResponseDto> loginResponseDto = memberService.signUpNewFamily(dto);
+        return loginResponseDto.map(responseDto -> new ExtendedResponse<>(responseDto, HttpStatus.OK.value(), "회원가입 성공"))
+                .orElseGet(() -> new ExtendedResponse<>(null, 12345, "이메일을 찾을 수 없습니다"));
     }
 
     @PostMapping("/api/register/currentFamily")
-    public ResponseEntity<ExtendedResponse<FamilyRegistrationDto>> registerCurrentFamily(@RequestBody FamilyDto dto) {
-        return ResponseEntity.ok(memberService.registerCurrentFamily(dto));
+    public ExtendedResponse<LoginResponseDto> signUpCurrentFamily(@RequestBody SignUpDto dto) {
+        Optional<LoginResponseDto> loginResponseDto = memberService.signUpCurrentFamily(dto);
+        return loginResponseDto.map(responseDto -> new ExtendedResponse<>(responseDto, HttpStatus.OK.value(), "회원가입 성공"))
+                .orElseGet(() -> new ExtendedResponse<>(null, 12345, "이메일을 찾을 수 없습니다"));
     }
 
-    @PatchMapping("/api/member")
-    public Member updateMember(@RequestBody CharacterDto dto) {
-        return memberService.updateCharacter(dto);
+
+    @GetMapping("/api/familyInfo/{familyCode}")
+    public ExtendedResponse<FamilyInfoResponseDto> requestFamilyInfo(@PathVariable String familyCode) {
+        return new ExtendedResponse<>(memberService.requestFamilyInfo(familyCode), HttpStatus.OK.value(), "");
     }
 
-    @PatchMapping("api/family")
-    public Family updateFamily(@RequestBody FamilyDto dto) {
-        return memberService.updateFamily(dto);
+    @GetMapping("/api/register/familyCode")
+    public ExtendedResponse<String> makeNewCode() {
+        return new ExtendedResponse<>(memberService.makeCode(), HttpStatus.OK.value(), "가족 코드가 발급되었습니다");
     }
+
+    @GetMapping("/api/register/familyCode/{code}")
+    public ExtendedResponse<Boolean> makeNewCode(@PathVariable String code) {
+        return new ExtendedResponse<>(memberService.validateCode(code), HttpStatus.OK.value(), "");
+    }
+
+
+//    @PatchMapping("/api/member")
+//    public Member updateMember(@RequestBody CharacterDto dto) {
+//        return memberService.updateCharacter(dto);
+//    }
+//
+//    @PatchMapping("api/family")
+//    public Family updateFamily(@RequestBody FamilyDto dto) {
+//        return memberService.updateFamily(dto);
+//    }
 
 }

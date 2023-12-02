@@ -28,11 +28,11 @@ public class Family extends Timestamped{
     @JsonManagedReference
     private List<Member> members = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "chatRoom_id")
     private ChatRoom chatRoom;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "plant_id")
     private Plant plant;
 
@@ -42,7 +42,20 @@ public class Family extends Timestamped{
         this.plant = plant;
     }
 
+    public Family(Plant plant, ChatRoom chatRoom) {
+        this.plant = plant;
+        this.chatRoom = chatRoom;
+    }
+
+    public void setUfoName(String ufoName) {
+        this.ufoName = ufoName;
+    }
+
     public void setPlant(Plant plant) {
         this.plant = plant;
+    }
+
+    public void setChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
     }
 }

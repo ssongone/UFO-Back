@@ -18,6 +18,4 @@ public class PlantController {
         return plantService.performActivity(plantId, xp);
     }
 
-
-
 }
