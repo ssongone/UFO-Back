@@ -1,15 +1,13 @@
 package jungle.spaceship.photo.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jungle.spaceship.member.entity.Member;
+import jungle.spaceship.member.entity.Timestamped;
 import jungle.spaceship.member.entity.family.Family;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -19,7 +17,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Photo {
+public class Photo extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,10 +26,6 @@ public class Photo {
     private String description;                                   /* 사진 간단 설명 */
 
     private String photoKey;
-
-    @CreatedDate
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createAt;
 
     @OneToMany(mappedBy = "photo", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Set<PhotoTag> photoTags = new LinkedHashSet<>();

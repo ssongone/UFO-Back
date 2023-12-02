@@ -77,7 +77,7 @@ public class MemberService {
         }
 
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
         LoginResponseDto loginResponseDto = new LoginResponseDto(tokenInfo, member, familyResponseDto);
         return Optional.of(loginResponseDto);
@@ -100,7 +100,7 @@ public class MemberService {
         Member member = securityUtil.extractMember();
         Family family = member.getFamily();
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
         return new LoginResponseDto(tokenInfo, member, familyResponseDto);
     }
@@ -128,7 +128,7 @@ public class MemberService {
         memberRepository.save(member);
         familyRepository.save(family);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
         return Optional.of(new LoginResponseDto(tokenInfo, member, familyResponseDto));
     }
@@ -161,7 +161,7 @@ public class MemberService {
         InvitationCode invitationCode = new InvitationCode(dto.getCode(), family);
         invitationCodeRepository.save(invitationCode);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
         return Optional.of(new LoginResponseDto(tokenInfo, member, familyResponseDto));
     }
@@ -207,7 +207,7 @@ public class MemberService {
         InvitationCode invitationCode = new InvitationCode(code, family);
         invitationCodeRepository.save(invitationCode);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(),family.getFamilyId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(),family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
         FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, member, familyResponseDto);
         return new ExtendedResponse<>(familyRegistrationDto, HttpStatus.CREATED.value(), "가족이 생성되었습니다");
@@ -234,7 +234,7 @@ public class MemberService {
         memberRepository.save(member);
         familyRepository.save(family);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
         FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, member, familyResponseDto);
 

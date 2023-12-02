@@ -24,6 +24,8 @@ public class CalendarEvent implements PushAlarm {
 
     private String eventName;
 
+    private String memo;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -35,6 +37,7 @@ public class CalendarEvent implements PushAlarm {
 
     public CalendarEvent(CalendarRequestDto dto, Member member) {
         this.member = member;
+        this.memo = dto.getMemo();
         this.eventName = dto.getEventName();
         this.startDate = dto.getStartDate();
         this.endDate = dto.getEndDate();
@@ -45,11 +48,11 @@ public class CalendarEvent implements PushAlarm {
         return this;
     }
 
-    public CalendarEvent update(CalendarRequestDto dto) {
+    public void update(CalendarRequestDto dto) {
         this.eventName = dto.getEventName();
+        this.memo = dto.getMemo();
         this.startDate = dto.getStartDate();
         this.endDate = dto.getEndDate();
-        return this;
     }
 
 

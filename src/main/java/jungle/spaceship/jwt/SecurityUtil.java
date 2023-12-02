@@ -18,8 +18,7 @@ public class SecurityUtil {
     public Member extractMember() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails user = (UserDetails) authentication.getPrincipal();
-        Long memberId = Long.valueOf(user.getUsername());
-        return memberRepository.findByMemberId(memberId).orElseThrow(() -> new NoSuchElementException("해당하는 사용자가 없습니다"));
+        return memberRepository.findByEmail(user.getUsername()).orElseThrow(() -> new NoSuchElementException("해당하는 사용자가 없습니다"));
     }
 
     public Long extractFamilyId() {

@@ -1,5 +1,5 @@
 server:
-  port: 12346
+  port: 1998
 spring:
   profiles:
     include:
