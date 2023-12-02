@@ -105,7 +105,7 @@ public class MemberService {
         return new LoginResponseDto(tokenInfo, member, familyResponseDto);
     }
 
-    public Optional<LoginResponseDto> signUpNewFamily(SignUpDto dto) {
+    public Optional<LoginResponseDto> signUpCurrentFamily(SignUpDto dto) {
         Optional<Member> byEmail = memberRepository.findByEmail(dto.getEmail());
         if (byEmail.isEmpty()) {
             return Optional.empty();
@@ -121,8 +121,8 @@ public class MemberService {
         family.getMembers().add(member);
         member.setFamily(family);
 
-        memberRepository.save(member);
         alienRepository.save(alien);
+        memberRepository.save(member);
         familyRepository.save(family);
 
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
@@ -130,7 +130,7 @@ public class MemberService {
         return Optional.of(new LoginResponseDto(tokenInfo, member, familyResponseDto));
     }
 
-    public Optional<LoginResponseDto> signUpCurrentFamily(SignUpDto dto) {
+    public Optional<LoginResponseDto> signUpNewFamily(SignUpDto dto) {
         Optional<Member> byEmail = memberRepository.findByEmail(dto.getEmail());
         if (byEmail.isEmpty()) {
             return Optional.empty();
@@ -150,8 +150,8 @@ public class MemberService {
         InvitationCode invitationCode = new InvitationCode(dto.getCode(), family);
         invitationCodeRepository.save(invitationCode);
         plantRepository.save(plant);
-        memberRepository.save(member);
         alienRepository.save(alien);
+        memberRepository.save(member);
         familyRepository.save(family);
 
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
