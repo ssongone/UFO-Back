@@ -7,7 +7,6 @@ import jungle.spaceship.member.service.MemberService;
 import jungle.spaceship.response.ExtendedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -52,18 +51,18 @@ public class MemberController {
 
 
     @GetMapping("/api/familyInfo/{familyCode}")
-    public FamilyInfoResponseDto requestFamilyInfo(@PathVariable String familyCode) {
-        return memberService.requestFamilyInfo(familyCode);
+    public ExtendedResponse<FamilyInfoResponseDto> requestFamilyInfo(@PathVariable String familyCode) {
+        return new ExtendedResponse<>(memberService.requestFamilyInfo(familyCode), HttpStatus.OK.value(), "");
     }
 
     @GetMapping("/api/register/familyCode")
-    public ResponseEntity<String> makeNewCode() {
-        return ResponseEntity.ok(memberService.makeCode());
+    public ExtendedResponse<String> makeNewCode() {
+        return new ExtendedResponse<>(memberService.makeCode(), HttpStatus.OK.value(), "가족 코드가 발급되었습니다");
     }
 
     @GetMapping("/api/register/familyCode/{code}")
-    public ResponseEntity<Boolean> makeNewCode(@PathVariable String code) {
-        return ResponseEntity.ok(memberService.validateCode(code));
+    public ExtendedResponse<Boolean> makeNewCode(@PathVariable String code) {
+        return new ExtendedResponse<>(memberService.validateCode(code), HttpStatus.OK.value(), "");
     }
 
 
