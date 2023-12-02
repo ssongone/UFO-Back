@@ -61,7 +61,7 @@ public class MemberController {
     }
 
     @GetMapping("/api/register/familyCode/{code}")
-    public ExtendedResponse<Boolean> makeNewCode(@PathVariable String code) {
+    public ExtendedResponse<Boolean> validateCode(@PathVariable String code) {
         return new ExtendedResponse<>(memberService.validateCode(code), HttpStatus.OK.value(), "");
     }
 
