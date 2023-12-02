@@ -37,6 +37,7 @@ public class JwtTokenProvider {
     }
 
     public TokenInfo generateTokenByMember(String memberEmail, String authority, Long familyId) {
+        System.out.println("memberEmail = " + memberEmail);
         long now = (new Date()).getTime();
         Date accessTokenExpiredAt = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
@@ -61,10 +62,8 @@ public class JwtTokenProvider {
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
     public Authentication getAuthentication(String accessToken) {
-        System.out.println("JwtTokenProvider.getAuthentication");
-        System.out.println("accessToken = " + accessToken);
         Claims claims = parseClaims(accessToken);
-
+        System.out.println("claims.getSubject() = " + claims.getSubject());
         if (claims.get(AUTHORITIES_KEY) == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }

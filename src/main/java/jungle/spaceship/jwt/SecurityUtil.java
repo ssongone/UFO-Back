@@ -18,6 +18,7 @@ public class SecurityUtil {
     public Member extractMember() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails user = (UserDetails) authentication.getPrincipal();
+        System.out.println("user.getUsername() = " + user.getUsername());
         return memberRepository.findByEmail(user.getUsername()).orElseThrow(() -> new NoSuchElementException("해당하는 사용자가 없습니다"));
     }
 
