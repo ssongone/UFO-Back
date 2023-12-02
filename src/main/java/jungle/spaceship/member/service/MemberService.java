@@ -252,6 +252,10 @@ public class MemberService {
         return code;
     }
 
+    public boolean validateCode(String code) {
+        return invitationCodeRepository.findByCode(code).isPresent();
+    }
+
     public FamilyInfoResponseDto requestFamilyInfo(String familyCode) {
         FamilyInfoResponseDto response = new FamilyInfoResponseDto();
         InvitationCode invitationCode = invitationCodeRepository.findByCode(familyCode)

@@ -62,6 +62,11 @@ public class MemberController {
         return ResponseEntity.ok(memberService.makeCode());
     }
 
+    @GetMapping("/api/register/familyCode/{code}")
+    public ResponseEntity<Boolean> makeNewCode(@PathVariable String code) {
+        return ResponseEntity.ok(memberService.validateCode(code));
+    }
+
 
 //    @PatchMapping("/api/member")
 //    public Member updateMember(@RequestBody CharacterDto dto) {

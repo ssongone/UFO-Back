@@ -26,6 +26,7 @@ public class SecurityConfig {
             "/api/login/kakao",
             "/api/login/kakaoRedirect",
             "/api/register/**",
+            "/api/familyInfo/**",
             "/room/**",
             "/ws",
             "/api/notification/**",
