@@ -69,11 +69,13 @@ public class MemberService {
         }
 
         Member member = memberByEmail.get();
-        if (member.getFamily() == null) {
+        Family family = member.getFamily();
+        System.out.println("family = " + family);
+        System.out.println("member = " + member.getFamilyRole());
+        if (family == null || member.getFamilyRole() == null) {
             return Optional.empty();
         }
 
-        Family family = member.getFamily();
 
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getMemberId(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
