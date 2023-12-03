@@ -5,14 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jungle.spaceship.member.controller.dto.AlienDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
 @Entity
-@ToString
 public class Alien {
 
     @Id

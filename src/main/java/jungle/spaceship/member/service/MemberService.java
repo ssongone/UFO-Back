@@ -164,7 +164,6 @@ public class MemberService {
 
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
-        System.out.println(new LoginResponseDto(tokenInfo, member, familyResponseDto));
         return Optional.of(new LoginResponseDto(tokenInfo, member, familyResponseDto));
     }
 

@@ -6,14 +6,12 @@ import jungle.spaceship.member.entity.family.Family;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class FamilyResponseDto {
     private Long familyId;
     private Long chatroomId;
