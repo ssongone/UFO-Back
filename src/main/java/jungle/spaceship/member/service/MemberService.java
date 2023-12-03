@@ -130,6 +130,7 @@ public class MemberService {
 
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
+        System.out.println(new LoginResponseDto(tokenInfo, member, familyResponseDto));
         return Optional.of(new LoginResponseDto(tokenInfo, member, familyResponseDto));
     }
 
@@ -163,6 +164,7 @@ public class MemberService {
 
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
+        System.out.println(new LoginResponseDto(tokenInfo, member, familyResponseDto));
         return Optional.of(new LoginResponseDto(tokenInfo, member, familyResponseDto));
     }
 
@@ -210,6 +212,7 @@ public class MemberService {
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(),family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
         FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, member, familyResponseDto);
+        System.out.println("familyRegistrationDto = " + familyRegistrationDto);
         return new ExtendedResponse<>(familyRegistrationDto, HttpStatus.CREATED.value(), "가족이 생성되었습니다");
 
     }
