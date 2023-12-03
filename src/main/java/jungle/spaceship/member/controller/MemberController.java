@@ -1,6 +1,7 @@
 package jungle.spaceship.member.controller;
 
 import jungle.spaceship.member.controller.dto.FamilyInfoResponseDto;
+import jungle.spaceship.member.controller.dto.FamilyResponseDto;
 import jungle.spaceship.member.controller.dto.LoginResponseDto;
 import jungle.spaceship.member.controller.dto.SignUpDto;
 import jungle.spaceship.member.service.MemberService;
@@ -63,6 +64,11 @@ public class MemberController {
     @GetMapping("/api/register/familyCode/{code}")
     public ExtendedResponse<Boolean> validateCode(@PathVariable String code) {
         return new ExtendedResponse<>(memberService.validateCode(code), HttpStatus.OK.value(), "");
+    }
+
+    @GetMapping("/api/family")
+    public ExtendedResponse<FamilyResponseDto> findByFamilyId() {
+        return new ExtendedResponse<>(memberService.findByFamily(), HttpStatus.OK.value(), "");
     }
 
 

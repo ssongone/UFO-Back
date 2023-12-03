@@ -283,6 +283,12 @@ public class MemberService {
         return response;
     }
 
+    public FamilyResponseDto findByFamily() {
+        Long familyId = securityUtil.extractFamilyId();
+        Family family = familyRepository.findById(familyId).orElseThrow(() -> new NoSuchElementException("가족 정보가 없어요"));
+        return new FamilyResponseDto(family);
+    }
+
 //    public Member updateCharacter(CharacterDto characterDto) {
 //        Member member = securityUtil.extractMember();
 //        member.updateCharacter(characterDto);
