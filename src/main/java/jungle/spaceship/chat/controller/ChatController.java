@@ -33,6 +33,7 @@ public class ChatController {
 
         Long memberId = Long.valueOf(accessor.getUser().getName());
         ChatRegisterDto resMessage = chatService.sendMessage(message, memberId);
+
         messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), resMessage);
 
     }
