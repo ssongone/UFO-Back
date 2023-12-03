@@ -12,6 +12,7 @@ import jungle.spaceship.member.entity.oauth.OAuthInfoResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 @Entity
+@ToString
 public class Member extends Timestamped {
 
     @Id
