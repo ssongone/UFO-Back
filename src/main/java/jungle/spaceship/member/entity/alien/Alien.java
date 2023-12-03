@@ -1,15 +1,18 @@
 package jungle.spaceship.member.entity.alien;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jungle.spaceship.member.controller.dto.AlienDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
 @Entity
+@ToString
 public class Alien {
 
     @Id
@@ -19,6 +22,7 @@ public class Alien {
     @Enumerated(EnumType.STRING)
     private AlienType type;
 
+    @JsonIgnore
     private AlienColor color;
 
     public Alien(AlienType type) {
