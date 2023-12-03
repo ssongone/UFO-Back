@@ -43,13 +43,12 @@ public class ChatService implements DisposableBean{
     /**
      * 메시지 보내기 및 캐시/DB 에 저장
      */
-    public ChatRegisterDto sendMessage(ChatRegisterDto message, Long memberId) {
-        System.out.println("memberId = " + memberId);
+    public ChatRegisterDto sendMessage(ChatRegisterDto message, String memberEmail) {
         if(ChatType.ENTER.equals(message.getType())) {
             message.setContent(message.getSender() + "(님)이 입장하였습니다.");
         }
         saveMessage(message);
-        Member member = memberRepository.findByMemberId(memberId).orElseThrow(()-> new NoSuchElementException("해당하는 사용자가 없습니다"));
+        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(()-> new NoSuchElementException("해당하는 사용자가 없습니다"));
         notificationService.sendMessageToFamilyExcludingMe(message, member);
         return message;
     }
