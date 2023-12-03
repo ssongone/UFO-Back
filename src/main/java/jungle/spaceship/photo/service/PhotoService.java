@@ -69,44 +69,62 @@ public class PhotoService {
 
     @Transactional
     public BasicResponse getPhotoList(){
-        Long photoId = null;
         Long familyId = securityUtil.extractFamilyId();
-        List<PhotoTag> photoTags;
-        if(photoId == null){
-            // 최신 사진 페이징 처리
-            photoTags = photoTagRepository.findRecentPhotoTags(PHOTO_PAGEABLE_CNT, familyId);
-        }else{
-            // photoId 기준 최신 사진 페이지 처리
-            photoTags = photoTagRepository.findRecentPhotoTagsWithPaging(PHOTO_PAGEABLE_CNT, familyId, photoId);
-        }
+
+        // 최신 사진 페이징 처리
+        List<PhotoTag> photoTags =
+                photoTagRepository.findRecentPhotoTags(PHOTO_PAGEABLE_CNT, familyId);
 
         List<PhotoListResponseDto> result = getPhotoListResponse(photoTags);
 
         log.info(result.toString());
         return new ExtendedResponse<>(result,HttpStatus.OK.value(), "사진 리스트 반환 성공!");
-
     }
 
     @Transactional
-    public BasicResponse getPhotoListByTag(PhotoListRequestDto requestDto){
-
+    public BasicResponse getPhotoListById(Long photoId) {
         Long familyId = securityUtil.extractFamilyId();
 
-        Long lastPhotoId = requestDto.getPhotoId();
-        FamilyRole familyRole = requestDto.getFamilyRole();
-
-        Long roleId = familyRoleInfoRepository.findByFamilyRole(familyRole).getFamilyRoleId();
-
-        List<PhotoTag> photoTags;
-        if(lastPhotoId == null){
-            photoTags = photoTagRepository.findRecentPhotoTagsByFamilyRole(PHOTO_PAGEABLE_CNT, familyId, roleId);
-        }else{
-            photoTags = photoTagRepository.findRecentPhotoTagsByFamilyRoleWithPaging(PHOTO_PAGEABLE_CNT, familyId, lastPhotoId, roleId);
-        }
+        // photoId 기준 최신 사진 페이지 처리
+        List<PhotoTag> photoTags =
+                photoTagRepository.findRecentPhotoTagsWithPaging(PHOTO_PAGEABLE_CNT, familyId, photoId);
 
         List<PhotoListResponseDto> result = getPhotoListResponse(photoTags);
 
+        log.info(result.toString());
         return new ExtendedResponse<>(result,HttpStatus.OK.value(), "사진 리스트 반환 성공!");
+    }
+
+    @Transactional
+    public BasicResponse getPhotoListByTag(PhotoTagRequestDto requestDto){
+
+        Long familyId = securityUtil.extractFamilyId();
+
+        FamilyRole familyRole = requestDto.familyRole();
+
+        Long roleId = familyRoleInfoRepository.findByFamilyRole(familyRole).getFamilyRoleId();
+
+        List<PhotoTag> photoTags =
+                photoTagRepository.findRecentPhotoTagsByFamilyRole(PHOTO_PAGEABLE_CNT, familyId, roleId);
+
+        List<PhotoListResponseDto> result = getPhotoListResponse(photoTags);
+
+        return new ExtendedResponse<>(result,HttpStatus.OK.value(), "사진 태그 리스트 반환 성공!");
+    }
+
+    public BasicResponse getPhotoListByTagAndId(Long photoId, PhotoTagRequestDto photoTagRequestDto) {
+
+        Long familyId = securityUtil.extractFamilyId();
+        FamilyRole familyRole = photoTagRequestDto.familyRole();
+
+        Long roleId = familyRoleInfoRepository.findByFamilyRole(familyRole).getFamilyRoleId();
+
+        List<PhotoTag> photoTags =
+                photoTagRepository.findRecentPhotoTagsByFamilyRoleWithPaging(PHOTO_PAGEABLE_CNT, familyId, photoId, roleId);
+
+        List<PhotoListResponseDto> result = getPhotoListResponse(photoTags);
+
+        return new ExtendedResponse<>(result,HttpStatus.OK.value(), "사진 태그 리스트 반환 성공!");
     }
 
 
@@ -137,5 +155,4 @@ public class PhotoService {
     private String makeS3Url(String photoKey){
         return amazonS3.getUrl(bucket, photoKey).toString();
     }
-
 }
