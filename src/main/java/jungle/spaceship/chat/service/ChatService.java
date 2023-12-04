@@ -5,9 +5,7 @@ import jungle.spaceship.chat.entity.Chat;
 import jungle.spaceship.chat.entity.ChatType;
 import jungle.spaceship.chat.repository.ChatRepository;
 import jungle.spaceship.chat.repository.RedisMessageCache;
-import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.repository.MemberRepository;
-import jungle.spaceship.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
@@ -17,7 +15,6 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Queue;
 
 @Slf4j
@@ -33,8 +30,6 @@ public class ChatService implements DisposableBean{
     // 채팅 메시지 임시 저장 캐시 : 채팅방Id, 채팅 메시지
 //    private static final Map<Long, Queue<Message>> messageMap = new HashMap<>();
     private final EntityManager em;
-    private final NotificationService notificationService;
-
     private static final int TRANSACTION_MESSAGE_SIZE = 20; // 한번에 처리될 메시지 사이즈
     private static final int MESSAGE_PAGEABLE_SIZE = 30;    // Queue 에 임시 보관될 메시지 수
     private static final int MESSAGE_CACHE_MAX = 50;        // Write Back 패턴 중 최대 모을 수 있는 메시지 캐시
@@ -48,8 +43,7 @@ public class ChatService implements DisposableBean{
             message.setContent(message.getSender() + "(님)이 입장하였습니다.");
         }
         saveMessage(message);
-        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(()-> new NoSuchElementException("해당하는 사용자가 없습니다"));
-        notificationService.sendMessageToFamilyExcludingMe(message, member);
+//        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(()-> new NoSuchElementException("해당하는 사용자가 없습니다"));
         return message;
     }
 

@@ -4,7 +4,6 @@ import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.controller.dto.PlantStateDto;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.service.PlantService;
-import jungle.spaceship.notification.service.NotificationService;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
 import jungle.spaceship.tmi.controller.dto.TmiDto;
@@ -34,7 +33,6 @@ public class TmiService {
     private final SecurityUtil securityUtil;
     private final TmiRepository tmiRepository;
     private final AttendanceRepository attendanceRepository;
-    private final NotificationService notificationService;
     private final PlantService plantService;
 
     public BasicResponse tmiCheck() {
@@ -54,7 +52,6 @@ public class TmiService {
         tmiRepository.save(tmi);
         TmiResponseDto responseDto = tmi.toResponseDto();
         System.out.println("responseDto = " + responseDto);
-        notificationService.sendMessageToFamilyExcludingMe(responseDto, member);
         return new BasicResponse(HttpStatus.CREATED.value(), "Tmi 등록 완료");
     }
 

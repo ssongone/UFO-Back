@@ -6,7 +6,10 @@ import jungle.spaceship.chat.repository.ChatRoomRepository;
 import jungle.spaceship.jwt.JwtTokenProvider;
 import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.jwt.TokenInfo;
-import jungle.spaceship.member.controller.dto.*;
+import jungle.spaceship.member.controller.dto.FamilyInfoResponseDto;
+import jungle.spaceship.member.controller.dto.FamilyResponseDto;
+import jungle.spaceship.member.controller.dto.LoginResponseDto;
+import jungle.spaceship.member.controller.dto.SignUpDto;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.entity.Plant;
 import jungle.spaceship.member.entity.alien.Alien;
@@ -14,16 +17,12 @@ import jungle.spaceship.member.entity.alien.AlienType;
 import jungle.spaceship.member.entity.family.Family;
 import jungle.spaceship.member.entity.family.FamilyRole;
 import jungle.spaceship.member.entity.family.InvitationCode;
-import jungle.spaceship.member.entity.family.Role;
 import jungle.spaceship.member.entity.oauth.KakaoInfoResponse;
 import jungle.spaceship.member.entity.oauth.OAuthInfoResponse;
 import jungle.spaceship.member.repository.*;
-import jungle.spaceship.notification.service.NotificationService;
-import jungle.spaceship.response.ExtendedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -52,7 +51,6 @@ public class MemberService {
     private final RestTemplate restTemplate;
     private final JwtTokenProvider jwtTokenProvider;
     private final SecurityUtil securityUtil;
-    private final NotificationService notificationService;
 
     static String DEFAULT_TOKEN = "cZONPdOLQYCg3gxyiC736r:APA91bGYhF7Em9guyGqFxjDun9dbkanX0K0x2Gc3y13lF1TTcjrhvbXzvOldg11K5rQ_1wJkH1qfQV941-SbBLIjym4Nct75_zBB_UiaUaLsgWcf2Xo9eVrdtC9eYIlQy0RDgc8qodA0";
 
@@ -165,83 +163,6 @@ public class MemberService {
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
         return Optional.of(new LoginResponseDto(tokenInfo, member, familyResponseDto));
-    }
-
-
-    public void signUp(SignUpDto dto) {
-        Member member = securityUtil.extractMember();
-        member.update(dto);
-        memberRepository.save(member);
-    }
-
-
-    public void registerAlien(AlienDto dto) {
-        Member member = securityUtil.extractMember();
-        Alien alien = new Alien(dto);
-        member.setAlien(alienRepository.save(alien));
-        memberRepository.save(member);
-    }
-
-    @Transactional
-    public ExtendedResponse<FamilyRegistrationDto> registerFamily(FamilyDto dto) {
-        String code = dto.getCode();
-        String firebaseToken = dto.getFirebaseToken();
-        if (firebaseToken == null || firebaseToken.isEmpty())
-            firebaseToken = DEFAULT_TOKEN;
-        System.out.println("firebaseToken = " + firebaseToken);
-        Member member = securityUtil.extractMember();
-        ChatRoom chatRoom = new ChatRoom(dto.getCreatedAt());
-        Plant plant = new Plant(dto.getPlantName());
-        Family family = new Family(dto, chatRoom,plant);
-
-        family.getMembers().add(member);
-        family.setPlant(plant);
-        member.setFamily(family);
-        member.setRole(Role.USER);
-        member.setFirebaseToken(firebaseToken);
-
-        plantRepository.save(plant);
-        chatRoomRepository.save(chatRoom);
-        memberRepository.save(member);
-        familyRepository.save(family);
-
-        InvitationCode invitationCode = new InvitationCode(code, family);
-        invitationCodeRepository.save(invitationCode);
-
-        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(),family.getFamilyId());
-        FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
-        FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, member, familyResponseDto);
-        System.out.println("familyRegistrationDto = " + familyRegistrationDto);
-        return new ExtendedResponse<>(familyRegistrationDto, HttpStatus.CREATED.value(), "가족이 생성되었습니다");
-
-    }
-
-    @Transactional
-    public ExtendedResponse<FamilyRegistrationDto> registerCurrentFamily(FamilyDto dto) {
-        String code = dto.getCode();
-        String firebaseToken = dto.getFirebaseToken();
-        if (firebaseToken.isEmpty())
-            firebaseToken = DEFAULT_TOKEN;
-        System.out.println("firebaseToken = " + firebaseToken);
-        InvitationCode invitationCode = invitationCodeRepository.findByCode(code)
-                .orElseThrow(() -> new NoSuchElementException("코드가 유효하지 않습니다"));
-
-        Family family = invitationCode.getFamily();
-        Member member = securityUtil.extractMember();
-        member.setRole(Role.USER);
-        member.setFamily(family);
-        member.setFirebaseToken(firebaseToken);
-        family.getMembers().add(member);
-
-        memberRepository.save(member);
-        familyRepository.save(family);
-
-        TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(), family.getFamilyId());
-        FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
-        FamilyRegistrationDto familyRegistrationDto = new FamilyRegistrationDto(tokenInfo, code, member, familyResponseDto);
-
-        notificationService.sendMessageToFamilyExcludingMe(familyRegistrationDto, member);
-        return new ExtendedResponse<>(familyRegistrationDto, HttpStatus.OK.value(), "가족에 등록되었습니다");
     }
 
     public String makeCode() {

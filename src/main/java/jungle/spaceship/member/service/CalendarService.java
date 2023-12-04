@@ -5,7 +5,6 @@ import jungle.spaceship.member.controller.dto.CalendarRequestDto;
 import jungle.spaceship.member.entity.CalendarEvent;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.repository.CalendarEventRepository;
-import jungle.spaceship.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,6 @@ import java.util.NoSuchElementException;
 public class CalendarService {
     private final CalendarEventRepository calendarEventRepository;
     private final SecurityUtil securityUtil;
-    private final NotificationService notificationService;
 
     public CalendarEvent getEvent(Long eventId) {
         return calendarEventRepository.findById(eventId).orElseThrow(()->
@@ -28,7 +26,6 @@ public class CalendarService {
     public CalendarEvent addEvent(CalendarRequestDto dto) {
         Member member = securityUtil.extractMember();
         CalendarEvent calendarEvent = new CalendarEvent(dto, member);
-        notificationService.sendMessageToFamilyExcludingMe(calendarEvent, member);
         return calendarEventRepository.save(calendarEvent);
     }
 
