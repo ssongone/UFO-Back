@@ -59,4 +59,13 @@ public class Photo {
 
     }
 
+    public void update(String description) {
+        this.description = description;
+    }
+
+    public void toNoneTag(Family family) {
+        this.photoTags.add(
+                new PhotoTag(family, this)
+        );
+    }
 }

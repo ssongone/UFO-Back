@@ -33,4 +33,9 @@ public class PhotoTag {
         this.photo = photo;
     }
 
+    public PhotoTag(Family family, Photo photo) {
+        this.familyRoleInfo = null;
+        this.family = family;
+        this.photo = photo;
+    }
 }

@@ -50,13 +50,18 @@ public class PhotoService {
         // 사진
         Photo photo = photoDto.toPhoto(member);
 
-        for(FamilyRole writer : photoDto.photoTags()){
+        if(photoDto.photoTags().isEmpty()){
+            photo.toNoneTag(member.getFamily());
 
-            // FamilyRole Info 클래스 찾음
-            FamilyRoleInfo roleInfo = roleRepository.findByFamilyRole(writer);
+        }else{
+            for(FamilyRole writer : photoDto.photoTags()){
 
-            // PhotoTag 저장
-            photo.toPhotoTag(roleInfo, member.getFamily());
+                // FamilyRole Info 클래스 찾음
+                FamilyRoleInfo roleInfo = roleRepository.findByFamilyRole(writer);
+
+                // PhotoTag 저장
+                photo.toPhotoTag(roleInfo, member.getFamily());
+            }
         }
 
         photoRepository.save(photo);
@@ -77,7 +82,6 @@ public class PhotoService {
 
         List<PhotoListResponseDto> result = getPhotoListResponse(photoTags);
 
-        log.info(result.toString());
         return new ExtendedResponse<>(result,HttpStatus.OK.value(), "사진 리스트 반환 성공!");
     }
 
@@ -91,7 +95,6 @@ public class PhotoService {
 
         List<PhotoListResponseDto> result = getPhotoListResponse(photoTags);
 
-        log.info(result.toString());
         return new ExtendedResponse<>(result,HttpStatus.OK.value(), "사진 리스트 반환 성공!");
     }
 
@@ -144,7 +147,9 @@ public class PhotoService {
                                     makeS3Url(photoTag.getPhoto().getPhotoKey()))
                     );
             // FamilyRole 을 추가
-            responseDto.setFamilyRole(photoTag.getFamilyRoleInfo().getFamilyRole());
+            if(photoTag.getFamilyRoleInfo() != null){
+                responseDto.setFamilyRole(photoTag.getFamilyRoleInfo().getFamilyRole());
+            }
         }
 
         return new ArrayList<>(photoResponseMap.values());
