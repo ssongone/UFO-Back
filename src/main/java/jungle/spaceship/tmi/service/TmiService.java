@@ -104,7 +104,7 @@ public class TmiService {
                         row -> (Date) row[0],
                         Collectors.mapping(row -> (Tmi) row[1], Collectors.toList())
                 ));
-        
+        System.out.println(resultMap);
         return new ExtendedResponse<>(resultMap, HttpStatus.OK.value(), "");
     }
 
@@ -115,14 +115,13 @@ public class TmiService {
         LocalDateTime startDateTime = startDate.atStartOfDay();
 
         List<Object[]> attendanceWithDate = attendanceRepository.findAttendanceTimeByFamilyAndDate(familyId, startDateTime);
-        Attendance at = (Attendance) attendanceWithDate.get(0)[1];
         Map<Date, List<Attendance>> resultMap = attendanceWithDate.stream()
                 .collect(Collectors.groupingBy(
                         row -> (Date) row[0],
                         Collectors.mapping(row -> (Attendance) row[1], Collectors.toList())
 
                 ));
-
+        System.out.println(resultMap);
         return new ExtendedResponse<>(resultMap, HttpStatus.OK.value(), "");
     }
 
