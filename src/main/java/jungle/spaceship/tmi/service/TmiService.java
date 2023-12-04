@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -92,32 +91,32 @@ public class TmiService {
     }
 
 
-    public ExtendedResponse<Map<Date, List<Tmi>>> weeklyTmi() {
+    public ExtendedResponse<Map<LocalDate, List<Tmi>>> weeklyTmi() {
         Long familyId = securityUtil.extractFamilyId();
         LocalDate startDate = LocalDate.now().minusWeeks(1);
         LocalDateTime startDateTime = startDate.atStartOfDay();
 
         List<Object[]> tmiWithDate = tmiRepository.findTmiDataByFamilyAndDate(familyId, startDateTime);
         System.out.println("tmiWithDate.size() = " + tmiWithDate.size());
-        Map<Date, List<Tmi>> resultMap = tmiWithDate.stream()
+        Map<LocalDate, List<Tmi>> resultMap = tmiWithDate.stream()
                 .collect(Collectors.groupingBy(
-                        row -> (Date) row[0],
+                        row -> (LocalDate) row[0],
                         Collectors.mapping(row -> (Tmi) row[1], Collectors.toList())
                 ));
         System.out.println(resultMap);
         return new ExtendedResponse<>(resultMap, HttpStatus.OK.value(), "");
     }
 
-    public ExtendedResponse<Map<Date, List<Attendance>>> weeklyAttendance() {
+    public ExtendedResponse<Map<LocalDate, List<Attendance>>> weeklyAttendance() {
         Long familyId = securityUtil.extractFamilyId();
 
         LocalDate startDate = LocalDate.now().minusWeeks(1);
         LocalDateTime startDateTime = startDate.atStartOfDay();
 
         List<Object[]> attendanceWithDate = attendanceRepository.findAttendanceTimeByFamilyAndDate(familyId, startDateTime);
-        Map<Date, List<Attendance>> resultMap = attendanceWithDate.stream()
+        Map<LocalDate, List<Attendance>> resultMap = attendanceWithDate.stream()
                 .collect(Collectors.groupingBy(
-                        row -> (Date) row[0],
+                        row -> (LocalDate) row[0],
                         Collectors.mapping(row -> (Attendance) row[1], Collectors.toList())
 
                 ));

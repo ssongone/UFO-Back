@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -63,12 +63,12 @@ public class TmiController {
     }
 
     @GetMapping("/weeklyTmi")
-    public ExtendedResponse<Map<Date, List<Tmi>>> weeklyTmi() {
+    public ExtendedResponse<Map<LocalDate, List<Tmi>>> weeklyTmi() {
         return tmiService.weeklyTmi();
     }
 
     @GetMapping("/weeklyAttendance")
-    public ExtendedResponse<Map<Date, List<Attendance>>> weeklyAttendance() {
+    public ExtendedResponse<Map<LocalDate, List<Attendance>>> weeklyAttendance() {
         return tmiService.weeklyAttendance();
     }
 
