@@ -4,6 +4,8 @@ import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.controller.dto.PlantStateDto;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.service.PlantService;
+import jungle.spaceship.notification.FcmService;
+import jungle.spaceship.notification.NotificationType;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
 import jungle.spaceship.tmi.controller.dto.TmiDto;
@@ -33,7 +35,7 @@ public class TmiService {
     private final TmiRepository tmiRepository;
     private final AttendanceRepository attendanceRepository;
     private final PlantService plantService;
-
+    private final FcmService fcmService;
     public BasicResponse tmiCheck() {
         Member member = securityUtil.extractMember();
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
@@ -49,8 +51,9 @@ public class TmiService {
 
         Tmi tmi = new Tmi(tmiDto, member);
         tmiRepository.save(tmi);
-        TmiResponseDto responseDto = tmi.toResponseDto();
-        System.out.println("responseDto = " + responseDto);
+
+        fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.TMI, tmiDto.getContent());
+
         return new BasicResponse(HttpStatus.CREATED.value(), "Tmi 등록 완료");
     }
 
@@ -79,7 +82,9 @@ public class TmiService {
         attendanceRepository.save(attendance);
 
         plantStateDto = plantService.earnAttendancePoint(securityUtil.extractFamilyId());
-
+        if (plantStateDto.isUp()) {
+            fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.PLANT, String.valueOf(plantStateDto.getLevel()));
+        }
         return new ExtendedResponse<>(plantStateDto, HttpStatus.OK.value(), "출석 완료!");
     }
 

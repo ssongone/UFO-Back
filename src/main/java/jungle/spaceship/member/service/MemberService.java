@@ -20,6 +20,8 @@ import jungle.spaceship.member.entity.family.InvitationCode;
 import jungle.spaceship.member.entity.oauth.KakaoInfoResponse;
 import jungle.spaceship.member.entity.oauth.OAuthInfoResponse;
 import jungle.spaceship.member.repository.*;
+import jungle.spaceship.notification.FcmService;
+import jungle.spaceship.notification.NotificationType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -51,7 +53,7 @@ public class MemberService {
     private final RestTemplate restTemplate;
     private final JwtTokenProvider jwtTokenProvider;
     private final SecurityUtil securityUtil;
-
+    private final FcmService fcmService;
     static String DEFAULT_TOKEN = "cZONPdOLQYCg3gxyiC736r:APA91bGYhF7Em9guyGqFxjDun9dbkanX0K0x2Gc3y13lF1TTcjrhvbXzvOldg11K5rQ_1wJkH1qfQV941-SbBLIjym4Nct75_zBB_UiaUaLsgWcf2Xo9eVrdtC9eYIlQy0RDgc8qodA0";
 
     static String OAUTH2_URL_KAKAO = "https://kapi.kakao.com/v2/user/me";
@@ -128,7 +130,8 @@ public class MemberService {
 
         TokenInfo tokenInfo = jwtTokenProvider.generateTokenByMember(member.getEmail(), member.getRole().getKey(), family.getFamilyId());
         FamilyResponseDto familyResponseDto = new FamilyResponseDto(family);
-        System.out.println(new LoginResponseDto(tokenInfo, member, familyResponseDto));
+
+        fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.ADD_FAMILY_MEMBER, member.getAlien().getType().toString());
         return Optional.of(new LoginResponseDto(tokenInfo, member, familyResponseDto));
     }
 

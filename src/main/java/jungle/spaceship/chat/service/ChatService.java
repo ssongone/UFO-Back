@@ -5,7 +5,10 @@ import jungle.spaceship.chat.entity.Chat;
 import jungle.spaceship.chat.entity.ChatType;
 import jungle.spaceship.chat.repository.ChatRepository;
 import jungle.spaceship.chat.repository.RedisMessageCache;
+import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.repository.MemberRepository;
+import jungle.spaceship.notification.FcmService;
+import jungle.spaceship.notification.NotificationType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
@@ -15,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 
 @Slf4j
@@ -25,6 +29,7 @@ public class ChatService implements DisposableBean{
 
     private final ChatRepository chatRepository;
     private final MemberRepository memberRepository;
+    private final FcmService fcmService;
 
     private final RedisMessageCache messageMap;
     // 채팅 메시지 임시 저장 캐시 : 채팅방Id, 채팅 메시지
@@ -43,7 +48,8 @@ public class ChatService implements DisposableBean{
             message.setContent(message.getSender() + "(님)이 입장하였습니다.");
         }
         saveMessage(message);
-//        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(()-> new NoSuchElementException("해당하는 사용자가 없습니다"));
+        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(()-> new NoSuchElementException("해당하는 사용자가 없습니다"));
+        fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.CHAT, message.getContent());
         return message;
     }
 

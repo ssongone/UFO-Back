@@ -7,7 +7,6 @@ import jungle.spaceship.photo.entity.Photo;
 
 import java.util.List;
 
-
 public record PhotoRegisterDto(
         @JsonProperty("photoTags") List<FamilyRole> photoTags,
         @JsonProperty("description") String description,

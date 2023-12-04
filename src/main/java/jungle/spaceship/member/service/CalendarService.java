@@ -5,6 +5,8 @@ import jungle.spaceship.member.controller.dto.CalendarRequestDto;
 import jungle.spaceship.member.entity.CalendarEvent;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.repository.CalendarEventRepository;
+import jungle.spaceship.notification.FcmService;
+import jungle.spaceship.notification.NotificationType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class CalendarService {
     private final CalendarEventRepository calendarEventRepository;
+    private final FcmService fcmService;
     private final SecurityUtil securityUtil;
 
     public CalendarEvent getEvent(Long eventId) {
@@ -26,6 +29,7 @@ public class CalendarService {
     public CalendarEvent addEvent(CalendarRequestDto dto) {
         Member member = securityUtil.extractMember();
         CalendarEvent calendarEvent = new CalendarEvent(dto, member);
+        fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.CALENDAR, dto.getEventName());
         return calendarEventRepository.save(calendarEvent);
     }
 
