@@ -2,7 +2,6 @@ package jungle.spaceship.member.entity.family;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jungle.spaceship.chat.entity.ChatRoom;
-import jungle.spaceship.member.controller.dto.FamilyDto;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.entity.Plant;
 import jungle.spaceship.member.entity.Timestamped;
@@ -35,12 +34,6 @@ public class Family extends Timestamped{
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "plant_id")
     private Plant plant;
-
-    public Family(FamilyDto dto, ChatRoom chatRoom, Plant plant) {
-        this.ufoName = dto.getUfoName();
-        this.chatRoom = chatRoom;
-        this.plant = plant;
-    }
 
     public Family(Plant plant, ChatRoom chatRoom) {
         this.plant = plant;

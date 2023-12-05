@@ -45,7 +45,6 @@ public class Member extends Timestamped {
 
     private LocalDate birthdate;
 
-    @JsonIgnore
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "alien_id")
     private Alien alien;

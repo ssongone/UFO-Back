@@ -1,7 +1,7 @@
 package jungle.spaceship.member.entity.alien;
 
 
-import jungle.spaceship.member.controller.dto.AlienDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,15 +19,11 @@ public class Alien {
     @Enumerated(EnumType.STRING)
     private AlienType type;
 
+    @JsonIgnore
     private AlienColor color;
 
     public Alien(AlienType type) {
         this.type = type;
-    }
-
-    public Alien(AlienDto dto) {
-        this.type = dto.getType();
-//        this.color = dto.getColor();
     }
 
     public void setType(AlienType type) {

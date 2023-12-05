@@ -4,7 +4,8 @@ import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.controller.dto.PlantStateDto;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.service.PlantService;
-import jungle.spaceship.notification.service.NotificationService;
+import jungle.spaceship.notification.FcmService;
+import jungle.spaceship.notification.NotificationType;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
 import jungle.spaceship.tmi.controller.dto.TmiDto;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,9 +34,8 @@ public class TmiService {
     private final SecurityUtil securityUtil;
     private final TmiRepository tmiRepository;
     private final AttendanceRepository attendanceRepository;
-    private final NotificationService notificationService;
     private final PlantService plantService;
-
+    private final FcmService fcmService;
     public BasicResponse tmiCheck() {
         Member member = securityUtil.extractMember();
         LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
@@ -52,9 +51,9 @@ public class TmiService {
 
         Tmi tmi = new Tmi(tmiDto, member);
         tmiRepository.save(tmi);
-        TmiResponseDto responseDto = tmi.toResponseDto();
-        System.out.println("responseDto = " + responseDto);
-        notificationService.sendMessageToFamilyExcludingMe(responseDto, member);
+
+        fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.TMI, tmiDto.getContent());
+
         return new BasicResponse(HttpStatus.CREATED.value(), "Tmi 등록 완료");
     }
 
@@ -83,7 +82,9 @@ public class TmiService {
         attendanceRepository.save(attendance);
 
         plantStateDto = plantService.earnAttendancePoint(securityUtil.extractFamilyId());
-
+        if (plantStateDto.isUp()) {
+            fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.PLANT, String.valueOf(plantStateDto.getLevel()));
+        }
         return new ExtendedResponse<>(plantStateDto, HttpStatus.OK.value(), "출석 완료!");
     }
 
@@ -95,37 +96,36 @@ public class TmiService {
     }
 
 
-    public ExtendedResponse<Map<Date, List<Tmi>>> weeklyTmi() {
+    public ExtendedResponse<Map<LocalDate, List<Tmi>>> weeklyTmi() {
         Long familyId = securityUtil.extractFamilyId();
         LocalDate startDate = LocalDate.now().minusWeeks(1);
         LocalDateTime startDateTime = startDate.atStartOfDay();
 
         List<Object[]> tmiWithDate = tmiRepository.findTmiDataByFamilyAndDate(familyId, startDateTime);
         System.out.println("tmiWithDate.size() = " + tmiWithDate.size());
-        Map<Date, List<Tmi>> resultMap = tmiWithDate.stream()
+        Map<LocalDate, List<Tmi>> resultMap = tmiWithDate.stream()
                 .collect(Collectors.groupingBy(
-                        row -> (Date) row[0],
+                        row -> (LocalDate) row[0],
                         Collectors.mapping(row -> (Tmi) row[1], Collectors.toList())
                 ));
-        
+        System.out.println(resultMap);
         return new ExtendedResponse<>(resultMap, HttpStatus.OK.value(), "");
     }
 
-    public ExtendedResponse<Map<Date, List<Attendance>>> weeklyAttendance() {
+    public ExtendedResponse<Map<LocalDate, List<Attendance>>> weeklyAttendance() {
         Long familyId = securityUtil.extractFamilyId();
 
         LocalDate startDate = LocalDate.now().minusWeeks(1);
         LocalDateTime startDateTime = startDate.atStartOfDay();
 
         List<Object[]> attendanceWithDate = attendanceRepository.findAttendanceTimeByFamilyAndDate(familyId, startDateTime);
-        Attendance at = (Attendance) attendanceWithDate.get(0)[1];
-        Map<Date, List<Attendance>> resultMap = attendanceWithDate.stream()
+        Map<LocalDate, List<Attendance>> resultMap = attendanceWithDate.stream()
                 .collect(Collectors.groupingBy(
-                        row -> (Date) row[0],
+                        row -> (LocalDate) row[0],
                         Collectors.mapping(row -> (Attendance) row[1], Collectors.toList())
 
                 ));
-
+        System.out.println(resultMap);
         return new ExtendedResponse<>(resultMap, HttpStatus.OK.value(), "");
     }
 

@@ -31,8 +31,9 @@ public class ChatController {
     @MessageMapping("/chat")
     public void message(ChatRegisterDto message, StompHeaderAccessor accessor) {
 
-        Long memberId = Long.valueOf(accessor.getUser().getName());
-        ChatRegisterDto resMessage = chatService.sendMessage(message, memberId);
+        String memberEmail = accessor.getUser().getName();
+        ChatRegisterDto resMessage = chatService.sendMessage(message, memberEmail);
+
         messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), resMessage);
 
     }

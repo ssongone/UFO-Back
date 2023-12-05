@@ -1,15 +1,10 @@
 package jungle.spaceship.chat.controller.dto;
 
-import com.google.firebase.messaging.Notification;
 import jungle.spaceship.chat.entity.Chat;
 import jungle.spaceship.chat.entity.ChatType;
-import jungle.spaceship.notification.PushAlarm;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 채팅 메시지에 대한 정보 담기
@@ -17,7 +12,7 @@ import java.util.Map;
  */
 @Getter
 @RequiredArgsConstructor
-public class ChatRegisterDto implements PushAlarm {
+public class ChatRegisterDto {
 
     private final ChatType type;
     private final Long roomId;
@@ -36,24 +31,6 @@ public class ChatRegisterDto implements PushAlarm {
                 .createAt(time)
                 .build();
 
-    }
-
-    @Override
-    public Notification toNotification() {
-        return Notification.builder()
-                .setTitle(sender)
-                .setBody(content)
-                .build();
-    }
-
-    @Override
-    public Map<String, String> getAdditionalData() {
-        Map<String, String> additionalData = new HashMap<>();
-
-        additionalData.put("sender", sender);
-        additionalData.put("content", content);
-
-        return additionalData;
     }
 
 }

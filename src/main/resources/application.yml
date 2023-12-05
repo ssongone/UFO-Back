@@ -1,5 +1,5 @@
 server:
-  port: 12346
+  port: 1998
 spring:
   profiles:
     include:
@@ -10,7 +10,7 @@ spring:
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
 
   data:

@@ -22,6 +22,7 @@ public class PlantService {
 
     @Transactional
     public PlantStateDto performActivity(Long plantId, int pointsEarned) {
+
         Plant plant = plantRepository.findById(plantId).orElseThrow(() -> new NoSuchElementException("해당하는 새싹이가 없어요"));
         PlantStateDto plantStateDto = plant.performActivity(pointsEarned);
         plantRepository.save(plant);
