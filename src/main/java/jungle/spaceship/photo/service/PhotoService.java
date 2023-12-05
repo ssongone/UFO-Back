@@ -64,7 +64,7 @@ public class PhotoService {
             for(String writer : photoDto.photoTags()){
 
                 // FamilyRole Info 클래스 찾음
-                FamilyRoleInfo roleInfo = roleRepository.findByFamilyRole(FamilyRole.valueOf(writer));
+                FamilyRoleInfo roleInfo = roleRepository.findByFamilyRole(FamilyRole.find(writer));
 
                 // PhotoTag 저장
                 photo.toPhotoTag(roleInfo, member.getFamily());
