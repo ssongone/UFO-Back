@@ -9,5 +9,6 @@ public enum AlienType {
     HEADBAND,
     TOMATO,
     GIRL,
-    BAND_AID
+    BAND_AID,
+    PIRATE
 }

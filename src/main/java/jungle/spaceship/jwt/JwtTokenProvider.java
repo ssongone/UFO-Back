@@ -36,14 +36,14 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenInfo generateTokenByMember(Long memberId, String authority, Long familyId) {
+    public TokenInfo generateTokenByMember(String memberEmail, String authority, Long familyId) {
+        System.out.println("memberEmail = " + memberEmail);
         long now = (new Date()).getTime();
         Date accessTokenExpiredAt = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
 
-        String subject = memberId.toString();
         String accessToken = Jwts.builder()
-                .setSubject(subject)
+                .setSubject(memberEmail)
                 .claim(AUTHORITIES_KEY, authority)
                 .claim(FAMILY_KEY, familyId.toString())
                 .setExpiration(accessTokenExpiredAt)
@@ -51,7 +51,7 @@ public class JwtTokenProvider {
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setSubject(subject)
+                .setSubject(memberEmail)
                 .setExpiration(refreshTokenExpiredAt)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -62,10 +62,8 @@ public class JwtTokenProvider {
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
     public Authentication getAuthentication(String accessToken) {
-        System.out.println("JwtTokenProvider.getAuthentication");
-        System.out.println("accessToken = " + accessToken);
         Claims claims = parseClaims(accessToken);
-
+        System.out.println("claims.getSubject() = " + claims.getSubject());
         if (claims.get(AUTHORITIES_KEY) == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
@@ -89,6 +87,9 @@ public class JwtTokenProvider {
             log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
             log.info("만료된 JWT 토큰입니다.");
+            Date expirationDate = e.getClaims().getExpiration();
+            log.info("토큰 만료일: {}", expirationDate);
+
         } catch (UnsupportedJwtException e) {
             log.info("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {

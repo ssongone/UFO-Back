@@ -4,13 +4,17 @@ import com.amazonaws.services.s3.AmazonS3;
 import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.entity.family.FamilyRole;
-import jungle.spaceship.notification.service.NotificationService;
-import jungle.spaceship.photo.controller.dto.*;
-import jungle.spaceship.photo.entity.PhotoTag;
-import jungle.spaceship.photo.repository.PhotoRepository;
-import jungle.spaceship.photo.repository.FamilyRoleInfoRepository;
-import jungle.spaceship.photo.entity.Photo;
+import jungle.spaceship.notification.FcmService;
+import jungle.spaceship.notification.NotificationType;
+import jungle.spaceship.photo.controller.dto.PhotoListResponseDto;
+import jungle.spaceship.photo.controller.dto.PhotoRegisterDto;
+import jungle.spaceship.photo.controller.dto.PhotoResponseDto;
+import jungle.spaceship.photo.controller.dto.PhotoTagRequestDto;
 import jungle.spaceship.photo.entity.FamilyRoleInfo;
+import jungle.spaceship.photo.entity.Photo;
+import jungle.spaceship.photo.entity.PhotoTag;
+import jungle.spaceship.photo.repository.FamilyRoleInfoRepository;
+import jungle.spaceship.photo.repository.PhotoRepository;
 import jungle.spaceship.photo.repository.PhotoTagRepository;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
@@ -21,7 +25,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -33,8 +40,8 @@ public class PhotoService {
     private final PhotoRepository photoRepository;
     private final PhotoTagRepository photoTagRepository;
     private final FamilyRoleInfoRepository familyRoleInfoRepository;
+    private final FcmService fcmService;
 
-    private final NotificationService notificationService;
     private final static int PHOTO_PAGEABLE_CNT = 40;
 
 
@@ -67,8 +74,7 @@ public class PhotoService {
         photoRepository.save(photo);
         PhotoResponseDto photoResponseDto =
                 new PhotoResponseDto(photo.getPhotoId(), photo.getCreateAt());
-
-        notificationService.sendMessageToFamilyExcludingMe(photoDto, member);
+        fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.PHOTO, photoDto.description());
         return new ExtendedResponse<>(photoResponseDto,HttpStatus.CREATED.value(), "사진이 생성되었습니다");
     }
 

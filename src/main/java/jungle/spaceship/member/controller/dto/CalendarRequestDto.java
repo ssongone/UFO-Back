@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 @Getter
 public class CalendarRequestDto {
     private String eventName;
+    private String memo;
 
     private LocalDateTime startDate;
 
