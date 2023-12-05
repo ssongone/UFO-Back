@@ -1,5 +1,14 @@
 package jungle.spaceship.member.entity.family;
 
+import lombok.Getter;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@Getter
 public enum FamilyRole {
     DAD("아빠"),
     MOM("엄마"),
@@ -18,13 +27,20 @@ public enum FamilyRole {
 
     EXTRA("기타");
 
-    String roleName;
+    private final String roleName;
 
     FamilyRole(String roleName) {
         this.roleName = roleName;
     }
 
-    public String getRoleName() {
-        return roleName;
+    private static final Map<String, FamilyRole> FamilyRole_MAP =
+            Collections.unmodifiableMap(Stream.of(values())
+                    .collect(Collectors.toMap(FamilyRole::getRoleName, Function.identity())));
+
+    public static FamilyRole find(String roleName) {
+        if (FamilyRole_MAP.containsKey(roleName)) {
+            return FamilyRole_MAP.get(roleName);
+        }
+        throw new IllegalArgumentException("가족 역할을 찾을 수 없습니다.");
     }
 }
