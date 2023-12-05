@@ -1,10 +1,5 @@
 package jungle.spaceship.tmi.controller;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
-import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.controller.dto.PlantStateDto;
 import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
@@ -21,8 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -32,8 +25,6 @@ import java.util.Map;
 public class TmiController {
 
     private final TmiService tmiService;
-    private final SecurityUtil securityUtil;
-    private final FirebaseMessaging firebaseMessaging;
 
     @PostMapping("/tmi")
     public ResponseEntity<BasicResponse> registerTmi(@RequestBody TmiDto tmiDto){
@@ -63,62 +54,15 @@ public class TmiController {
     }
 
     @GetMapping("/weeklyTmi")
-    public ExtendedResponse<Map<LocalDate, List<Tmi>>> weeklyTmi() {
+    public ExtendedResponse<Map<String, List<Tmi>>> weeklyTmi() {
         return tmiService.weeklyTmi();
     }
 
     @GetMapping("/weeklyAttendance")
-    public ExtendedResponse<Map<LocalDate, List<Attendance>>> weeklyAttendance() {
+    public ExtendedResponse<Map<String, List<Attendance>>> weeklyAttendance() {
         return tmiService.weeklyAttendance();
     }
 
-    @PostMapping("/api/1/mind627")
-    public String mind627() {
-        System.out.println("TmiController.mind627");
-        String token = securityUtil.extractMember().getFirebaseToken();
 
-        Notification notification = Notification.builder()
-                .setTitle("푸ㅅ1알➱림ㅌㅔ亼트✒")
-                .setBody("ε종윤ய은도H௩ヌ1❣")
-                .build();
-
-        Message message = Message.builder()
-                .setNotification(notification)
-                .putData("time", LocalDateTime.now().toString())
-                .putData("songwon", "배고픔")
-                .setToken(token).build();
-
-        try {
-            firebaseMessaging.send(message);
-        } catch (FirebaseMessagingException e) {
-            log.error("cannot send to memberList push message. error info : {}", e.getMessage());
-        }
-
-        return "완";
-    }
-
-    @PostMapping("/api/1/mind")
-    public String mind() {
-        System.out.println("TmiController.mind");
-
-        Notification notification = Notification.builder()
-                .setTitle("푸ㅅ1알➱림ㅌㅔ亼트✒")
-                .setBody("ε종윤ய은도H௩ヌ1❣")
-                .build();
-
-        Message message = Message.builder()
-                .setNotification(notification)
-                .putData("time", LocalDateTime.now().toString())
-                .putData("songwon", "배고픔")
-                .setToken("cYchq7owRPO_K0qJCQQXh0:APA91bF9v442hVrHV6X7T7oLW8phzCTBIbow-ddsf6EehecHt11twYgRxN2JYoxYY_lEJwh9gxMhRDojYcdfdCzIgR2sx7NKqM4pW4Oj8-FBNZmVjWoZMkuIhAUUVNw0dE7Z9BEiU8nV").build();
-
-        try {
-            firebaseMessaging.send(message);
-        } catch (FirebaseMessagingException e) {
-            log.error("cannot send to memberList push message. error info : {}", e.getMessage());
-        }
-
-        return "완";
-    }
 
 }

@@ -96,32 +96,32 @@ public class TmiService {
     }
 
 
-    public ExtendedResponse<Map<LocalDate, List<Tmi>>> weeklyTmi() {
+    public ExtendedResponse<Map<String, List<Tmi>>> weeklyTmi() {
         Long familyId = securityUtil.extractFamilyId();
         LocalDate startDate = LocalDate.now().minusWeeks(1);
         LocalDateTime startDateTime = startDate.atStartOfDay();
 
         List<Object[]> tmiWithDate = tmiRepository.findTmiDataByFamilyAndDate(familyId, startDateTime);
         System.out.println("tmiWithDate.size() = " + tmiWithDate.size());
-        Map<LocalDate, List<Tmi>> resultMap = tmiWithDate.stream()
+        Map<String, List<Tmi>> resultMap = tmiWithDate.stream()
                 .collect(Collectors.groupingBy(
-                        row -> (LocalDate) row[0],
+                        row -> row[0].toString(),
                         Collectors.mapping(row -> (Tmi) row[1], Collectors.toList())
                 ));
         System.out.println(resultMap);
         return new ExtendedResponse<>(resultMap, HttpStatus.OK.value(), "");
     }
 
-    public ExtendedResponse<Map<LocalDate, List<Attendance>>> weeklyAttendance() {
+    public ExtendedResponse<Map<String, List<Attendance>>> weeklyAttendance() {
         Long familyId = securityUtil.extractFamilyId();
 
         LocalDate startDate = LocalDate.now().minusWeeks(1);
         LocalDateTime startDateTime = startDate.atStartOfDay();
 
         List<Object[]> attendanceWithDate = attendanceRepository.findAttendanceTimeByFamilyAndDate(familyId, startDateTime);
-        Map<LocalDate, List<Attendance>> resultMap = attendanceWithDate.stream()
+        Map<String, List<Attendance>> resultMap = attendanceWithDate.stream()
                 .collect(Collectors.groupingBy(
-                        row -> (LocalDate) row[0],
+                        row -> row[0].toString(),
                         Collectors.mapping(row -> (Attendance) row[1], Collectors.toList())
 
                 ));

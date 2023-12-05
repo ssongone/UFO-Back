@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -69,6 +70,22 @@ public class MemberController {
     @GetMapping("/api/family")
     public ExtendedResponse<FamilyResponseDto> findByFamilyId() {
         return new ExtendedResponse<>(memberService.findByFamily(), HttpStatus.OK.value(), "");
+    }
+
+    @DeleteMapping("/api/member")
+    public void deleteMember() {
+        memberService.deleteMember();
+    }
+
+    @DeleteMapping("/api/1/member/{id}")
+    public void deleteMember(@PathVariable Long id) {
+        memberService.deleteMember(id);
+    }
+
+
+    @GetMapping("/api/family/koreanVer")
+    public ExtendedResponse<List<String>> familyRoleKorean() {
+        return new ExtendedResponse<>(memberService.familyRoleKorean() , HttpStatus.OK.value(), "");
     }
 
 

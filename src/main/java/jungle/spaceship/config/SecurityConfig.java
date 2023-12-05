@@ -30,7 +30,6 @@ public class SecurityConfig {
             "/room/**",
             "/ws",
             "/api/notification/**",
-            "/api/plant/**",
             "/api/1/**",
             "/", "/css/**", "/images/**", "/js/**", "/h2-console/**"
     };
