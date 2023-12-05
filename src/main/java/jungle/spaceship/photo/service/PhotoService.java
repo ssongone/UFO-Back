@@ -25,10 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -167,30 +164,5 @@ public class PhotoService {
         return amazonS3.getUrl(bucket, photoKey).toString();
     }
 
-    public BasicResponse updatePhoto(Long photoId, PhotoUpdateDto photoUpdateDto) {
-        String description = photoUpdateDto.description();
 
-        // photo 에서 태그 수정하는 방법
-        // 1.
-        Photo photo =
-                photoRepository.findById(photoId).orElseThrow(()-> new NoSuchElementException("해당하는 사진이 없습니다"));
-        photo.update(description);
-
-        List<FamilyRole> oldFamilyRoles = photoUpdateDto.oldPhotoTags();
-        List<FamilyRole> newFamilyRoles = photoUpdateDto.newPhotoTags();
-        List<FamilyRoleInfo> newFamilyRoleInfos = familyRoleInfoRepository.findAllByFamilyRoleIn(newFamilyRoles);
-
-//        photo.getPhotoTags()
-
-//        familyRoleInfoRepository.findByFamilyRole()
-//        Set<PhotoTag> oldTags = photo.getPhotoTags();
-//        for(PhotoTag tag : oldTags){
-//            FamilyRoleInfo oldfamilyRoleInfo = tag.getFamilyRoleInfo();
-//        }
-
-
-
-//        return new ExtendedResponse<>(result,HttpStatus.OK.value(), "사진 태그 리스트 반환 성공!");
-        return null;
-    }
 }
