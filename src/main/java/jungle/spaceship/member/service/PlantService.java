@@ -1,5 +1,6 @@
 package jungle.spaceship.member.service;
 
+import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.controller.dto.PlantStateDto;
 import jungle.spaceship.member.entity.Plant;
 import jungle.spaceship.member.entity.family.Family;
@@ -19,6 +20,13 @@ public class PlantService {
 
     private final PlantRepository plantRepository;
     private final FamilyRepository familyRepository;
+    private final SecurityUtil securityUtil;
+
+    public Plant getPlant() {
+        Long familyId = securityUtil.extractFamilyId();
+        Family family = familyRepository.findById(familyId).orElseThrow(() -> new NoSuchElementException("가족 정보가 잘못됐어요"));
+        return family.getPlant();
+    }
 
     @Transactional
     public PlantStateDto performActivity(Long plantId, int pointsEarned) {
