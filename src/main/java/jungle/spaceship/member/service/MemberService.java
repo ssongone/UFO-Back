@@ -39,6 +39,7 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static jungle.spaceship.member.entity.family.InvitationCode.CODE_CHARACTERS;
 import static jungle.spaceship.member.entity.family.InvitationCode.CODE_LENGTH;
@@ -237,6 +238,17 @@ public class MemberService {
         calendarEventRepository.deleteByMember(member);
         photoRepository.deleteByMember(member);
         memberRepository.delete(member);
+    }
+
+    public List<String> familyRoleKorean() {
+        Long familyId = securityUtil.extractFamilyId();
+        Family family = familyRepository.findById(familyId).orElseThrow(() -> new NoSuchElementException("가족 정보가 없어요"));
+
+        return family.getMembers().stream()
+                .map(Member::getFamilyRole)
+                .map(FamilyRole::getRoleName)
+                .collect(Collectors.toList());
+
     }
 
 //    public Member updateCharacter(CharacterDto characterDto) {
