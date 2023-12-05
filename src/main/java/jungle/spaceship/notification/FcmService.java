@@ -40,6 +40,10 @@ public class FcmService {
     }
 
     private void sendFcmMessage(String firebaseToken, NotificationType type, String sender, String content) {
+        if (firebaseToken == null) {
+            System.out.println("토큰없뜸");
+            return;
+        }
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "key=" + SERVER_KEY);
