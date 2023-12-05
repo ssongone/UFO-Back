@@ -62,12 +62,12 @@ public class TmiController {
     }
 
     @GetMapping("/weeklyTmi")
-    public ExtendedResponse<Map<java.sql.Date, List<Tmi>>> weeklyTmi() {
+    public ExtendedResponse<Map<String, List<Tmi>>> weeklyTmi() {
         return tmiService.weeklyTmi();
     }
 
     @GetMapping("/weeklyAttendance")
-    public ExtendedResponse<Map<java.sql.Date, List<Attendance>>> weeklyAttendance() {
+    public ExtendedResponse<Map<String, List<Attendance>>> weeklyAttendance() {
         return tmiService.weeklyAttendance();
     }
 
