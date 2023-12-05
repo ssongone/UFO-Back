@@ -13,7 +13,7 @@ import java.util.Map;
 
 
 public record PhotoRegisterDto(
-        @JsonProperty("photoTags") List<FamilyRole> photoTags,
+        @JsonProperty("photoTags") List<String> photoTags,
         @JsonProperty("description") String description,
         @JsonProperty("photoKey") String photoKey,
         @JsonProperty("writer") String writer)

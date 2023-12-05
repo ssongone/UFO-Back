@@ -19,7 +19,7 @@ public class PhotoListResponseDto {
     private String photoKey;
     private LocalDateTime createAt;
 
-    private final List<FamilyRole> photoTags = new ArrayList<>();
+    private final List<String> photoTags = new ArrayList<>();
 
 
     public void setPhoto(Photo photo) {
@@ -27,7 +27,7 @@ public class PhotoListResponseDto {
         this.photoKey = photo.getPhotoKey();
     }
 
-    public void setFamilyRole(FamilyRole familyRole) {
+    public void setFamilyRole(String familyRole) {
         this.photoTags.add(familyRole);
     }
 
