@@ -61,10 +61,10 @@ public class PhotoService {
             photo.toNoneTag(member.getFamily());
 
         }else{
-            for(FamilyRole writer : photoDto.photoTags()){
+            for(String writer : photoDto.photoTags()){
 
                 // FamilyRole Info 클래스 찾음
-                FamilyRoleInfo roleInfo = roleRepository.findByFamilyRole(writer);
+                FamilyRoleInfo roleInfo = roleRepository.findByFamilyRole(FamilyRole.valueOf(writer));
 
                 // PhotoTag 저장
                 photo.toPhotoTag(roleInfo, member.getFamily());
@@ -154,7 +154,7 @@ public class PhotoService {
                     );
             // FamilyRole 을 추가
             if(photoTag.getFamilyRoleInfo() != null){
-                responseDto.setFamilyRole(photoTag.getFamilyRoleInfo().getFamilyRole());
+                responseDto.setFamilyRole(photoTag.getFamilyRoleInfo().getFamilyRole().getRoleName());
             }
         }
 
@@ -165,5 +165,32 @@ public class PhotoService {
     // s3에 업로드 된 이미지의 객체 url 생성
     private String makeS3Url(String photoKey){
         return amazonS3.getUrl(bucket, photoKey).toString();
+    }
+
+    public BasicResponse updatePhoto(Long photoId, PhotoUpdateDto photoUpdateDto) {
+        String description = photoUpdateDto.description();
+
+        // photo 에서 태그 수정하는 방법
+        // 1.
+        Photo photo =
+                photoRepository.findById(photoId).orElseThrow(()-> new NoSuchElementException("해당하는 사진이 없습니다"));
+        photo.update(description);
+
+        List<FamilyRole> oldFamilyRoles = photoUpdateDto.oldPhotoTags();
+        List<FamilyRole> newFamilyRoles = photoUpdateDto.newPhotoTags();
+        List<FamilyRoleInfo> newFamilyRoleInfos = familyRoleInfoRepository.findAllByFamilyRoleIn(newFamilyRoles);
+
+//        photo.getPhotoTags()
+
+//        familyRoleInfoRepository.findByFamilyRole()
+//        Set<PhotoTag> oldTags = photo.getPhotoTags();
+//        for(PhotoTag tag : oldTags){
+//            FamilyRoleInfo oldfamilyRoleInfo = tag.getFamilyRoleInfo();
+//        }
+
+
+
+//        return new ExtendedResponse<>(result,HttpStatus.OK.value(), "사진 태그 리스트 반환 성공!");
+        return null;
     }
 }
