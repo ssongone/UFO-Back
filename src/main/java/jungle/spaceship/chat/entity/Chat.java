@@ -13,7 +13,7 @@ public class Chat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long messageId;
+    private Long chat_Id;
 
     @Enumerated
     private ChatType chatType;
