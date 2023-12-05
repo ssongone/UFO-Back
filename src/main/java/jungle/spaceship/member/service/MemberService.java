@@ -220,6 +220,7 @@ public class MemberService {
         return new FamilyResponseDto(family);
     }
 
+    @Transactional
     public void deleteMember() {
         Member member = securityUtil.extractMember();
         tmiRepository.deleteByMember(member);
@@ -228,7 +229,7 @@ public class MemberService {
         photoRepository.deleteByMember(member);
         memberRepository.delete(member);
     }
-
+    @Transactional
     public void deleteMember(Long id) {
         Member member = memberRepository.findByMemberId(id).orElseThrow(()-> new NoSuchElementException("없는 멤버인듯!"));
         tmiRepository.deleteByMember(member);
