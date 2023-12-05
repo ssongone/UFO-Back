@@ -22,6 +22,9 @@ import jungle.spaceship.member.entity.oauth.OAuthInfoResponse;
 import jungle.spaceship.member.repository.*;
 import jungle.spaceship.notification.FcmService;
 import jungle.spaceship.notification.NotificationType;
+import jungle.spaceship.photo.repository.PhotoRepository;
+import jungle.spaceship.tmi.repository.AttendanceRepository;
+import jungle.spaceship.tmi.repository.TmiRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -49,6 +52,10 @@ public class MemberService {
     private final FamilyRepository familyRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final InvitationCodeRepository invitationCodeRepository;
+    private final TmiRepository tmiRepository;
+    private final AttendanceRepository attendanceRepository;
+    private final CalendarEventRepository calendarEventRepository;
+    private final PhotoRepository photoRepository;
     private final PlantRepository plantRepository;
     private final RestTemplate restTemplate;
     private final JwtTokenProvider jwtTokenProvider;
@@ -211,6 +218,24 @@ public class MemberService {
         Long familyId = securityUtil.extractFamilyId();
         Family family = familyRepository.findById(familyId).orElseThrow(() -> new NoSuchElementException("가족 정보가 없어요"));
         return new FamilyResponseDto(family);
+    }
+
+    public void deleteMember() {
+        Member member = securityUtil.extractMember();
+        tmiRepository.deleteByMember(member);
+        attendanceRepository.deleteByMember(member);
+        calendarEventRepository.deleteByMember(member);
+        photoRepository.deleteByMember(member);
+        memberRepository.delete(member);
+    }
+
+    public void deleteMember(Long id) {
+        Member member = memberRepository.findByMemberId(id).orElseThrow(()-> new NoSuchElementException("없는 멤버인듯!"));
+        tmiRepository.deleteByMember(member);
+        attendanceRepository.deleteByMember(member);
+        calendarEventRepository.deleteByMember(member);
+        photoRepository.deleteByMember(member);
+        memberRepository.delete(member);
     }
 
 //    public Member updateCharacter(CharacterDto characterDto) {

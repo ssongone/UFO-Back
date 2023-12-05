@@ -71,6 +71,16 @@ public class MemberController {
         return new ExtendedResponse<>(memberService.findByFamily(), HttpStatus.OK.value(), "");
     }
 
+    @DeleteMapping("/api/member")
+    public void deleteMember() {
+        memberService.deleteMember();
+    }
+
+    @DeleteMapping("/api/1/member/{id}")
+    public void deleteMember(@PathVariable Long id) {
+        memberService.deleteMember(id);
+    }
+
 
 //    @PatchMapping("/api/member")
 //    public Member updateMember(@RequestBody CharacterDto dto) {

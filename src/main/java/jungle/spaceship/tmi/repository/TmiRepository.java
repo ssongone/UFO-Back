@@ -22,5 +22,7 @@ public interface TmiRepository extends JpaRepository<Tmi, Long> {
     )
     List<Object[]> findTmiDataByFamilyAndDate(@Param("familyId") Long familyId, @Param("createdAt") LocalDateTime createdAt);
 
+    void deleteByMember(Member member);
+
 
 }

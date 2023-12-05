@@ -21,6 +21,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
              "AND a.attendanceTime > :createdAt "
              )
      List<Object[]> findAttendanceTimeByFamilyAndDate(@Param("familyId") Long familyId, @Param("createdAt") LocalDateTime createdAt);
+    void deleteByMember(Member member);
 
 }
 
