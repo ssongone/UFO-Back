@@ -15,7 +15,7 @@ public enum NotificationType {
     TMI((sender, message)-> {
         Map<String, Object> map = new HashMap<>();
         map.put("title", "TMI");
-        map.put("message", "눌러서 확인해보세요");
+        map.put("message", sender + ": " + message);
         return map;
     }),
     CHAT((sender, message) -> {

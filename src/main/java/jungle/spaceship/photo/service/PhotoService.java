@@ -39,7 +39,7 @@ public class PhotoService {
     private final FamilyRoleInfoRepository familyRoleInfoRepository;
     private final FcmService fcmService;
 
-    private final static int PHOTO_PAGEABLE_CNT = 40;
+    private final static int PHOTO_PAGEABLE_CNT = 80;
 
 
     @Value("${cloud.aws.s3.bucket}")
