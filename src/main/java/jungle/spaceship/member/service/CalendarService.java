@@ -5,6 +5,7 @@ import jungle.spaceship.member.controller.dto.CalendarRequestDto;
 import jungle.spaceship.member.entity.CalendarEvent;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.repository.CalendarEventRepository;
+import jungle.spaceship.member.repository.FamilyRepository;
 import jungle.spaceship.notification.FcmService;
 import jungle.spaceship.notification.NotificationType;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.NoSuchElementException;
 public class CalendarService {
     private final CalendarEventRepository calendarEventRepository;
     private final FcmService fcmService;
+    private final FamilyRepository familyRepository;
     private final SecurityUtil securityUtil;
 
     public CalendarEvent getEvent(Long eventId) {
@@ -30,6 +32,12 @@ public class CalendarService {
         Member member = securityUtil.extractMember();
         CalendarEvent calendarEvent = new CalendarEvent(dto, member);
         fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.CALENDAR, dto.getEventName());
+        if (member.getFamily() != null) {
+            if (member.getFamily().getPlant() != null) {
+              member.getFamily().getPlant().setPoint(2);
+              familyRepository.save(member.getFamily());
+            }
+        }
         return calendarEventRepository.save(calendarEvent);
     }
 

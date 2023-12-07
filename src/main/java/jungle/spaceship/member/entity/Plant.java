@@ -51,4 +51,8 @@ public class Plant {
     public void setName(String name) {
         this.name = name;
     }
+
+    public void setPoint(int point) {
+        this.point = point;
+    }
 }
