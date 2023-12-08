@@ -1,5 +1,6 @@
 package jungle.spaceship.photo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.entity.Timestamped;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class Comment extends Timestamped {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "photo_id")
+    @JsonBackReference
     private Photo photo;
 
     @ManyToOne(fetch = FetchType.LAZY)

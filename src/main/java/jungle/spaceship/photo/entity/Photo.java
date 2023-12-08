@@ -1,5 +1,6 @@
 package jungle.spaceship.photo.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.entity.Timestamped;
 import jungle.spaceship.member.entity.family.Family;
@@ -37,6 +38,7 @@ public class Photo extends Timestamped {
     private Member member; // 사진 등록자
 
     @OneToMany(mappedBy = "photo",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JsonManagedReference
     private List<Comment> comment = new ArrayList<>();            /* 사진 댓글 */
 
     public Photo(String description, String photoKey, Member member){

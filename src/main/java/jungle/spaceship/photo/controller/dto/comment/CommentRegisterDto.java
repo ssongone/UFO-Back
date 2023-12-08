@@ -12,6 +12,7 @@ public record CommentRegisterDto(
 {
 
     public Comment toComment(Photo photo, Member member) {
+        System.out.println("content = " + content);
         return new Comment(
                 content, photo, member);
     }
