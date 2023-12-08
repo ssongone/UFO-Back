@@ -27,4 +27,13 @@ public enum FamilyRole {
     public String getRoleName() {
         return roleName;
     }
+
+    public static FamilyRole findByRoleName(String roleName) {
+        for (FamilyRole role : values()) {
+            if (role.getRoleName().equals(roleName)) {
+                return role;
+            }
+        }
+        return EXTRA;
+    }
 }

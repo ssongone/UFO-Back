@@ -1,6 +1,7 @@
 package jungle.spaceship.photo.entity;
 
 import jungle.spaceship.member.entity.family.Family;
+import jungle.spaceship.member.entity.family.FamilyRole;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,9 +16,8 @@ public class PhotoTag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long photoTagId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
-    private FamilyRoleInfo familyRoleInfo;
+    @Enumerated(EnumType.STRING)
+    private FamilyRole familyRole;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "photo_id")
@@ -27,14 +27,14 @@ public class PhotoTag {
     @JoinColumn(name = "family_id")
     private Family family;
 
-    public PhotoTag(FamilyRoleInfo roleInfo, Family family, Photo photo){
-        this.familyRoleInfo = roleInfo;
+    public PhotoTag(FamilyRole familyRole, Family family, Photo photo){
+        this.familyRole = familyRole;
         this.family = family;
         this.photo = photo;
     }
 
     public PhotoTag(Family family, Photo photo) {
-        this.familyRoleInfo = null;
+        this.familyRole = null;
         this.family = family;
         this.photo = photo;
     }

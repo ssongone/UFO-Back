@@ -10,10 +10,8 @@ import jungle.spaceship.photo.controller.dto.PhotoListResponseDto;
 import jungle.spaceship.photo.controller.dto.PhotoRegisterDto;
 import jungle.spaceship.photo.controller.dto.PhotoResponseDto;
 import jungle.spaceship.photo.controller.dto.PhotoTagRequestDto;
-import jungle.spaceship.photo.entity.FamilyRoleInfo;
 import jungle.spaceship.photo.entity.Photo;
 import jungle.spaceship.photo.entity.PhotoTag;
-import jungle.spaceship.photo.repository.FamilyRoleInfoRepository;
 import jungle.spaceship.photo.repository.PhotoRepository;
 import jungle.spaceship.photo.repository.PhotoTagRepository;
 import jungle.spaceship.response.BasicResponse;
@@ -25,7 +23,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -33,10 +34,9 @@ import java.util.*;
 public class PhotoService {
 
     private final SecurityUtil securityUtil;
-    private final FamilyRoleInfoRepository roleRepository;
+//    private final FamilyRoleInfoRepository familyRoleInfoRepository;
     private final PhotoRepository photoRepository;
     private final PhotoTagRepository photoTagRepository;
-    private final FamilyRoleInfoRepository familyRoleInfoRepository;
     private final FcmService fcmService;
 
     private final static int PHOTO_PAGEABLE_CNT = 80;
@@ -60,11 +60,8 @@ public class PhotoService {
         }else{
             for(String writer : photoDto.photoTags()){
 
-                // FamilyRole Info 클래스 찾음
-                FamilyRoleInfo roleInfo = roleRepository.findByFamilyRole(FamilyRole.valueOf(writer));
-
-                // PhotoTag 저장
-                photo.toPhotoTag(roleInfo, member.getFamily());
+                FamilyRole byRoleName = FamilyRole.findByRoleName(writer);
+                photo.toPhotoTag(byRoleName, member.getFamily());
             }
         }
 
@@ -108,10 +105,10 @@ public class PhotoService {
 
         FamilyRole familyRole = requestDto.familyRole();
 
-        Long roleId = familyRoleInfoRepository.findByFamilyRole(familyRole).getFamilyRoleId();
+//        Long roleId = familyRoleInfoRepository.findByFamilyRole(familyRole).getFamilyRoleId();
 
         List<PhotoTag> photoTags =
-                photoTagRepository.findRecentPhotoTagsByFamilyRole(PHOTO_PAGEABLE_CNT, familyId, roleId);
+                photoTagRepository.findRecentPhotoTagsByFamilyRole(PHOTO_PAGEABLE_CNT, familyId, familyRole);
 
         List<PhotoListResponseDto> result = getPhotoListResponse(photoTags);
 
@@ -123,17 +120,15 @@ public class PhotoService {
         Long familyId = securityUtil.extractFamilyId();
         FamilyRole familyRole = photoTagRequestDto.familyRole();
 
-        Long roleId = familyRoleInfoRepository.findByFamilyRole(familyRole).getFamilyRoleId();
+//        Long roleId = familyRoleInfoRepository.findByFamilyRole(familyRole).getFamilyRoleId();
 
         List<PhotoTag> photoTags =
-                photoTagRepository.findRecentPhotoTagsByFamilyRoleWithPaging(PHOTO_PAGEABLE_CNT, familyId, photoId, roleId);
+                photoTagRepository.findRecentPhotoTagsByFamilyRoleWithPaging(PHOTO_PAGEABLE_CNT, familyId, photoId, familyRole);
 
         List<PhotoListResponseDto> result = getPhotoListResponse(photoTags);
 
         return new ExtendedResponse<>(result,HttpStatus.OK.value(), "사진 태그 리스트 반환 성공!");
     }
-
-
 
 
     private List<PhotoListResponseDto> getPhotoListResponse(List<PhotoTag> photoTags) {
@@ -150,8 +145,8 @@ public class PhotoService {
                                     makeS3Url(photoTag.getPhoto().getPhotoKey()))
                     );
             // FamilyRole 을 추가
-            if(photoTag.getFamilyRoleInfo() != null){
-                responseDto.setFamilyRole(photoTag.getFamilyRoleInfo().getFamilyRole().getRoleName());
+            if(photoTag.getFamilyRole() != null){
+                responseDto.setFamilyRole(photoTag.getFamilyRole().getRoleName());
             }
         }
 

@@ -3,6 +3,7 @@ package jungle.spaceship.photo.entity;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.entity.Timestamped;
 import jungle.spaceship.member.entity.family.Family;
+import jungle.spaceship.member.entity.family.FamilyRole;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -46,9 +47,9 @@ public class Photo extends Timestamped {
 
 
 
-    public void toPhotoTag(FamilyRoleInfo roleInfo, Family family) {
+    public void toPhotoTag(FamilyRole familyRole, Family family) {
         this.photoTags.add(
-                new PhotoTag(roleInfo, family, this)
+                new PhotoTag(familyRole, family, this)
         );
 
     }

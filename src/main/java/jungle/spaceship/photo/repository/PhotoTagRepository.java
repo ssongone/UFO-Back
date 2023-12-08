@@ -1,5 +1,6 @@
 package jungle.spaceship.photo.repository;
 
+import jungle.spaceship.member.entity.family.FamilyRole;
 import jungle.spaceship.photo.entity.PhotoTag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -34,25 +35,25 @@ public interface PhotoTagRepository extends JpaRepository<PhotoTag, Long> {
             "INNER JOIN (SELECT p.photo_id FROM photo p WHERE p.photo_id < :lastPhotoId ORDER BY p.create_at DESC LIMIT :photo_cnt) AS pp " +
             "ON pt.photo_id = pp.photo_id " +
             "WHERE pt.family_id = :familyId " +
-            "AND pt.role_id = :roleId " +
+            "AND pt.family_role = :familyRole " +
             "ORDER BY pp.photo_id DESC", nativeQuery = true)
     List<PhotoTag> findRecentPhotoTagsByFamilyRoleWithPaging(
             @Param("photo_cnt") int photo_cnt,
             @Param("familyId") Long familyId,
             @Param("lastPhotoId") Long lastPhotoId,
-            @Param("roleId") Long roleId
+            @Param("familyRole") FamilyRole familyRole
     );
 
     @Query(value = "SELECT pt.* FROM photo_tag AS pt " +
             "INNER JOIN (SELECT p.photo_id FROM photo p ORDER BY p.create_at DESC LIMIT :photo_cnt) AS pp " +
             "ON pt.photo_id = pp.photo_id " +
             "WHERE pt.family_id = :familyId " +
-            "AND pt.role_id = :roleId " +
+            "AND pt.family_role = :familyRole " +
             "ORDER BY pp.photo_id DESC", nativeQuery = true)
     List<PhotoTag> findRecentPhotoTagsByFamilyRole(
             @Param("photo_cnt") int photo_cnt,
             @Param("familyId") Long familyId,
-            @Param("roleId") Long roleId
+            @Param("familyRole") FamilyRole familyRole
     );
 
 
