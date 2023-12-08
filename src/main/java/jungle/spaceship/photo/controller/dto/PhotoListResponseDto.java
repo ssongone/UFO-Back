@@ -1,7 +1,6 @@
 package jungle.spaceship.photo.controller.dto;
 
-import jungle.spaceship.member.entity.family.FamilyRole;
-import jungle.spaceship.photo.entity.Comment;
+import jungle.spaceship.photo.controller.dto.comment.CommentResponseDto;
 import jungle.spaceship.photo.entity.Photo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,7 @@ public class PhotoListResponseDto {
     private Long photoId;
     private String description;
     private String writer;
-    private List<Comment> comments;
+    private List<CommentResponseDto> comments;
     private String photoKey;
     private LocalDateTime createAt;
 
@@ -32,11 +31,10 @@ public class PhotoListResponseDto {
     }
 
     public PhotoListResponseDto(Photo photo, String photoKey){
-
         this.photoId = photo.getPhotoId();
         this.description = photo.getDescription();
         this.writer = photo.getMember().getNickname();
-        this.comments = photo.getComment();
+        this.comments = photo.dtoComments();
         this.photoKey = photoKey;
         this.createAt = photo.getCreateAt();
     }

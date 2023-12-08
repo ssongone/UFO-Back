@@ -12,10 +12,13 @@ public class CommentResponseDto {
 
     private final LocalDateTime createAt;
 
+    private String writer;
+
     public CommentResponseDto(Comment comment){
         this.commentId = comment.getCommentId();
         this.content = comment.getContent();
         this.createAt = comment.getCreateAt();
+        this.writer = comment.getMember().getNickname();
     }
 
 }

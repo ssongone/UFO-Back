@@ -5,6 +5,7 @@ import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.entity.Timestamped;
 import jungle.spaceship.member.entity.family.Family;
 import jungle.spaceship.member.entity.family.FamilyRole;
+import jungle.spaceship.photo.controller.dto.comment.CommentResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -47,8 +49,6 @@ public class Photo extends Timestamped {
         this.member = member;
     }
 
-
-
     public void toPhotoTag(FamilyRole familyRole, Family family) {
         this.photoTags.add(
                 new PhotoTag(familyRole, family, this)
@@ -64,5 +64,11 @@ public class Photo extends Timestamped {
         this.photoTags.add(
                 new PhotoTag(family, this)
         );
+    }
+
+    public List<CommentResponseDto> dtoComments() {
+        return comment.stream()
+                .map(CommentResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
