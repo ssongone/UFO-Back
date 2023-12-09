@@ -61,4 +61,10 @@ public class PhotoController {
     {
         return ResponseEntity.ok(photoService.getPhotoListByTagAndId(photoId, photoTagRequestDto));
     }
+
+    @GetMapping("/photo/{photoId}/commnets")
+    public ResponseEntity<BasicResponse> getPhotoComments(@PathVariable Long photoId) {
+        return ResponseEntity.ok(photoService.getPhotoComments(photoId));
+    }
+
 }

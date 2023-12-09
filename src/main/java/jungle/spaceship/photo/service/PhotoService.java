@@ -10,6 +10,8 @@ import jungle.spaceship.photo.controller.dto.PhotoListResponseDto;
 import jungle.spaceship.photo.controller.dto.PhotoRegisterDto;
 import jungle.spaceship.photo.controller.dto.PhotoResponseDto;
 import jungle.spaceship.photo.controller.dto.PhotoTagRequestDto;
+import jungle.spaceship.photo.controller.dto.comment.CommentResponseDto;
+import jungle.spaceship.photo.entity.Comment;
 import jungle.spaceship.photo.entity.Photo;
 import jungle.spaceship.photo.entity.PhotoTag;
 import jungle.spaceship.photo.repository.PhotoRepository;
@@ -23,10 +25,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -157,6 +157,17 @@ public class PhotoService {
     // s3에 업로드 된 이미지의 객체 url 생성
     private String makeS3Url(String photoKey){
         return amazonS3.getUrl(bucket, photoKey).toString();
+    }
+
+    public BasicResponse getPhotoComments(Long photoId) {
+        Optional<Photo> byId = photoRepository.findById(photoId);
+        if (byId.isEmpty()) {
+            return new ExtendedResponse<>(null, HttpStatus.BAD_REQUEST.value(), "해당 사진이 없슴다");
+        }
+        Photo photo = byId.get();
+        List<Comment> comments = photo.getComment();
+        List<CommentResponseDto> collect = comments.stream().map(CommentResponseDto::new).collect(Collectors.toList());
+        return new ExtendedResponse<>(collect, HttpStatus.OK.value(), "댓글 리스트 반환 성공!");
     }
 
 
