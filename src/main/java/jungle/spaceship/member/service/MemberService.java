@@ -83,8 +83,6 @@ public class MemberService {
 
         Member member = memberByEmail.get();
         Family family = member.getFamily();
-        System.out.println("family = " + family);
-        System.out.println("member = " + member.getFamilyRole());
         if (family == null || member.getFamilyRole() == null) {
             return Optional.empty();
         }

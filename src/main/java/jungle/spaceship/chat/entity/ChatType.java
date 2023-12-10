@@ -1,5 +1,5 @@
 package jungle.spaceship.chat.entity;
 
 public enum ChatType {
-        ENTER, TALK,
+        ENTER, TALK, offer, answer, candidate
 }

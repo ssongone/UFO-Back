@@ -20,7 +20,7 @@ public class ChatRegisterDto {
 
     @Setter
     private String content;
-    private final String time;
+    private String time;
 
     public Chat getNewMessage(){
         return Chat.builder()
