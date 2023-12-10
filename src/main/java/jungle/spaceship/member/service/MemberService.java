@@ -22,12 +22,16 @@ import jungle.spaceship.member.entity.oauth.OAuthInfoResponse;
 import jungle.spaceship.member.repository.*;
 import jungle.spaceship.notification.FcmService;
 import jungle.spaceship.notification.NotificationType;
+import jungle.spaceship.photo.repository.CommentRepository;
 import jungle.spaceship.photo.repository.PhotoRepository;
+import jungle.spaceship.response.BasicResponse;
+import jungle.spaceship.response.ExtendedResponse;
 import jungle.spaceship.tmi.repository.AttendanceRepository;
 import jungle.spaceship.tmi.repository.TmiRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -62,6 +66,7 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final SecurityUtil securityUtil;
     private final FcmService fcmService;
+    private final CommentRepository commentRepository;
     static String DEFAULT_TOKEN = "cZONPdOLQYCg3gxyiC736r:APA91bGYhF7Em9guyGqFxjDun9dbkanX0K0x2Gc3y13lF1TTcjrhvbXzvOldg11K5rQ_1wJkH1qfQV941-SbBLIjym4Nct75_zBB_UiaUaLsgWcf2Xo9eVrdtC9eYIlQy0RDgc8qodA0";
 
     static String OAUTH2_URL_KAKAO = "https://kapi.kakao.com/v2/user/me";
@@ -227,6 +232,7 @@ public class MemberService {
         tmiRepository.deleteByMember(member);
         attendanceRepository.deleteByMember(member);
         calendarEventRepository.deleteByMember(member);
+        commentRepository.deleteByMember(member);
         photoRepository.deleteByMember(member);
         memberRepository.delete(member);
     }
@@ -236,6 +242,7 @@ public class MemberService {
         tmiRepository.deleteByMember(member);
         attendanceRepository.deleteByMember(member);
         calendarEventRepository.deleteByMember(member);
+        commentRepository.deleteByMember(member);
         photoRepository.deleteByMember(member);
         memberRepository.delete(member);
     }
@@ -250,6 +257,13 @@ public class MemberService {
                 .collect(Collectors.toList());
 
     }
+
+    public BasicResponse getFamilyMemberPoints() {
+        Long familyId = securityUtil.extractFamilyId();
+        return new ExtendedResponse<>(memberRepository.findByFamily_FamilyIdOrderByPointDesc(familyId), HttpStatus.OK.value(),"오늘의 점수 반환");
+    }
+
+
 
 //    public Member updateCharacter(CharacterDto characterDto) {
 //        Member member = securityUtil.extractMember();

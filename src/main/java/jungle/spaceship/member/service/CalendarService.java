@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static jungle.spaceship.member.entity.Plant.ADD_EVENT_POINT;
+
 @Service
 @RequiredArgsConstructor
 public class CalendarService {
@@ -22,7 +24,7 @@ public class CalendarService {
     private final FcmService fcmService;
     private final FamilyRepository familyRepository;
     private final SecurityUtil securityUtil;
-
+    private final PlantService plantService;
     public CalendarEvent getEvent(Long eventId) {
         return calendarEventRepository.findById(eventId).orElseThrow(()->
                 new NoSuchElementException("해당 이벤트가 존재하지 않습니다"));
@@ -32,11 +34,10 @@ public class CalendarService {
         Member member = securityUtil.extractMember();
         CalendarEvent calendarEvent = new CalendarEvent(dto, member);
         fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.CALENDAR, dto.getEventName());
-        if (member.getFamily() != null) {
-            if (member.getFamily().getPlant() != null) {
-              member.getFamily().getPlant().setPoint(2);
-              familyRepository.save(member.getFamily());
-            }
+        if (member.getFamily() != null && member.getFamily().getPlant() != null) {
+            member.getFamily().getPlant().setPoint(2);
+            familyRepository.save(member.getFamily());
+            plantService.performActivity(member, ADD_EVENT_POINT);
         }
         return calendarEventRepository.save(calendarEvent);
     }

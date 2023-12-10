@@ -2,6 +2,7 @@ package jungle.spaceship.photo.service;
 
 import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.entity.Member;
+import jungle.spaceship.member.service.PlantService;
 import jungle.spaceship.photo.controller.dto.comment.CommentModifyDto;
 import jungle.spaceship.photo.controller.dto.comment.CommentRegisterDto;
 import jungle.spaceship.photo.controller.dto.comment.CommentResponseDto;
@@ -18,6 +19,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.NoSuchElementException;
+
+import static jungle.spaceship.member.entity.Plant.ADD_COMMENT_POINT;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,7 +29,7 @@ public class CommentService {
     private final SecurityUtil securityUtil;
     private final CommentRepository commentRepository;
     private final PhotoRepository photoRepository;
-
+    private final PlantService plantService;
     /**
      * 댓글 등록
      */
@@ -41,6 +45,8 @@ public class CommentService {
         commentRepository.save(comment);
 
         CommentResponseDto commentResponseDto = new CommentResponseDto(comment);
+
+        plantService.performActivity(member, ADD_COMMENT_POINT);
 
         return new ExtendedResponse<>(commentResponseDto, HttpStatus.CREATED.value(), "댓글이 생성되었습니다");
     }

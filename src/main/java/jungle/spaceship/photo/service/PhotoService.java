@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.entity.family.FamilyRole;
+import jungle.spaceship.member.service.PlantService;
 import jungle.spaceship.notification.FcmService;
 import jungle.spaceship.notification.NotificationType;
 import jungle.spaceship.photo.controller.dto.PhotoListResponseDto;
@@ -28,17 +29,18 @@ import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static jungle.spaceship.member.entity.Plant.UPLOAD_PHOTO_POINT;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PhotoService {
 
     private final SecurityUtil securityUtil;
-//    private final FamilyRoleInfoRepository familyRoleInfoRepository;
     private final PhotoRepository photoRepository;
     private final PhotoTagRepository photoTagRepository;
     private final FcmService fcmService;
-
+    private final PlantService plantService;
     private final static int PHOTO_PAGEABLE_CNT = 80;
 
 
@@ -69,6 +71,7 @@ public class PhotoService {
         PhotoResponseDto photoResponseDto =
                 new PhotoResponseDto(photo.getPhotoId(), photo.getCreateAt());
         fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.PHOTO, photoDto.description());
+        plantService.performActivity(member, UPLOAD_PHOTO_POINT);
         return new ExtendedResponse<>(photoResponseDto,HttpStatus.CREATED.value(), "사진이 생성되었습니다");
     }
 

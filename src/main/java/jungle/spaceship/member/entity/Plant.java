@@ -20,8 +20,13 @@ public class Plant {
     private int point;
     private String name;
 
-    public static final int[] LEVEL_THRESHOLD = {10, 20, 40, 80, 120, 160, 200, 250, 300, 350, 400};
+    public static final int[] LEVEL_THRESHOLD = {20, 50, 100, 160, 250, 300, 400, 600, 900, 1500, 2000};
+    public static final int TODAY_MISSION_POINT = 3;
     public static final int ATTENDANCE_POINT = 1;
+    public static final int TMI_POINT = 1;
+    public static final int UPLOAD_PHOTO_POINT = 2;
+    public static final int ADD_COMMENT_POINT = 1;
+    public static final int ADD_EVENT_POINT = 1;
 
     public PlantStateDto performActivity(int pointsEarned) {
         this.point += pointsEarned;
@@ -38,7 +43,6 @@ public class Plant {
             level++;
             isUp = true;
         }
-        System.out.println("level = " + level);
         return isUp;
     }
 

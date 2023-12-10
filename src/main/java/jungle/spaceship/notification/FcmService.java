@@ -55,11 +55,8 @@ public class FcmService {
             throw new RuntimeException(e);
         }
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-        System.out.println("entity = " + entity);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(FCM_ENDPOINT, HttpMethod.POST, entity, String.class);
-
-        System.out.println("FCM Response: " + response.getBody());
     }
 
     private String makeResponse(String firebaseToken, NotificationType type, String sender, String content) throws JsonProcessingException {

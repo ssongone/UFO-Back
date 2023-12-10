@@ -19,12 +19,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static jungle.spaceship.member.entity.Plant.ATTENDANCE_POINT;
+import static jungle.spaceship.member.entity.Plant.TMI_POINT;
 
 @Slf4j
 @Service
@@ -52,6 +56,7 @@ public class TmiService {
         Tmi tmi = new Tmi(tmiDto, member);
         tmiRepository.save(tmi);
 
+        plantService.performActivity(member, TMI_POINT);
         fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.TMI, tmiDto.getContent());
 
         return new BasicResponse(HttpStatus.CREATED.value(), "Tmi 등록 완료");
@@ -68,6 +73,7 @@ public class TmiService {
         return collect;
     }
 
+    @Transactional
     public ExtendedResponse<PlantStateDto> attend() {
         Member member = securityUtil.extractMember();
 
@@ -81,10 +87,7 @@ public class TmiService {
         Attendance attendance = new Attendance(member);
         attendanceRepository.save(attendance);
 
-        plantStateDto = plantService.earnAttendancePoint(securityUtil.extractFamilyId());
-        if (plantStateDto.isUp()) {
-            fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.PLANT, String.valueOf(plantStateDto.getLevel()));
-        }
+        plantService.performActivity(member, ATTENDANCE_POINT);
         return new ExtendedResponse<>(plantStateDto, HttpStatus.OK.value(), "출석 완료!");
     }
 
@@ -102,7 +105,6 @@ public class TmiService {
         LocalDateTime startDateTime = startDate.atStartOfDay();
 
         List<Object[]> tmiWithDate = tmiRepository.findTmiDataByFamilyAndDate(familyId, startDateTime);
-        System.out.println("tmiWithDate.size() = " + tmiWithDate.size());
         Map<String, List<Tmi>> resultMap = tmiWithDate.stream()
                 .collect(Collectors.groupingBy(
                         row -> row[0].toString(),

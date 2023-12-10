@@ -56,6 +56,8 @@ public class Member extends Timestamped {
 
     @JsonIgnore
     private String firebaseToken;
+
+    private int point;
     public void setFamily(Family family) {
         this.family = family;
     }
@@ -97,5 +99,16 @@ public class Member extends Timestamped {
 
     public void setFirebaseToken(String firebaseToken) {
         this.firebaseToken = firebaseToken;
+    }
+
+    // 몇점 올랐는지 반환
+    public int updatePoint(int xp) {
+        int before = point;
+        point += xp;
+        if (point > 10) {
+            System.out.println("하루 경험치 획득량 초과");
+            point = 10;
+        }
+        return point - before;
     }
 }

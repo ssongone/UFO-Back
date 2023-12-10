@@ -5,9 +5,11 @@ import jungle.spaceship.member.controller.dto.FamilyResponseDto;
 import jungle.spaceship.member.controller.dto.LoginResponseDto;
 import jungle.spaceship.member.controller.dto.SignUpDto;
 import jungle.spaceship.member.service.MemberService;
+import jungle.spaceship.response.BasicResponse;
 import jungle.spaceship.response.ExtendedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -86,6 +88,11 @@ public class MemberController {
     @GetMapping("/api/family/koreanVer")
     public ExtendedResponse<List<String>> familyRoleKorean() {
         return new ExtendedResponse<>(memberService.familyRoleKorean() , HttpStatus.OK.value(), "");
+    }
+
+    @GetMapping("/api/family/points")
+    public ResponseEntity<BasicResponse> getFamilyMemberPoint() {
+        return ResponseEntity.ok(memberService.getFamilyMemberPoints());
     }
 
 
