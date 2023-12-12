@@ -261,6 +261,17 @@ public class MemberService {
         return new ExtendedResponse<>(memberRepository.findByFamily_FamilyIdOrderByPointDesc(familyId), HttpStatus.OK.value(),"오늘의 점수 반환");
     }
 
+    public boolean tingling(Long memberId) {
+
+        Member to = memberRepository.findById(memberId).orElseThrow(() -> new NoSuchElementException("해당 하는 멤버가 없어요"));
+        Member from = securityUtil.extractMember();
+        if (to.getFamily() != from.getFamily()) {
+            return false;
+        }
+
+        fcmService.tingle(from, to);
+        return true;
+    }
 
 
 //    public Member updateCharacter(CharacterDto characterDto) {

@@ -41,7 +41,14 @@ public enum NotificationType {
         map.put("title", "Plant");
         map.put("message", "눌러서 확인해보세요");
         return map;
+    }),
+    TINGLING((sender, message)-> {
+        Map<String, Object> map = new HashMap<>();
+        map.put("title", sender + "님이 찌릿통신을 보냈어요");
+        map.put("message", "앱에 들어와서 응답해주세요!");
+        return map;
     });
+
 
 
     private final BiFunction<String, String, Map<String, Object>> mapper;

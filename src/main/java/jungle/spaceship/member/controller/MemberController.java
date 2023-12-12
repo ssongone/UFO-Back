@@ -95,6 +95,15 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getFamilyMemberPoints());
     }
 
+    @GetMapping("/tingle/{memberId}")
+    public ResponseEntity<BasicResponse> tingling(@PathVariable Long memberId) {
+        boolean tingling = memberService.tingling(memberId);
+        if (!tingling) {
+            return ResponseEntity.ok(new BasicResponse(12345, "찌릿통신 실패"));
+        }
+        return ResponseEntity.ok(new BasicResponse(200, "찌릿통신 성공"));
+    }
+
 
 //    @PatchMapping("/api/member")
 //    public Member updateMember(@RequestBody CharacterDto dto) {

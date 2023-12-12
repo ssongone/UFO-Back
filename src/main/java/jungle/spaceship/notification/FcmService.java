@@ -35,8 +35,6 @@ public class FcmService {
                 .collect(Collectors.toList());
 
         tokens.stream().forEach(token-> sendFcmMessage(token, type, member.getNickname(), content));
-
-
     }
 
     private void sendFcmMessage(String firebaseToken, NotificationType type, String sender, String content) {
@@ -71,6 +69,12 @@ public class FcmService {
         String result = objectMapper.writeValueAsString(jsonMap);
         System.out.println("result = " + result);
         return result;
+    }
+
+
+    public void tingle(Member from, Member to) {
+        String firebaseToken = to.getFirebaseToken();
+        sendFcmMessage(firebaseToken, NotificationType.TINGLING, from.getNickname(), "");
     }
 
 }
