@@ -58,7 +58,7 @@ public class ChatService implements DisposableBean{
         Long roomId = chatRegisterDto.getRoomId();
 
         Chat chat = chatRegisterDto.getNewMessage();
-
+        System.out.println("chat = " + chat);
         // 채팅방에 캐시가 없다면 새로운 큐를 생성 및 메시지 추가 후 put(roomId, queue) 한다.
         if(!messageMap.containsKey(roomId)){
             //채팅방에 처음쓰는 글이라면 캐시가 없으므로 캐시를 생성
@@ -119,7 +119,7 @@ public class ChatService implements DisposableBean{
     }
 
     private List<Chat> getMessageInDB(Long roomId) {
-        return chatRepository.findNumberOfMessageInChatRoomReverse(roomId,MESSAGE_PAGEABLE_SIZE);
+        return chatRepository.findNumberOfMessageInChatRoomReverse(roomId, MESSAGE_PAGEABLE_SIZE);
     }
 
     private List<Chat> getMessageInCache(Long roomId){

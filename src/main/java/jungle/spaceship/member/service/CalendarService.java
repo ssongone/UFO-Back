@@ -35,7 +35,6 @@ public class CalendarService {
         CalendarEvent calendarEvent = new CalendarEvent(dto, member);
         fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.CALENDAR, dto.getEventName());
         if (member.getFamily() != null && member.getFamily().getPlant() != null) {
-            member.getFamily().getPlant().setPoint(2);
             familyRepository.save(member.getFamily());
             plantService.performActivity(member, ADD_EVENT_POINT);
         }

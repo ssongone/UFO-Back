@@ -48,7 +48,6 @@ public class PlantService {
 
     @Transactional
     public void performActivity(Member member, int pointsEarned) {
-        System.out.println("PlantService.performActivity :" + member.getNickname());
         int xp = member.updatePoint(pointsEarned);
         memberRepository.save(member);
 
