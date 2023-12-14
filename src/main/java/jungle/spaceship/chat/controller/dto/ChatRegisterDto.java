@@ -2,27 +2,26 @@ package jungle.spaceship.chat.controller.dto;
 
 import jungle.spaceship.chat.entity.Chat;
 import jungle.spaceship.chat.entity.ChatType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * 채팅 메시지에 대한 정보 담기
  *
  */
 @Getter
-@RequiredArgsConstructor
 @AllArgsConstructor
 public class ChatRegisterDto {
 
-    private final ChatType type;
-    private final Long roomId;
-    private final String sender;    // 회원 닉네임
+    private ChatType type;
+    private Long roomId;
+    private String sender;    // 회원 닉네임
 
     @Setter
     private String content;
     private String time;
+
+    public ChatRegisterDto() {
+    }
 
     public Chat getNewMessage(){
         return Chat.builder()

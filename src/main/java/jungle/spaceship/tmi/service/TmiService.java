@@ -69,7 +69,6 @@ public class TmiService {
                 .stream()
                 .map(Tmi::toResponseDto)
                 .collect(Collectors.toList());
-        System.out.println("collect = " + collect);
         return collect;
     }
 
@@ -110,7 +109,6 @@ public class TmiService {
                         row -> row[0].toString(),
                         Collectors.mapping(row -> (Tmi) row[1], Collectors.toList())
                 ));
-        System.out.println(resultMap);
         return new ExtendedResponse<>(resultMap, HttpStatus.OK.value(), "");
     }
 
@@ -127,7 +125,6 @@ public class TmiService {
                         Collectors.mapping(row -> (Attendance) row[1], Collectors.toList())
 
                 ));
-        System.out.println(resultMap);
         return new ExtendedResponse<>(resultMap, HttpStatus.OK.value(), "");
     }
 

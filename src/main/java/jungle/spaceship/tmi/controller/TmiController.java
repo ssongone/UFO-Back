@@ -34,7 +34,6 @@ public class TmiController {
     @GetMapping("/familyTmi")
     public List<TmiResponseDto> getTmiByFamilyId() {
         List<TmiResponseDto> tmiByFamilyId = tmiService.getTmiByFamilyId();
-        System.out.println("tmiByFamilyId = " + tmiByFamilyId);
         return tmiByFamilyId;
     }
 

@@ -46,7 +46,6 @@ public class CalendarController {
     @GetMapping("/calendarEvent/day/{year}/{month}")
     public ExtendedResponse<List<CalendarEvent>> monthlyEvent(@PathVariable int year, @PathVariable int month) {
         List<CalendarEvent> calendarEvents = calendarService.monthlyEvent(year, month);
-        System.out.println("calendarEvents = " + calendarEvents);
         return new ExtendedResponse<>(calendarEvents, HttpStatus.OK.value(), "");
     }
 }

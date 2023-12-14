@@ -67,7 +67,6 @@ public class FcmService {
 
         ObjectMapper objectMapper = new ObjectMapper();
         String result = objectMapper.writeValueAsString(jsonMap);
-        System.out.println("result = " + result);
         return result;
     }
 

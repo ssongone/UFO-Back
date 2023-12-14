@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -57,7 +58,12 @@ public class ChatService implements DisposableBean{
     }
 
     public void sendCalendarEventMessage(CalendarEvent calendarEvent, Member member) {
-        String content = member.getNickname() + "님이 " + calendarEvent.getEventName() + "이벤트를 등록하였습니다";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String content = "⚡️이벤트 등록 알림⚡️\n" +
+                "[" + calendarEvent.getEventName() + "]\n" +
+                "시작일 : " + calendarEvent.getStartDate().format(formatter) + "\n" +
+                "종료일 : " + calendarEvent.getEndDate().format(formatter);
 
         ChatRegisterDto chatRegisterDto = new ChatRegisterDto(ChatType.CALENDAR,
                 member.getFamily().getChatRoom().getRoomId(),
@@ -77,7 +83,6 @@ public class ChatService implements DisposableBean{
         Long roomId = chatRegisterDto.getRoomId();
 
         Chat chat = chatRegisterDto.getNewMessage();
-        System.out.println("chat = " + chat);
         // 채팅방에 캐시가 없다면 새로운 큐를 생성 및 메시지 추가 후 put(roomId, queue) 한다.
         if(!messageMap.containsKey(roomId)){
             //채팅방에 처음쓰는 글이라면 캐시가 없으므로 캐시를 생성

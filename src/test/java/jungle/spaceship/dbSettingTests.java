@@ -24,7 +24,6 @@ public class dbSettingTests {
                             DB_URL,
                             DB_USERNAME,
                             DB_PASSWORD)){
-            System.out.println(connection);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
