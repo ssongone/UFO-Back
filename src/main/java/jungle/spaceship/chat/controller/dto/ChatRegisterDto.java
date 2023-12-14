@@ -2,6 +2,7 @@ package jungle.spaceship.chat.controller.dto;
 
 import jungle.spaceship.chat.entity.Chat;
 import jungle.spaceship.chat.entity.ChatType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class ChatRegisterDto {
 
     private final ChatType type;

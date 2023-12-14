@@ -3,6 +3,8 @@ package jungle.spaceship.photo.service;
 import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.service.PlantService;
+import jungle.spaceship.notification.FcmService;
+import jungle.spaceship.notification.NotificationType;
 import jungle.spaceship.photo.controller.dto.comment.CommentModifyDto;
 import jungle.spaceship.photo.controller.dto.comment.CommentRegisterDto;
 import jungle.spaceship.photo.controller.dto.comment.CommentResponseDto;
@@ -30,6 +32,9 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PhotoRepository photoRepository;
     private final PlantService plantService;
+    private final FcmService fcmService;
+
+
     /**
      * 댓글 등록
      */
@@ -47,6 +52,7 @@ public class CommentService {
         CommentResponseDto commentResponseDto = new CommentResponseDto(comment);
 
         plantService.performActivity(member, ADD_COMMENT_POINT);
+        fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.COMMENT, "");
 
         return new ExtendedResponse<>(commentResponseDto, HttpStatus.CREATED.value(), "댓글이 생성되었습니다");
     }
@@ -57,7 +63,6 @@ public class CommentService {
     public BasicResponse modifyComment(Long commentId, CommentModifyDto commentModifyDto) {
 
         String content = commentModifyDto.getContent();
-
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NoSuchElementException("해당하는 댓글이 없습니다"));
 
@@ -66,7 +71,7 @@ public class CommentService {
         commentModifyDto.setModifiedAt(comment.getModifiedAt());
         commentRepository.save(comment);
 
-        return new ExtendedResponse<>(commentModifyDto, HttpStatus.OK.value(), "댓글이 수정 완료!");
+        return new ExtendedResponse<>(commentModifyDto, HttpStatus.OK.value(), "댓글 수정 완료!");
     }
 
     /**

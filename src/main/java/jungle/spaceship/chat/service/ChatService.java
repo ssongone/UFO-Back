@@ -5,6 +5,7 @@ import jungle.spaceship.chat.entity.Chat;
 import jungle.spaceship.chat.entity.ChatType;
 import jungle.spaceship.chat.repository.ChatRepository;
 import jungle.spaceship.chat.repository.RedisMessageCache;
+import jungle.spaceship.member.entity.CalendarEvent;
 import jungle.spaceship.member.entity.Member;
 import jungle.spaceship.member.repository.MemberRepository;
 import jungle.spaceship.notification.FcmService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -50,8 +52,25 @@ public class ChatService implements DisposableBean{
         saveMessage(message);
         Member member = memberRepository.findByEmail(memberEmail).orElseThrow(()-> new NoSuchElementException("해당하는 사용자가 없습니다"));
         fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.CHAT, message.getContent());
+
         return message;
     }
+
+    public void sendCalendarEventMessage(CalendarEvent calendarEvent, Member member) {
+        String content = member.getNickname() + "님이 " + calendarEvent.getEventName() + "이벤트를 등록하였습니다";
+
+        ChatRegisterDto chatRegisterDto = new ChatRegisterDto(ChatType.CALENDAR,
+                member.getFamily().getChatRoom().getRoomId(),
+                member.getNickname(),
+                content,
+                LocalDateTime.now().toString()
+        );
+        saveMessage(chatRegisterDto);
+
+    }
+
+//    private String content;
+//    private String time;
 
 
     private void saveMessage(ChatRegisterDto chatRegisterDto){

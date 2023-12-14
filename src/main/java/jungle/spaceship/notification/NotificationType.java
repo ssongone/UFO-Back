@@ -47,6 +47,12 @@ public enum NotificationType {
         map.put("title", sender + "님이 찌릿통신을 보냈어요");
         map.put("message", "앱에 들어와서 응답해주세요!");
         return map;
+    }),
+    COMMENT((sender, message)-> {
+        Map<String, Object> map = new HashMap<>();
+        map.put("title", "Comment");
+        map.put("message", sender +"님이 사진에 댓글을 남겼습니다");
+        return map;
     });
 
 

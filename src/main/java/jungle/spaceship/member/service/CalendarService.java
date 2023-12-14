@@ -1,5 +1,6 @@
 package jungle.spaceship.member.service;
 
+import jungle.spaceship.chat.service.ChatService;
 import jungle.spaceship.jwt.SecurityUtil;
 import jungle.spaceship.member.controller.dto.CalendarRequestDto;
 import jungle.spaceship.member.entity.CalendarEvent;
@@ -25,6 +26,7 @@ public class CalendarService {
     private final FamilyRepository familyRepository;
     private final SecurityUtil securityUtil;
     private final PlantService plantService;
+    private final ChatService chatService;
     public CalendarEvent getEvent(Long eventId) {
         return calendarEventRepository.findById(eventId).orElseThrow(()->
                 new NoSuchElementException("해당 이벤트가 존재하지 않습니다"));
@@ -38,6 +40,7 @@ public class CalendarService {
             familyRepository.save(member.getFamily());
             plantService.performActivity(member, ADD_EVENT_POINT);
         }
+        chatService.sendCalendarEventMessage(calendarEvent, member);
         return calendarEventRepository.save(calendarEvent);
     }
 
