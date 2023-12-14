@@ -104,6 +104,11 @@ public class MemberController {
         return ResponseEntity.ok(new BasicResponse(200, "찌릿통신 성공"));
     }
 
+    @GetMapping("/ladder")
+    public void ladder() {
+        memberService.ladder();
+    }
+
 
 //    @PatchMapping("/api/member")
 //    public Member updateMember(@RequestBody CharacterDto dto) {

@@ -40,6 +40,7 @@ public class CalendarService {
             familyRepository.save(member.getFamily());
             plantService.performActivity(member, ADD_EVENT_POINT);
         }
+        System.out.println("CalendarService.addEvent");
         chatService.sendCalendarEventMessage(calendarEvent, member);
         return calendarEventRepository.save(calendarEvent);
     }

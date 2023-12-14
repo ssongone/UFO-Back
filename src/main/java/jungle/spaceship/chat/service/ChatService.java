@@ -13,6 +13,7 @@ import jungle.spaceship.notification.NotificationType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -33,6 +34,8 @@ public class ChatService implements DisposableBean{
     private final ChatRepository chatRepository;
     private final MemberRepository memberRepository;
     private final FcmService fcmService;
+    private final SimpMessageSendingOperations messagingTemplate;
+
 
     private final RedisMessageCache messageMap;
     // 채팅 메시지 임시 저장 캐시 : 채팅방Id, 채팅 메시지
@@ -58,25 +61,26 @@ public class ChatService implements DisposableBean{
     }
 
     public void sendCalendarEventMessage(CalendarEvent calendarEvent, Member member) {
+        System.out.println("ChatService.sendCalendarEventMessage");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
+        Long roomId = member.getFamily().getChatRoom().getRoomId();
         String content = "⚡️이벤트 등록 알림⚡️\n" +
                 "[" + calendarEvent.getEventName() + "]\n" +
                 "시작일 : " + calendarEvent.getStartDate().format(formatter) + "\n" +
                 "종료일 : " + calendarEvent.getEndDate().format(formatter);
 
         ChatRegisterDto chatRegisterDto = new ChatRegisterDto(ChatType.CALENDAR,
-                member.getFamily().getChatRoom().getRoomId(),
+                roomId,
                 member.getNickname(),
                 content,
                 LocalDateTime.now().toString()
         );
+
+        System.out.println(chatRegisterDto);
         saveMessage(chatRegisterDto);
 
+        messagingTemplate.convertAndSend("/sub/chat/room/" + roomId, chatRegisterDto);
     }
-
-//    private String content;
-//    private String time;
 
 
     private void saveMessage(ChatRegisterDto chatRegisterDto){

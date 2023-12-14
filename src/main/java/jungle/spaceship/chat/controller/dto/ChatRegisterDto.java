@@ -10,6 +10,7 @@ import lombok.*;
  */
 @Getter
 @AllArgsConstructor
+@ToString
 public class ChatRegisterDto {
 
     private ChatType type;

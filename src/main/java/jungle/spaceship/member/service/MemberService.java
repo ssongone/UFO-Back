@@ -273,6 +273,11 @@ public class MemberService {
         return true;
     }
 
+    public void ladder() {
+        Member member = securityUtil.extractMember();
+        fcmService.sendFcmMessageToFamilyExcludingMe(member, NotificationType.GAME_RESULT, "사다리 게임");
+    }
+
 
 //    public Member updateCharacter(CharacterDto characterDto) {
 //        Member member = securityUtil.extractMember();
